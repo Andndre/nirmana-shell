@@ -14,7 +14,13 @@ $ErrorActionPreference = 'Stop'
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-$setupScriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
+$setupScriptDir = if ($PSScriptRoot) {
+    $PSScriptRoot
+} elseif ($MyInvocation.MyCommand.Path) {
+    Split-Path -Parent $MyInvocation.MyCommand.Path
+} else {
+    $null
+}
 $versionFile = if ($setupScriptDir) { Join-Path $setupScriptDir "VERSION" } else { $null }
 $nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.0" }
 
@@ -88,7 +94,8 @@ if ($hasLocalSource) {
             git clone --quiet https://github.com/Andndre/nirmana-shell.git $installDir
         } else {
             Write-Host "--> Updating repository in $installDir..." -ForegroundColor DarkGray
-            git -C $installDir pull --quiet
+            git -C $installDir fetch --quiet origin main 2>$null
+            git -C $installDir reset --hard origin/main 2>$null
         }
     } else {
         # Fallback: Download archive if git is not yet available in current session PATH
