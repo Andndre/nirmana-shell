@@ -1,0 +1,62 @@
+# =====================================================================
+# Nirmana-Shell - Custom Theme: Takuya Theme (Craftzdog Style)
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+[╭─](bold #21c7c7)$directory$git_branch$git_status$fill$bun$dart$nodejs$python$cmd_duration$time
+[╰─](bold #21c7c7)$character"""
+
+[fill]
+symbol = " "
+
+[character]
+success_symbol = "[❯](bold #21c7c7) "
+error_symbol = "[❯](bold #ef5350) "
+
+[directory]
+format = "[](fg:#0077c2)[ $path](bg:#0077c2 fg:#ffffff)[](fg:#0077c2) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:#fffb38)[ $branch](bg:#fffb38 fg:#011627)"
+
+[git_status]
+format = "[$all_status$ahead_behind](bg:#fffb38 fg:#011627)[](fg:#fffb38) "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+modified = " !"
+untracked = " ?"
+stashed = " "
+
+[bun]
+format = "[](fg:#303030)[ $version](bg:#303030 fg:#ff9f43)[](fg:#303030) "
+version_format = "v${raw}"
+
+[dart]
+symbol = " "
+format = "[](fg:#303030)[$symbol$version](bg:#303030 fg:#7fd5ea)[](fg:#303030) "
+version_format = "v${raw}"
+
+[nodejs]
+symbol = "󰎙 "
+format = "[](fg:#303030)[$symbol$version](bg:#303030 fg:#3ec669)[](fg:#303030) "
+version_format = "v${raw}"
+
+[python]
+symbol = "󰌠 "
+format = "[](fg:#303030)[$symbol$version](bg:#303030 fg:#e4f34a)[](fg:#303030) "
+version_format = "v${raw}"
+
+[cmd_duration]
+min_time = 2_000
+format = "[](fg:#303030)[ $duration](bg:#303030 fg:#f9e2af)[](fg:#303030) "
+
+[time]
+disabled = false
+time_format = "%H:%M"
+format = "[](fg:#40c4ff)[ $time](bg:#40c4ff fg:#011627)[](fg:#40c4ff)"

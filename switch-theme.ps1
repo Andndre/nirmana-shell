@@ -68,7 +68,8 @@ function Ensure-Previews ([switch]$Force) {
                 'half-life'             = 'Cyberpunk lambda prompt with electric green & orange accents'
                 'robbyrussell'          = 'Legendary minimal arrow prompt with colored git & runtime status'
                 'spaceship'             = 'Cosmic developer prompt with rocket execution symbol'
-                'clean-detailed'        = 'Modern two-line prompt with bracketed status segments'
+                'clean-detailed'        = 'Modern two-line prompt with right-aligned runtime & duration'
+                'takuya'                = 'Craftzdog signature prompt with right-aligned runtime & clock'
             }
 
             foreach ($c in $customThemes) {
@@ -214,6 +215,7 @@ $themeToWtScheme = @{
     'robbyrussell'          = 'Catppuccin Mocha'
     'spaceship'             = 'Tokyo Night'
     'clean-detailed'        = 'Nirmana'
+    'takuya'                = 'Tokyo Night'
 }
 
 $wtCandidatePaths = @(

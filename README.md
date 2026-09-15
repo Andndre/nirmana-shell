@@ -92,13 +92,15 @@ Supports custom themes and official Starship presets:
   * `half-life`: Cyberpunk lambda prompt with electric green and orange accents
   * `robbyrussell`: Legendary minimal arrow prompt with colored git and runtime status
   * `spaceship`: Cosmic developer prompt with rocket execution symbol
-  * `clean-detailed`: Modern two-line prompt with bracketed status segments
+  * `clean-detailed`: Modern two-line prompt with right-aligned runtime and duration
+  * `takuya`: Craftzdog signature prompt with right-aligned runtime and clock
 * **`[Starship]` Official Presets**:
   * `bracketed-segments`, `catppuccin-powerline`, `gruvbox-rainbow`, `nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`, `pastel-powerline`, `plain-text-symbols`, `pure-preset`
 
 Usage example:
 ```powershell
 nirmana theme
+nirmana theme takuya
 nirmana theme bubbles
 nirmana theme robbyrussell
 nirmana theme spaceship
@@ -119,7 +121,7 @@ nirmana-shell/
 ├── .previews/              # Pre-rendered theme preview cards
 ├── configs/
 │   └── Microsoft.PowerShell_profile.ps1 # PowerShell 7 profile
-└── themes/                 # 16 custom and adapted Starship themes (*.toml)
+└── themes/                 # 17 custom and adapted Starship themes (*.toml)
 ```
 
 ---
