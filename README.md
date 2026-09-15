@@ -73,17 +73,24 @@ Once installed, the `nirmana-shell` command (or shorthand alias `nirmana`) is gl
 | `nirmana-shell update` | Pull the latest changes and themes from GitHub |
 | `nirmana-shell reload` | Reload the active PowerShell `$PROFILE` in the current session |
 
-### Available Themes:
-* **`nirmana`** (Signature Default)
-* **`tokyo-night`**
-* **`catppuccin-mocha`**
-* **`minimal-emerald`**
+### Available Themes & Official Presets:
+
+You can switch to any of Nirmana-Shell's custom-tuned themes or official Starship community presets (from [starship.rs/presets](https://starship.rs/presets/)):
+
+* **Custom Tuned Themes**:
+  * `nirmana` — Signature theme with vibrant cyan, amethyst accents, and clean contrast.
+  * `catppuccin-mocha` — Soothing pastel aesthetic.
+  * `tokyo-night` — Dark cyberpunk neon palette.
+  * `minimal-emerald` — Distraction-free emerald green theme.
+* **Official Starship Presets (Dynamic)**:
+  * `bracketed-segments`, `catppuccin-powerline`, `gruvbox-rainbow`, `jetpack`, `nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`, `pastel-powerline`, `plain-text-symbols`, `pure-preset`, `tokyo-night`.
 
 Example:
 ```powershell
-nirmana theme tokyo-night
+nirmana theme gruvbox-rainbow
+nirmana theme nirmana
 ```
-*(Tip: Type `nirmana theme ` and press `Tab` to cycle through available themes).*
+*(Tip: Type `nirmana theme ` and press `Tab` to cycle through all available themes and presets).*
 
 ---
 
@@ -91,9 +98,10 @@ nirmana theme tokyo-night
 
 ```text
 nirmana-shell/
+├── LICENSE                 # MIT License & third-party acknowledgements
 ├── README.md               # Documentation and usage guide
 ├── setup.ps1               # Automated one-command installer script
-├── switch-theme.ps1        # Interactive theme switcher script
+├── switch-theme.ps1        # Unified theme switcher script
 ├── configs/
 │   └── Microsoft.PowerShell_profile.ps1 # Canonical PowerShell 7 profile
 └── themes/
@@ -112,3 +120,18 @@ Share this single command with anyone on Windows:
 ```powershell
 irm https://raw.githubusercontent.com/Andndre/nirmana-shell/main/setup.ps1 | iex
 ```
+
+---
+
+## License & Legal Acknowledgements
+
+Nirmana-Shell is open-source under the [MIT License](file:///D:/nirmana-shell/LICENSE).
+
+It utilizes and integrates with the following open-source software under their respective licenses:
+* [Starship](https://starship.rs) — Licensed under the **ISC License** (Copyright © 2019-present, Starship Contributors). Presets are rendered via Starship's official first-party `starship preset` mechanism.
+* [Zoxide](https://github.com/ajeetdsouza/zoxide) — MIT License.
+* [Eza](https://github.com/eza-community/eza) — EUPL-1.2 License.
+* [FZF](https://github.com/junegunn/fzf) — MIT License.
+* [Delta](https://github.com/dandavison/delta) — MIT License.
+* [FD](https://github.com/sharkdp/fd) — MIT / Apache-2.0 License.
+* [PSReadLine](https://github.com/PowerShell/PSReadLine) — MIT License.

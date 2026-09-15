@@ -1,0 +1,42 @@
+MIT License
+
+Copyright (c) 2026 Andre (@Andndre)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+### Third-Party Licenses & Acknowledgements
+
+Nirmana-Shell automates the installation and configuration of the following open-source tools:
+
+* **Starship** — ISC License. Copyright (c) 2019-present, Starship Contributors.
+  Website: https://starship.rs | GitHub: https://github.com/starship/starship
+* **Zoxide** — MIT License. Copyright (c) 2020-present, Ajeet D'Souza.
+  GitHub: https://github.com/ajeetdsouza/zoxide
+* **Eza** — EUPL-1.2 License. Copyright (c) 2023-present, Eza Community.
+  GitHub: https://github.com/eza-community/eza
+* **FZF** — MIT License. Copyright (c) 2013-present, Junegunn Choi.
+  GitHub: https://github.com/junegunn/fzf
+* **Delta** — MIT License. Copyright (c) 2019-present, Dan Davison.
+  GitHub: https://github.com/dandavison/delta
+* **FD** — MIT / Apache-2.0 License. Copyright (c) 2017-present, David Peter.
+  GitHub: https://github.com/sharkdp/fd
+* **PSReadLine** — MIT License. Copyright (c) Microsoft Corporation.
+  GitHub: https://github.com/PowerShell/PSReadLine

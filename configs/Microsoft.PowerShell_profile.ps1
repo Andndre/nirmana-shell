@@ -128,13 +128,15 @@ Register-ArgumentCompleter -Native -CommandName 'nirmana-shell', 'nirmana' -Scri
         }
     } elseif ($elements.Count -eq 3 -and $elements[1].Value -eq 'theme') {
         $root = Join-Path $HOME ".nirmana-shell"
+        $themes = @()
         if (Test-Path (Join-Path $root "themes")) {
-            Get-ChildItem (Join-Path $root "themes") -Filter "*.toml" | ForEach-Object {
-                $themeName = $_.BaseName
-                if ($themeName -like "$wordToComplete*") {
-                    [System.Management.Automation.CompletionResult]::new($themeName, $themeName, 'ParameterValue', $themeName)
-                }
-            }
+            $themes += Get-ChildItem (Join-Path $root "themes") -Filter "*.toml" | ForEach-Object { $_.BaseName }
+        }
+        if (Get-Command starship -ErrorAction SilentlyContinue) {
+            try { $themes += & starship preset --list 2>$null } catch {}
+        }
+        $themes | Select-Object -Unique | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
         }
     }
 }
