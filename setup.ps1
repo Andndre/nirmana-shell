@@ -11,9 +11,14 @@
 
 $ErrorActionPreference = 'Stop'
 
-Write-Host "`n========================================================" -ForegroundColor Cyan
-Write-Host "   NIRMANA-SHELL: MODERN TERMINAL AUTOMATION" -ForegroundColor White
-Write-Host "========================================================`n" -ForegroundColor DarkGray
+$OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+Write-Host ""
+Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Cyan
+Write-Host "│          NIRMANA-SHELL: MODERN TERMINAL AUTOMATION          │" -ForegroundColor White
+Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Cyan
+Write-Host ""
 
 # 1. Package Installation via WinGet
 Write-Host "[1/6] Checking & Installing Modern CLI Tools via WinGet..." -ForegroundColor Cyan
@@ -58,6 +63,8 @@ if ($hasLocalSource) {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     if (!(Test-Path $installDir)) {
         Copy-Item $scriptDir $installDir -Recurse -Force | Out-Null
+    } else {
+        Copy-Item "$scriptDir\*" $installDir -Recurse -Force | Out-Null
     }
 } else {
     # Running remotely via irm | iex
@@ -163,11 +170,13 @@ foreach ($wtPath in $wtSettingsPaths) {
     }
 }
 
-Write-Host "`n========================================================" -ForegroundColor Cyan
-Write-Host " NIRMANA-SHELL INSTALLATION COMPLETE!" -ForegroundColor Green
-Write-Host " Next Steps for User:" -ForegroundColor Yellow
-Write-Host " 1. Ensure a Nerd Font is installed (e.g. CaskaydiaCove NF / JetBrainsMono NF)." -ForegroundColor White
-Write-Host " 2. In Windows Terminal: Settings -> Defaults -> Appearance -> Font Face -> select 'CaskaydiaCove NF'." -ForegroundColor White
-Write-Host " 3. Open a new tab in Windows Terminal to enjoy PowerShell 7." -ForegroundColor White
-Write-Host " 4. Type 'nirmana-shell theme' anytime to switch themes!" -ForegroundColor Green
-Write-Host "========================================================`n" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
+Write-Host "│            NIRMANA-SHELL INSTALLATION COMPLETE              │" -ForegroundColor Green
+Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor Cyan
+Write-Host "│  Next Steps:                                                │" -ForegroundColor Yellow
+Write-Host "│  1. Ensure a Nerd Font is selected (e.g. CaskaydiaCove NF)  │" -ForegroundColor White
+Write-Host "│  2. Open a new tab in Windows Terminal to use PowerShell 7  │" -ForegroundColor White
+Write-Host "│  3. Type 'nirmana theme' to launch the theme switcher       │" -ForegroundColor White
+Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Green
+Write-Host ""

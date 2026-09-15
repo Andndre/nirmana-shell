@@ -2,12 +2,20 @@
 # Nirmana-Shell: PowerShell 7 Profile
 # =====================================================================
 
+$OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
 # 1. Starship Prompt Engine
 if (Get-Command starship -ErrorAction SilentlyContinue) {
     Invoke-Expression (&starship init powershell)
 }
 
-# 2. PSReadLine (Modern Autocomplete & Predictive IntelliSense)
+# 2. Global TUI Defaults (Rounded Borders & Indicators)
+if (Get-Command fzf -ErrorAction SilentlyContinue) {
+    $env:FZF_DEFAULT_OPTS = "--border=rounded --pointer='◆ ' --marker='✓ ' --scrollbar='│' --prompt='❯ '"
+}
+
+# 3. PSReadLine (Modern Autocomplete & Predictive IntelliSense)
 if (Get-Module -ListAvailable PSReadLine) {
     Import-Module PSReadLine
 
@@ -28,13 +36,21 @@ if (Get-Module -ListAvailable PSReadLine) {
     # - Ctrl+f: Accept prediction word-by-word (Fish style)
     Set-PSReadLineKeyHandler -Chord 'Ctrl+f' -Function ForwardWord
 
-    # - Ctrl+r: Interactive Fuzzy History Search via fzf (fullscreen layout matching zi)
+    # - Ctrl+r: Interactive Fuzzy History Search via fzf with rounded TUI border
     if (Get-Command fzf -ErrorAction SilentlyContinue) {
         Set-PSReadLineKeyHandler -Chord 'Ctrl+r' -ScriptBlock {
             $historyFile = (Get-PSReadLineOption).HistorySavePath
             if (Test-Path $historyFile) {
                 $selected = Get-Content $historyFile -Encoding utf8 -ErrorAction SilentlyContinue |
-                    fzf --tac --no-sort
+                    fzf --tac --no-sort `
+                        --border=rounded `
+                        --border-label=" Command History Search (Ctrl+R) " `
+                        --border-label-pos=3 `
+                        --prompt="Search ❯ " `
+                        --pointer="◆ " `
+                        --scrollbar="│" `
+                        --height=50% `
+                        --reverse
                 if ($selected) {
                     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
                     [Microsoft.PowerShell.PSConsoleReadLine]::Insert($selected)
@@ -44,12 +60,13 @@ if (Get-Module -ListAvailable PSReadLine) {
     }
 }
 
-# 3. Zoxide (Smarter 'cd' navigation via 'z')
+# 4. Zoxide (Smarter 'cd' navigation via 'z' and 'zi')
 if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    $env:_ZO_FZF_OPTS = "--border=rounded --border-label=' Directory Jump (zi) ' --border-label-pos=3 --prompt='Jump ❯ ' --pointer='◆ ' --scrollbar='│' --height=50% --reverse"
     Invoke-Expression (&zoxide init powershell | Out-String)
 }
 
-# 4. Eza (Modern 'ls' replacement with icons & colors)
+# 5. Eza (Modern 'ls' replacement with icons & colors)
 if (Get-Command eza -ErrorAction SilentlyContinue) {
     if (Test-Path Alias:ls) { Remove-Item Alias:ls -Force }
     function ls { eza --icons --group-directories-first @args }
@@ -58,7 +75,7 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
     function lt { eza --icons --tree --level=2 @args }
 }
 
-# 5. Nirmana-Shell CLI Helper & Commands
+# 6. Nirmana-Shell CLI Helper & Commands
 function global:nirmana-shell {
     param(
         [Parameter(Position=0)]
@@ -88,30 +105,55 @@ function global:nirmana-shell {
             }
         }
         'doctor' {
-            Write-Host "`n=== Nirmana-Shell Health Check ===" -ForegroundColor Cyan
             $tools = @('pwsh', 'starship', 'zoxide', 'eza', 'fzf', 'delta', 'fd', 'rg')
+            $w = 70
+            $line = '─' * ($w - 2)
+            Write-Host ""
+            Write-Host "╭$line╮" -ForegroundColor Cyan
+            Write-Host "│                      NIRMANA HEALTH CHECK                          │" -ForegroundColor Cyan
+            Write-Host "├$line┤" -ForegroundColor Cyan
             foreach ($t in $tools) {
                 $found = Get-Command $t -ErrorAction SilentlyContinue
                 if ($found) {
-                    Write-Host " [+] $t -> $($found.Source)" -ForegroundColor Green
+                    $label = "  [+] " + $t.PadRight(10)
+                    $rem = $w - 2 - $label.Length - 1 - $found.Source.Length
+                    if ($rem -lt 0) {
+                        $truncated = "..." + $found.Source.Substring($found.Source.Length - ($w - 2 - $label.Length - 4))
+                        Write-Host ("│" + $label + $truncated + " │") -ForegroundColor Green
+                    } else {
+                        Write-Host ("│" + $label + $found.Source + (' ' * $rem) + "│") -ForegroundColor Green
+                    }
                 } else {
-                    Write-Host " [-] $t -> Not found in PATH" -ForegroundColor Red
+                    $label = "  [-] " + $t.PadRight(10) + "Not found in PATH"
+                    $rem = $w - 2 - $label.Length
+                    Write-Host ("│" + $label + (' ' * [math]::Max(0, $rem)) + "│") -ForegroundColor Red
                 }
             }
+            Write-Host "╰$line╯" -ForegroundColor Cyan
             Write-Host ""
         }
         'reload' {
             . $PROFILE
-            Write-Host "PowerShell 7 profile reloaded successfully." -ForegroundColor Green
+            Write-Host ""
+            Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
+            Write-Host "│  PowerShell 7 profile reloaded successfully.                │" -ForegroundColor Green
+            Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Green
+            Write-Host ""
         }
         default {
-            Write-Host "Nirmana-Shell CLI" -ForegroundColor Cyan
-            Write-Host "Usage: nirmana-shell <command> [arguments]`n" -ForegroundColor White
-            Write-Host "Commands:" -ForegroundColor Yellow
-            Write-Host "  theme [name]   Switch Starship theme interactively or directly"
-            Write-Host "  update         Update Nirmana-Shell to the latest version from GitHub"
-            Write-Host "  doctor         Check health of CLI dependencies (pwsh, starship, zoxide, etc.)"
-            Write-Host "  reload         Reload `$PROFILE in this active session"
+            Write-Host ""
+            Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Cyan
+            Write-Host "│                      NIRMANA-SHELL CLI                      │" -ForegroundColor Cyan
+            Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor Cyan
+            Write-Host "│  Usage: nirmana <command> [arguments]                       │" -ForegroundColor White
+            Write-Host "│                                                             │" -ForegroundColor White
+            Write-Host "│  Commands:                                                  │" -ForegroundColor Yellow
+            Write-Host "│    theme [name]   Switch theme with top-preview TUI         │" -ForegroundColor White
+            Write-Host "│    update         Update Nirmana-Shell from GitHub          │" -ForegroundColor White
+            Write-Host "│    doctor         Verify health and PATH of all CLI tools   │" -ForegroundColor White
+            Write-Host "│    reload         Reload PowerShell 7 profile               │" -ForegroundColor White
+            Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Cyan
+            Write-Host ""
         }
     }
 }

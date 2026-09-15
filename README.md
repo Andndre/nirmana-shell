@@ -67,7 +67,7 @@ The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 
 | Command | Description |
 | :--- | :--- |
-| `nirmana theme` | Open interactive `fzf` picker to switch themes |
+| `nirmana theme` | Open interactive theme switcher with top prompt preview and rounded borders |
 | `nirmana theme <name>` | Apply a specific theme (supports Tab completion) |
 | `nirmana doctor` | Verify PATH and health of all CLI tools |
 | `nirmana update` | Pull latest updates from GitHub |
@@ -100,7 +100,8 @@ nirmana-shell/
 ├── LICENSE                 # MIT license and acknowledgements
 ├── README.md               # Documentation
 ├── setup.ps1               # Automated installer
-├── switch-theme.ps1        # Theme switcher
+├── switch-theme.ps1        # Theme switcher with real-time preview
+├── .previews/              # Pre-rendered theme preview cards
 ├── configs/
 │   └── Microsoft.PowerShell_profile.ps1 # PowerShell 7 profile
 └── themes/

@@ -2,21 +2,26 @@
 .SYNOPSIS
     Nirmana-Shell Unified Theme Switcher
 .DESCRIPTION
-    Switches between custom Nirmana themes and official Starship presets dynamically.
+    Switches between custom Nirmana themes and official Starship presets dynamically
+    with real-time interactive preview and rounded TUI borders.
 .EXAMPLE
     .\switch-theme.ps1
     .\switch-theme.ps1 nirmana
     .\switch-theme.ps1 gruvbox-rainbow
-    .\switch-theme.ps1 pastel-powerline
-    .\switch-theme.ps1 catppuccin-mocha
 #>
 
 param (
     [string]$ThemeName
 )
 
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$scriptDir = if ($MyInvocation.MyCommand.Path) {
+    Split-Path -Parent $MyInvocation.MyCommand.Path
+} else {
+    Join-Path $HOME ".nirmana-shell"
+}
+
 $themesDir = Join-Path $scriptDir "themes"
+$previewDir = Join-Path $scriptDir ".previews"
 $targetConfig = Join-Path $HOME ".config\starship.toml"
 
 # 1. Discover Custom Themes
@@ -25,16 +30,79 @@ if (Test-Path $themesDir) {
     $customThemes = Get-ChildItem $themesDir -Filter "*.toml" | ForEach-Object { $_.BaseName }
 }
 
-# 2. Discover Official Starship Presets Dynamically
+# 2. Discover Official Starship Presets Dynamically (Excluding Custom Overrides)
 $officialPresets = @()
 if (Get-Command starship -ErrorAction SilentlyContinue) {
     try {
-        $officialPresets = & starship preset --list 2>$null
+        $officialPresets = & starship preset --list 2>$null | Where-Object {
+            -not [string]::IsNullOrWhiteSpace($_) -and ($customThemes -notcontains $_)
+        }
     } catch {}
 }
 
-# 3. Interactive Selection via FZF if ThemeName is omitted
+# 3. Ensure Preview Cache Exists
+function Ensure-Previews {
+    if (-not (Test-Path $previewDir) -or (Get-ChildItem $previewDir -Filter "*.txt").Count -eq 0) {
+        if (!(Test-Path $previewDir)) { New-Item -ItemType Directory -Path $previewDir -Force | Out-Null }
+        $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+        $esc = [char]27
+
+        $customMeta = @{
+            'nirmana'          = 'Clean contrast with geometric accents & cyan/purple highlights'
+            'catppuccin-mocha' = 'Soothing pastel aesthetic based on Catppuccin Mocha'
+            'tokyo-night'      = 'Cyberpunk dark theme inspired by Tokyo Night palette'
+            'minimal-emerald'  = 'Distraction-free minimalist prompt with emerald green accents'
+        }
+
+        foreach ($c in $customThemes) {
+            $desc = if ($customMeta.ContainsKey($c)) { $customMeta[$c] } else { 'Custom Starship theme' }
+            $cfg = Join-Path $themesDir "$c.toml"
+            $env:STARSHIP_CONFIG = $cfg
+            $rendered = & starship prompt --path $scriptDir --status 0
+            $content = @"
+
+  $esc[1;36mTheme:$esc[0m      $esc[1;37m$c$esc[0m $esc[0;90m(Custom Theme)$esc[0m
+  $esc[1;36mDetails:$esc[0m    $esc[0;37m$desc$esc[0m
+  $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
+  $esc[1;33mRendered Prompt:$esc[0m
+
+  $rendered$esc[1;32mgit status$esc[0m
+
+  $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
+  $esc[0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate$esc[0m
+"@
+            [System.IO.File]::WriteAllText((Join-Path $previewDir "$c.txt"), $content, $utf8NoBom)
+        }
+
+        $tempToml = Join-Path $env:TEMP "temp_preset.toml"
+        foreach ($p in $officialPresets) {
+            try {
+                & starship preset $p > $tempToml
+                $env:STARSHIP_CONFIG = $tempToml
+                $rendered = & starship prompt --path $scriptDir --status 0
+                $content = @"
+
+  $esc[1;35mPreset:$esc[0m     $esc[1;37m$p$esc[0m $esc[0;90m(Official Starship Preset)$esc[0m
+  $esc[1;35mSource:$esc[0m     $esc[0;37mhttps://starship.rs/presets/$esc[0m
+  $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
+  $esc[1;33mRendered Prompt:$esc[0m
+
+  $rendered$esc[1;32mgit status$esc[0m
+
+  $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
+  $esc[0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate$esc[0m
+"@
+                [System.IO.File]::WriteAllText((Join-Path $previewDir "$p.txt"), $content, $utf8NoBom)
+            } catch {}
+        }
+        Remove-Item $tempToml -ErrorAction SilentlyContinue
+    }
+}
+
+# 4. Interactive Selection via FZF if ThemeName is omitted
 if (-not $ThemeName) {
+    Ensure-Previews
+
     $menuItems = @()
     foreach ($c in $customThemes) {
         $menuItems += "[Custom]   $c"
@@ -44,9 +112,24 @@ if (-not $ThemeName) {
     }
 
     if (Get-Command fzf -ErrorAction SilentlyContinue) {
-        $selected = $menuItems | fzf --prompt="Select Theme / Preset> " --height=40% --reverse --border
+        $previewCmd = "type `"$previewDir\{2}.txt`""
+        $fzfArgs = @(
+            "--prompt=  Select Theme ❯ ",
+            "--pointer=◆ ",
+            "--marker=✓ ",
+            "--scrollbar=│",
+            "--border=rounded",
+            "--border-label= Nirmana Theme Switcher ",
+            "--border-label-pos=3",
+            "--preview-window=top:55%:border-rounded",
+            "--preview-label= Real-Time Prompt Preview ",
+            "--preview-label-pos=3",
+            "--height=75%",
+            "--reverse",
+            "--preview=$previewCmd"
+        )
+        $selected = $menuItems | & fzf $fzfArgs
         if ($selected) {
-            # Extract clean theme name
             $ThemeName = ($selected -replace '^\[(Custom|Official)\]\s+', '').Trim()
         }
     } else {
@@ -70,7 +153,7 @@ if (-not $ThemeName) {
 # Clean input if user passed bracketed label
 $cleanThemeName = ($ThemeName -replace '^\[(Custom|Official)\]\s+', '').Trim()
 
-# 4. Apply Theme or Preset
+# 5. Apply Theme or Preset
 $targetConfigDir = Split-Path -Parent $targetConfig
 if (!(Test-Path $targetConfigDir)) {
     New-Item -ItemType Directory -Path $targetConfigDir -Force | Out-Null
@@ -82,8 +165,14 @@ $isOfficial = $officialPresets -contains $cleanThemeName
 if ($isCustom) {
     $sourceTheme = Join-Path $themesDir "$cleanThemeName.toml"
     Copy-Item $sourceTheme $targetConfig -Force
-    Write-Host "Successfully applied custom theme: $cleanThemeName" -ForegroundColor Green
-    Write-Host "Saved to $targetConfig (Open a new tab to see visual changes)." -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
+    Write-Host "│  Custom Theme Applied: $($cleanThemeName.PadRight(44))│" -ForegroundColor Green
+    Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor DarkGray
+    Write-Host "│  Saved to: ~/.config/starship.toml                          │" -ForegroundColor DarkGray
+    Write-Host "│  Reload session: nirmana reload                             │" -ForegroundColor DarkGray
+    Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Green
+    Write-Host ""
 } elseif ($isOfficial) {
     & starship preset $cleanThemeName -o $targetConfig -f
     
@@ -94,9 +183,15 @@ if ($isCustom) {
         Set-Content -Path $targetConfig -Value $content -Encoding utf8
     }
     
-    Write-Host "Successfully applied official Starship preset: $cleanThemeName" -ForegroundColor Green
-    Write-Host "Source: Official Starship presets (https://starship.rs/presets/)" -ForegroundColor DarkGray
-    Write-Host "Saved to $targetConfig (Open a new tab to see visual changes)." -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
+    Write-Host "│  Official Preset Applied: $($cleanThemeName.PadRight(42))│" -ForegroundColor Green
+    Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor DarkGray
+    Write-Host "│  Source: https://starship.rs/presets/                       │" -ForegroundColor DarkGray
+    Write-Host "│  Saved to: ~/.config/starship.toml                          │" -ForegroundColor DarkGray
+    Write-Host "│  Reload session: nirmana reload                             │" -ForegroundColor DarkGray
+    Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Green
+    Write-Host ""
 } else {
     Write-Error "Theme '$cleanThemeName' not found in custom themes ($($customThemes -join ', ')) or official presets ($($officialPresets -join ', '))"
     exit 1

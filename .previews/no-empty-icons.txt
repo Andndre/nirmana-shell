@@ -1,0 +1,10 @@
+
+  [1;35mPreset:[0m     [1;37mno-empty-icons[0m [0;90m(Official Starship Preset)[0m
+  [1;35mSource:[0m     [0;37mhttps://starship.rs/presets/[0m
+  [0;90m──────────────────────────────────────────────────────────────────────────────[0m
+  [1;33mRendered Prompt:[0m
+
+   [1;36mnirmana-shell[0m on [1;35m main[0m [1;31m[?][0m  [1;32m❯[0m [1;32mgit status[0m
+
+  [0;90m──────────────────────────────────────────────────────────────────────────────[0m
+  [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m
