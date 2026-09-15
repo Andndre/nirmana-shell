@@ -157,23 +157,108 @@ if (Test-Path $sourceProfile) {
     }
 }
 
-# 6. Windows Terminal Settings (Silence Bell & Default Profile)
-Write-Host "`n[6/6] Configuring Windows Terminal (Silencing Bell & Setting PS7 Default)..." -ForegroundColor Cyan
+# 6. Windows Terminal Settings (Silence Bell, Font, Schemes, & PS7 Default)
+Write-Host "`n[6/6] Configuring Windows Terminal (Bell, Font, Schemes & PS7 Default)..." -ForegroundColor Cyan
 $wtSettingsPaths = @(
     "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
+    "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json",
     "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
 )
+
+$schemesToInject = @'
+    {
+      "name": "Catppuccin Mocha",
+      "background": "#1E1E2E",
+      "foreground": "#CDD6F4",
+      "cursorColor": "#F5E0DC",
+      "selectionBackground": "#585B70",
+      "black": "#45475A",
+      "red": "#F38BA8",
+      "green": "#A6E3A1",
+      "yellow": "#F9E2AF",
+      "blue": "#89B4FA",
+      "purple": "#F5C2E7",
+      "cyan": "#94E2D5",
+      "white": "#BAC2DE",
+      "brightBlack": "#585B70",
+      "brightRed": "#F38BA8",
+      "brightGreen": "#A6E3A1",
+      "brightYellow": "#F9E2AF",
+      "brightBlue": "#89B4FA",
+      "brightPurple": "#F5C2E7",
+      "brightCyan": "#94E2D5",
+      "brightWhite": "#A6ADC8"
+    },
+    {
+      "name": "Tokyo Night",
+      "background": "#1A1B26",
+      "foreground": "#C0CAF5",
+      "cursorColor": "#C0CAF5",
+      "selectionBackground": "#33467C",
+      "black": "#15161E",
+      "red": "#F7768E",
+      "green": "#9ECE6A",
+      "yellow": "#E0AF68",
+      "blue": "#7AA2F7",
+      "purple": "#BB9AF7",
+      "cyan": "#7DCFFF",
+      "white": "#A9B1D6",
+      "brightBlack": "#414868",
+      "brightRed": "#F7768E",
+      "brightGreen": "#9ECE6A",
+      "brightYellow": "#E0AF68",
+      "brightBlue": "#7AA2F7",
+      "brightPurple": "#BB9AF7",
+      "brightCyan": "#7DCFFF",
+      "brightWhite": "#C0CAF5"
+    },
+    {
+      "name": "Nirmana",
+      "background": "#12141A",
+      "foreground": "#F8F9FA",
+      "cursorColor": "#00F0FF",
+      "selectionBackground": "#2E3440",
+      "black": "#1E222D",
+      "red": "#FF4757",
+      "green": "#2ED573",
+      "yellow": "#FED330",
+      "blue": "#00F0FF",
+      "purple": "#A29BFE",
+      "cyan": "#00F0FF",
+      "white": "#F8F9FA",
+      "brightBlack": "#57606F",
+      "brightRed": "#FF6B81",
+      "brightGreen": "#7BED9F",
+      "brightYellow": "#FFEAA7",
+      "brightBlue": "#70A1FF",
+      "brightPurple": "#C56CF0",
+      "brightCyan": "#00D2D3",
+      "brightWhite": "#FFFFFF"
+    }
+'@
 
 foreach ($wtPath in $wtSettingsPaths) {
     if (Test-Path $wtPath) {
         try {
-            $json = Get-Content $wtPath -Raw -Encoding utf8 | ConvertFrom-Json
-            if ($json.profiles.defaults) {
-                $json.profiles.defaults | Add-Member -NotePropertyName "bellStyle" -NotePropertyValue "none" -Force
-                $json.defaultProfile = "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
-                $json | ConvertTo-Json -Depth 32 | Set-Content -Path $wtPath -Encoding utf8
-                Write-Host "Windows Terminal settings configured successfully." -ForegroundColor Green
+            $raw = Get-Content $wtPath -Raw -Encoding utf8
+            if ($raw -notmatch '"Catppuccin Mocha"' -and $raw -match '("schemes"\s*:\s*\[)') {
+                $raw = $raw -replace '("schemes"\s*:\s*\[)', "`$1`n$schemesToInject,"
             }
+            if ($raw -match '"colorScheme"\s*:\s*"[^"]*"') {
+                $raw = $raw -replace '("colorScheme"\s*:\s*)"[^"]*"', '$1"Catppuccin Mocha"'
+            } elseif ($raw -match '("defaults"\s*:\s*\{)') {
+                $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"colorScheme`": `"Catppuccin Mocha`","
+            }
+            if ($raw -notmatch '"face"\s*:\s*"CaskaydiaCove NF"' -and $raw -match '("defaults"\s*:\s*\{)') {
+                $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"font`": { `"face`": `"CaskaydiaCove NF`" },"
+            }
+            if ($raw -match '"bellStyle"\s*:\s*"[^"]*"') {
+                $raw = $raw -replace '("bellStyle"\s*:\s*)"[^"]*"', '$1"none"'
+            } elseif ($raw -match '("defaults"\s*:\s*\{)') {
+                $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"bellStyle`": `"none`","
+            }
+            Set-Content -Path $wtPath -Value $raw -Encoding utf8
+            Write-Host "Windows Terminal settings configured successfully at: $(Split-Path $wtPath -Leaf)" -ForegroundColor Green
         } catch {
             Write-Host "Note: Windows Terminal settings could not be modified automatically ($($_.Exception.Message))." -ForegroundColor DarkGray
         }

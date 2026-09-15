@@ -184,11 +184,17 @@ if ($themeToWtScheme.ContainsKey($cleanThemeName)) {
         if (Test-Path $wtPath) {
             try {
                 $raw = Get-Content $wtPath -Raw -Encoding utf8
+                $modified = $false
                 if ($raw -match '"colorScheme"\s*:\s*"[^"]*"') {
-                    $updated = $raw -replace '("colorScheme"\s*:\s*)"[^"]*"', "`$1`"$targetWtScheme`""
-                    Set-Content -Path $wtPath -Value $updated -Encoding utf8
+                    $raw = $raw -replace '("colorScheme"\s*:\s*)"[^"]*"', "`$1`"$targetWtScheme`""
+                    $modified = $true
+                } elseif ($raw -match '("defaults"\s*:\s*\{)') {
+                    $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"colorScheme`": `"$targetWtScheme`","
+                    $modified = $true
+                }
+                if ($modified) {
+                    Set-Content -Path $wtPath -Value $raw -Encoding utf8
                     $syncedWtScheme = $targetWtScheme
-                    break
                 }
             } catch {}
         }
