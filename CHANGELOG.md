@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2026-09-15
+
+### Added
+
+- **F2 Prediction View Toggle Persistence**: Preference between PSReadLine `InlineView` and `ListView` is now automatically stored in `~/.config/nirmana/settings.json` upon pressing `F2` and restored across PowerShell sessions.
+- **Active Theme Preservation during Update**: `setup.ps1` and `switch-theme.ps1` now persist and honor the active theme across updates (`nirmana update` / `setup.ps1`), preventing reset to the default theme.
+- **User Customization Hook (`custom.ps1`)**: Introduced `~/.config/nirmana/custom.ps1` as an unmanaged user script loaded at profile end, allowing persistent custom aliases, environment variables, and functions across updates.
+- **Zoxide `za` Shortcut**: Added `za` alias for `zoxide add` to quickly register directories to Zoxide database directly from the terminal prompt.
+- **Automatic Zoxide Directory Seeding**: Automatically registers `$HOME`, `Downloads`, and `$installDir` on fresh installations when the Zoxide database is empty.
+- **Windows Terminal Color Scheme Alignment**: Installer automatically aligns Windows Terminal color schemes to the active theme upon setup or update.
+
+### Changed
+
+- **Fallback Version String**: Updated default version fallback in `setup.ps1` to `1.0.5`.
+
 ## [1.0.4] - 2026-09-15
 
 ### Changed

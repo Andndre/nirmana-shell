@@ -16,7 +16,7 @@ $setupScriptDir = if ($PSScriptRoot) {
     $null
 }
 $versionFile = if ($setupScriptDir) { Join-Path $setupScriptDir "VERSION" } else { $null }
-$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.4" }
+$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.5" }
 $isLegacyPS = $PSVersionTable.PSVersion.Major -lt 7
 
 Write-Host ""
@@ -109,9 +109,21 @@ if ($hasLocalSource) {
         Copy-Item (Join-Path $tempExtract "nirmana-shell-main\*") $installDir -Recurse -Force
         Remove-Item $tempZip, $tempExtract -Recurse -Force -ErrorAction SilentlyContinue
     }
+
+    # Pre-seed initial directories into Zoxide if database is brand new
+    if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+        try {
+            $existing = & zoxide query -l 2>$null
+            if (-not $existing) {
+                & zoxide add $HOME 2>$null
+                & zoxide add (Join-Path $HOME "Downloads") 2>$null
+                & zoxide add $installDir 2>$null
+            }
+        } catch {}
+    }
 }
 
-# 4. Starship Config (Default: Nirmana Theme)
+# 4. Starship Config (Theme Persistence & Safety)
 Write-Host "`n[4/6] Setting Up Starship Configuration (~/.config/starship.toml)..." -ForegroundColor Cyan
 $starshipConfigDir = Join-Path $HOME ".config"
 if (!(Test-Path $starshipConfigDir)) {
@@ -119,22 +131,58 @@ if (!(Test-Path $starshipConfigDir)) {
 }
 
 $starshipConfigPath = Join-Path $starshipConfigDir "starship.toml"
-if (Test-Path $starshipConfigPath) {
-    Copy-Item $starshipConfigPath "$starshipConfigPath.bak" -Force
+$nirmanaConfigDir = Join-Path $HOME ".config\nirmana"
+$nirmanaConfigFile = Join-Path $nirmanaConfigDir "settings.json"
+
+$savedTheme = $null
+if (Test-Path $nirmanaConfigFile) {
+    try {
+        $savedSettings = Get-Content $nirmanaConfigFile -Raw -Encoding utf8 | ConvertFrom-Json
+        if ($savedSettings.theme) { $savedTheme = $savedSettings.theme }
+    } catch {}
 }
 
-$sourceNirmanaTheme = Join-Path $installDir "themes\nirmana.toml"
-if (Test-Path $sourceNirmanaTheme) {
-    Copy-Item $sourceNirmanaTheme $starshipConfigPath -Force
-    Write-Host "Nirmana signature theme applied successfully." -ForegroundColor Green
-} else {
-    $remoteThemeUrl = "https://raw.githubusercontent.com/Andndre/nirmana-shell/main/themes/nirmana.toml"
-    try {
-        Invoke-RestMethod -Uri $remoteThemeUrl -OutFile $starshipConfigPath
-        Write-Host "Nirmana signature theme downloaded and applied." -ForegroundColor Green
-    } catch {
-        Write-Host "Note: Default Starship configuration used." -ForegroundColor DarkGray
+if ($savedTheme) {
+    # Active theme recorded in settings.json - preserve and update that specific theme
+    $customThemePath = Join-Path $installDir "themes\$savedTheme.toml"
+    if (Test-Path $customThemePath) {
+        Copy-Item $customThemePath $starshipConfigPath -Force
+        Write-Host "Active theme '$savedTheme' preserved and updated from repository." -ForegroundColor Green
+    } elseif (Get-Command starship -ErrorAction SilentlyContinue) {
+        try {
+            & starship preset $savedTheme -o $starshipConfigPath -f 2>$null
+            Write-Host "Active Starship preset '$savedTheme' preserved." -ForegroundColor Green
+        } catch {
+            Write-Host "Existing configuration preserved for '$savedTheme'." -ForegroundColor Green
+        }
+    } else {
+        Write-Host "Existing Starship configuration preserved for '$savedTheme'." -ForegroundColor Green
     }
+} elseif (Test-Path $starshipConfigPath) {
+    # Existing starship.toml detected without settings.json - preserve as is
+    Write-Host "Existing Starship configuration detected and preserved." -ForegroundColor Green
+} else {
+    # Fresh install: Apply default Nirmana signature theme
+    $sourceNirmanaTheme = Join-Path $installDir "themes\nirmana.toml"
+    if (Test-Path $sourceNirmanaTheme) {
+        Copy-Item $sourceNirmanaTheme $starshipConfigPath -Force
+        Write-Host "Nirmana signature theme applied successfully." -ForegroundColor Green
+    } else {
+        $remoteThemeUrl = "https://raw.githubusercontent.com/Andndre/nirmana-shell/main/themes/nirmana.toml"
+        try {
+            Invoke-RestMethod -Uri $remoteThemeUrl -OutFile $starshipConfigPath
+            Write-Host "Nirmana signature theme downloaded and applied." -ForegroundColor Green
+        } catch {
+            Write-Host "Note: Default Starship configuration used." -ForegroundColor DarkGray
+        }
+    }
+    # Record initial theme in settings.json
+    try {
+        if (!(Test-Path $nirmanaConfigDir)) { New-Item -ItemType Directory -Path $nirmanaConfigDir -Force | Out-Null }
+        $initSettings = [pscustomobject]@{ theme = "nirmana"; predictionViewStyle = "InlineView" }
+        $initJson = $initSettings | ConvertTo-Json -Depth 4
+        [System.IO.File]::WriteAllText($nirmanaConfigFile, $initJson, [System.Text.UTF8Encoding]::new($false))
+    } catch {}
 }
 
 # 5. PowerShell 7 Profile Configuration
@@ -164,6 +212,22 @@ if (Test-Path $sourceProfile) {
     } catch {
         Write-Host "Failed to download remote profile: $($_.Exception.Message)" -ForegroundColor Red
     }
+}
+
+# Create user custom extension template if not present
+$userCustomProfile = Join-Path $nirmanaConfigDir "custom.ps1"
+if (!(Test-Path $userCustomProfile)) {
+    if (!(Test-Path $nirmanaConfigDir)) { New-Item -ItemType Directory -Path $nirmanaConfigDir -Force | Out-Null }
+    $customTemplate = @'
+# Nirmana-Shell: User Custom Extensions
+# Add your personal functions, aliases, and environment variables here.
+# This file is NEVER overwritten during Nirmana-Shell updates.
+
+# Examples:
+# function proj { Set-Location D:\projects }
+# $env:EDITOR = 'code'
+'@
+    Set-Content -Path $userCustomProfile -Value $customTemplate -Encoding utf8
 }
 
 # Notification bridge for Windows PowerShell 5.1
@@ -269,10 +333,36 @@ foreach ($wtPath in $wtSettingsPaths) {
             if ($raw -notmatch '"Catppuccin Mocha"' -and $raw -match '("schemes"\s*:\s*\[)') {
                 $raw = $raw -replace '("schemes"\s*:\s*\[)', "`$1`n$schemesToInject,"
             }
-            if ($raw -match '"colorScheme"\s*:\s*"[^"]*"') {
-                $raw = $raw -replace '("colorScheme"\s*:\s*)"[^"]*"', '$1"Catppuccin Mocha"'
-            } elseif ($raw -match '("defaults"\s*:\s*\{)') {
-                $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"colorScheme`": `"Catppuccin Mocha`","
+            $themeToWtScheme = @{
+                'catppuccin-mocha'      = 'Catppuccin Mocha'
+                'tokyo-night'           = 'Tokyo Night'
+                'nirmana'               = 'Nirmana'
+                'minimal-emerald'       = 'Catppuccin Mocha'
+                'jetpack'               = 'Tokyo Night'
+                'bubbles'               = 'Tokyo Night'
+                'jandedobbeleer'        = 'Catppuccin Mocha'
+                'atomic'                = 'Catppuccin Mocha'
+                'agnoster'              = 'Tokyo Night'
+                'powerlevel10k_rainbow' = 'Catppuccin Mocha'
+                'dracula'               = 'Tokyo Night'
+                'paradox'               = 'Catppuccin Mocha'
+                'half-life'             = 'Tokyo Night'
+                'robbyrussell'          = 'Catppuccin Mocha'
+                'spaceship'             = 'Tokyo Night'
+                'clean-detailed'        = 'Nirmana'
+                'takuya'                = 'Tokyo Night'
+            }
+            $targetScheme = if ($savedTheme -and $themeToWtScheme.ContainsKey($savedTheme)) {
+                $themeToWtScheme[$savedTheme]
+            } else {
+                $null
+            }
+
+            if ($targetScheme -and $raw -match '("colorScheme"\s*:\s*)"[^"]*"') {
+                $raw = $raw -replace '("colorScheme"\s*:\s*)"[^"]*"', "`$1`"$targetScheme`""
+            } elseif ($raw -notmatch '"colorScheme"' -and $raw -match '("defaults"\s*:\s*\{)') {
+                $defaultScheme = if ($targetScheme) { $targetScheme } else { "Catppuccin Mocha" }
+                $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"colorScheme`": `"$defaultScheme`","
             }
             if ($raw -notmatch '"face"\s*:\s*"CaskaydiaCove NF"' -and $raw -match '("defaults"\s*:\s*\{)') {
                 $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"font`": { `"face`": `"CaskaydiaCove NF`" },"

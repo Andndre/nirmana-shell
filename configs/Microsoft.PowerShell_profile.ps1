@@ -30,6 +30,38 @@ if (Get-Command fzf -ErrorAction SilentlyContinue) {
     $env:FZF_DEFAULT_OPTS = "--border=rounded --pointer='◆ ' --marker='✓ ' --scrollbar='│' --prompt='❯ '"
 }
 
+# Nirmana state & preferences management (~/.config/nirmana/settings.json)
+$script:nirmanaConfigDir = Join-Path $HOME ".config\nirmana"
+$script:nirmanaConfigFile = Join-Path $script:nirmanaConfigDir "settings.json"
+
+function script:Get-NirmanaConfig {
+    if (Test-Path $script:nirmanaConfigFile) {
+        try {
+            return (Get-Content $script:nirmanaConfigFile -Raw -Encoding utf8 | ConvertFrom-Json)
+        } catch {
+            return [pscustomobject]@{}
+        }
+    }
+    return [pscustomobject]@{}
+}
+
+function script:Set-NirmanaConfig {
+    param([string]$Key, [object]$Value)
+    try {
+        if (!(Test-Path $script:nirmanaConfigDir)) {
+            New-Item -ItemType Directory -Path $script:nirmanaConfigDir -Force | Out-Null
+        }
+        $cfg = script:Get-NirmanaConfig
+        if ($cfg.PSObject.Properties[$Key]) {
+            $cfg.$Key = $Value
+        } else {
+            $cfg | Add-Member -NotePropertyName $Key -NotePropertyValue $Value -Force
+        }
+        $json = $cfg | ConvertTo-Json -Depth 4
+        [System.IO.File]::WriteAllText($script:nirmanaConfigFile, $json, [System.Text.UTF8Encoding]::new($false))
+    } catch {}
+}
+
 # 3. PSReadLine (Modern Autocomplete & Predictive IntelliSense)
 if (Get-Module -ListAvailable PSReadLine) {
     Import-Module PSReadLine
@@ -37,10 +69,14 @@ if (Get-Module -ListAvailable PSReadLine) {
     # Disable audio bell chime on backspace at beginning of line
     Set-PSReadLineOption -BellStyle None
 
+    # Load persisted prediction view style or default to InlineView
+    $savedCfg = script:Get-NirmanaConfig
+    $savedView = if ($savedCfg.predictionViewStyle -eq "ListView") { "ListView" } else { "InlineView" }
+
     # Inline predictions (active only in VT-supported interactive consoles)
     if (-not [System.Console]::IsOutputRedirected) {
         Set-PSReadLineOption -PredictionSource History -ErrorAction SilentlyContinue
-        Set-PSReadLineOption -PredictionViewStyle InlineView -ErrorAction SilentlyContinue
+        Set-PSReadLineOption -PredictionViewStyle $savedView -ErrorAction SilentlyContinue
         Set-PSReadLineOption -Colors @{ InlinePrediction = '#767676' } -ErrorAction SilentlyContinue
     }
 
@@ -50,6 +86,14 @@ if (Get-Module -ListAvailable PSReadLine) {
 
     # - Ctrl+f: Accept prediction word-by-word (Fish style)
     Set-PSReadLineKeyHandler -Chord 'Ctrl+f' -Function ForwardWord
+
+    # - F2: Toggle between InlineView and ListView and persist preference
+    Set-PSReadLineKeyHandler -Chord 'F2' -ScriptBlock {
+        $curr = (Get-PSReadLineOption).PredictionViewStyle
+        $next = if ($curr -eq 'ListView') { 'InlineView' } else { 'ListView' }
+        Set-PSReadLineOption -PredictionViewStyle $next -ErrorAction SilentlyContinue
+        script:Set-NirmanaConfig "predictionViewStyle" $next
+    }
 
     # - Ctrl+r: Interactive Fuzzy History Search via fzf with rounded TUI border
     if (Get-Command fzf -ErrorAction SilentlyContinue) {
@@ -79,6 +123,7 @@ if (Get-Module -ListAvailable PSReadLine) {
 if (Get-Command zoxide -ErrorAction SilentlyContinue) {
     $env:_ZO_FZF_OPTS = "--border=rounded --border-label=' Directory Jump (zi) ' --border-label-pos=3 --prompt='Jump ❯ ' --pointer='◆ ' --scrollbar='│' --height=50% --reverse"
     Invoke-Expression (&zoxide init powershell | Out-String)
+    function global:za { zoxide add @args }
 }
 
 # 5. Eza (Modern 'ls' replacement with icons & colors)
@@ -225,4 +270,10 @@ Register-ArgumentCompleter -Native -CommandName 'nirmana-shell', 'nirmana' -Scri
             [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
         }
     }
+}
+
+# 7. Optional User Custom Extensions (~/.config/nirmana/custom.ps1)
+$userCustomProfile = Join-Path $HOME ".config\nirmana\custom.ps1"
+if (Test-Path $userCustomProfile) {
+    . $userCustomProfile
 }

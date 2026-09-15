@@ -47,19 +47,24 @@ Icons used by Starship and Eza require a patched Nerd Font.
 
 ## Shortcuts and Commands
 
-| Feature             | Shortcut / Command     | Description                                      |
-| :------------------ | :--------------------- | :----------------------------------------------- |
-| Inline Autocomplete | Gray text              | History-based prediction                         |
-| Accept Suggestion   | `Right Arrow` / `End`  | Accept full prediction                           |
-| Accept Word         | `Ctrl + F`             | Accept next word of prediction                   |
-| Toggle View         | `F2`                   | Switch between inline and list prediction styles |
-| History Search      | `Ctrl + R`             | Fullscreen fuzzy history search using `fzf`      |
-| Menu Completion     | `Tab`                  | Interactive completion menu                      |
-| Directory Jump      | `z <folder>`           | Jump to previously visited directory             |
-| Interactive Jump    | `zi`                   | Select directory interactively via `fzf`         |
-| File Listing        | `ls`, `ll`, `la`, `lt` | Directory listing using `eza`                    |
-| Git Diffs           | `git diff`, `git show` | Syntax-highlighted diffs using `delta`           |
-| File Search         | `fd <query>`           | Fast file search                                 |
+| Feature             | Shortcut / Command     | Description                                                           |
+| :------------------ | :--------------------- | :-------------------------------------------------------------------- |
+| Inline Autocomplete | Gray text              | History-based prediction                                              |
+| Accept Suggestion   | `Right Arrow` / `End`  | Accept full prediction                                                |
+| Accept Word         | `Ctrl + F`             | Accept next word of prediction                                        |
+| Toggle View         | `F2`                   | Switch between inline and list prediction (persisted across sessions) |
+| History Search      | `Ctrl + R`             | Fullscreen fuzzy history search using `fzf`                           |
+| Menu Completion     | `Tab`                  | Interactive completion menu                                           |
+| Directory Jump      | `z <folder>`           | Jump to previously visited directory                                  |
+| Interactive Jump    | `zi`                   | Select directory interactively via `fzf`                              |
+| Add Directory       | `za [folder]`          | Add directory to zoxide (default: current folder)                     |
+| File Listing        | `ls`, `ll`, `la`, `lt` | Directory listing using `eza`                                         |
+| Git Diffs           | `git diff`, `git show` | Syntax-highlighted diffs using `delta`                                |
+| File Search         | `fd <query>`           | Fast file search                                                      |
+
+> [!TIP]
+> **User Custom Extensions:** Place personal functions, tokens, and aliases in `~/.config/nirmana/custom.ps1`. This file is loaded automatically by your profile and is **never overwritten** during Nirmana-Shell updates.
+> **Persistent Preferences:** Theme choice and F2 prediction view style are saved in `~/.config/nirmana/settings.json` and survive all updates.
 
 ---
 

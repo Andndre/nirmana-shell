@@ -278,6 +278,27 @@ if ($themeToWtScheme.ContainsKey($cleanThemeName)) {
     }
 }
 
+# Persist active theme in Nirmana settings (~/.config/nirmana/settings.json)
+try {
+    $nirmanaConfigDir = Join-Path $HOME ".config\nirmana"
+    if (!(Test-Path $nirmanaConfigDir)) {
+        New-Item -ItemType Directory -Path $nirmanaConfigDir -Force | Out-Null
+    }
+    $nirmanaConfigFile = Join-Path $nirmanaConfigDir "settings.json"
+    $cfg = if (Test-Path $nirmanaConfigFile) {
+        try { Get-Content $nirmanaConfigFile -Raw -Encoding utf8 | ConvertFrom-Json } catch { [pscustomobject]@{} }
+    } else {
+        [pscustomobject]@{}
+    }
+    if ($cfg.PSObject.Properties['theme']) {
+        $cfg.theme = $cleanThemeName
+    } else {
+        $cfg | Add-Member -NotePropertyName 'theme' -NotePropertyValue $cleanThemeName -Force
+    }
+    $json = $cfg | ConvertTo-Json -Depth 4
+    [System.IO.File]::WriteAllText($nirmanaConfigFile, $json, [System.Text.UTF8Encoding]::new($false))
+} catch {}
+
 if ($isCustom) {
     $sourceTheme = Join-Path $themesDir "$cleanThemeName.toml"
     Copy-Item $sourceTheme $targetConfig -Force
