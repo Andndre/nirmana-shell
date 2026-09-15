@@ -10,6 +10,7 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $php\
 $nodejs\
 $bun\
@@ -20,6 +21,9 @@ $cmd_duration\
 $line_break\
 $character"""
 
+[fill]
+symbol = " "
+
 [character]
 success_symbol = "[❯](bold #A6E3A1)"
 error_symbol = "[❯](bold #F38BA8)"
@@ -28,7 +32,7 @@ error_symbol = "[❯](bold #F38BA8)"
 truncation_length = 3
 truncation_symbol = "…/"
 style = "bold #89DCEB"
-read_only = " 󰌾"
+read_only = " "
 
 [git_branch]
 symbol = " "
@@ -60,7 +64,7 @@ style = "bold #FAB387"
 format = "[$symbol($version )]($style)"
 
 [dart]
-symbol = " "
+symbol = " "
 style = "bold #74C7EC"
 format = "[$symbol($version )]($style)"
 
@@ -70,9 +74,10 @@ style = "bold #F9E2AF"
 format = "[$symbol($version )]($style)"
 
 [package]
-symbol = "󰏗 "
+symbol = " "
 style = "bold #F5C2E7"
 format = "[$symbol$version]($style) "
+
 [battery]
 disabled = true
 [dotnet]
