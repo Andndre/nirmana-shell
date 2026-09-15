@@ -11,10 +11,10 @@ if (Get-Command starship -ErrorAction SilentlyContinue) {
 if (Get-Module -ListAvailable PSReadLine) {
     Import-Module PSReadLine
 
-    # Matikan suara beep / bell audio saat menekan backspace di baris kosong
+    # Disable audio bell chime on backspace at beginning of line
     Set-PSReadLineOption -BellStyle None
 
-    # Prediksi inline hanya aktif jika berada di terminal interaktif (VT-supported)
+    # Inline predictions (active only in VT-supported interactive consoles)
     if (-not [System.Console]::IsOutputRedirected) {
         Set-PSReadLineOption -PredictionSource History -ErrorAction SilentlyContinue
         Set-PSReadLineOption -PredictionViewStyle InlineView -ErrorAction SilentlyContinue
@@ -22,13 +22,13 @@ if (Get-Module -ListAvailable PSReadLine) {
     }
 
     # Key Handlers:
-    # - Tab: Menu completion grid interaktif
+    # - Tab: Interactive menu completion grid
     Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 
-    # - Ctrl+f: Terima prediksi per kata (Fish style)
+    # - Ctrl+f: Accept prediction word-by-word (Fish style)
     Set-PSReadLineKeyHandler -Chord 'Ctrl+f' -Function ForwardWord
 
-    # - Ctrl+r: Interactive Fuzzy History Search via fzf (tampilan identik dengan zi)
+    # - Ctrl+r: Interactive Fuzzy History Search via fzf (fullscreen layout matching zi)
     if (Get-Command fzf -ErrorAction SilentlyContinue) {
         Set-PSReadLineKeyHandler -Chord 'Ctrl+r' -ScriptBlock {
             $historyFile = (Get-PSReadLineOption).HistorySavePath
@@ -74,50 +74,50 @@ function global:tridatu-shell {
             if (Test-Path $switchScript) {
                 & $switchScript $Argument
             } else {
-                Write-Error "Skrip tema tidak ditemukan di $root"
+                Write-Error "Theme switch script not found at $root"
             }
         }
         'update' {
             if (Test-Path (Join-Path $root ".git")) {
-                Write-Host "Memperbarui Tridatu-Shell dari GitHub..." -ForegroundColor Cyan
+                Write-Host "Updating Tridatu-Shell from GitHub..." -ForegroundColor Cyan
                 git -C $root pull
                 & (Join-Path $root "setup.ps1")
             } else {
-                Write-Host "Mengunduh ulang setup Tridatu-Shell..." -ForegroundColor Cyan
+                Write-Host "Re-running Tridatu-Shell setup..." -ForegroundColor Cyan
                 irm https://raw.githubusercontent.com/Andndre/tridatu-shell/main/setup.ps1 | iex
             }
         }
         'doctor' {
-            Write-Host "`n=== Pemeriksaan Kesehatan Tridatu-Shell ===" -ForegroundColor Cyan
+            Write-Host "`n=== Tridatu-Shell Health Check ===" -ForegroundColor Cyan
             $tools = @('pwsh', 'starship', 'zoxide', 'eza', 'fzf', 'delta', 'fd', 'rg')
             foreach ($t in $tools) {
                 $found = Get-Command $t -ErrorAction SilentlyContinue
                 if ($found) {
                     Write-Host " [✓] $t -> $($found.Source)" -ForegroundColor Green
                 } else {
-                    Write-Host " [✗] $t -> Tidak ditemukan di PATH" -ForegroundColor Red
+                    Write-Host " [✗] $t -> Not found in PATH" -ForegroundColor Red
                 }
             }
             Write-Host ""
         }
         'reload' {
             . $PROFILE
-            Write-Host "Profil PowerShell 7 berhasil dimuat ulang." -ForegroundColor Green
+            Write-Host "PowerShell 7 profile reloaded successfully." -ForegroundColor Green
         }
         default {
             Write-Host "Tridatu-Shell CLI" -ForegroundColor Red
-            Write-Host "Penggunaan: tridatu-shell <perintah> [argumen]`n" -ForegroundColor White
-            Write-Host "Perintah:" -ForegroundColor Yellow
-            Write-Host "  theme [nama]   Ganti tema Starship secara interaktif atau langsung"
-            Write-Host "  update         Perbarui tridatu-shell ke versi terbaru dari GitHub"
-            Write-Host "  doctor         Periksa status dependensi CLI (pwsh, starship, zoxide, dll.)"
-            Write-Host "  reload         Muat ulang `$PROFILE sesi aktif ini"
+            Write-Host "Usage: tridatu-shell <command> [arguments]`n" -ForegroundColor White
+            Write-Host "Commands:" -ForegroundColor Yellow
+            Write-Host "  theme [name]   Switch Starship theme interactively or directly"
+            Write-Host "  update         Update Tridatu-Shell to the latest version from GitHub"
+            Write-Host "  doctor         Check health of CLI dependencies (pwsh, starship, zoxide, etc.)"
+            Write-Host "  reload         Reload `$PROFILE in this active session"
         }
     }
 }
 Set-Alias -Name tridatu -Value tridatu-shell -Option AllScope -Scope Global -Force
 
-# Autocomplete untuk perintah tridatu-shell
+# Argument completer for tridatu-shell
 Register-ArgumentCompleter -Native -CommandName 'tridatu-shell', 'tridatu' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $subcommands = @('theme', 'update', 'doctor', 'reload')

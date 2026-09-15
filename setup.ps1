@@ -16,7 +16,7 @@ Write-Host "   TRIDATU-SHELL — MODERN TERMINAL AUTOMATION" -ForegroundColor Wh
 Write-Host "========================================================`n" -ForegroundColor DarkGray
 
 # 1. Package Installation via WinGet
-Write-Host "[1/5] Memeriksa & Memasang Utilitas CLI Modern via WinGet..." -ForegroundColor Cyan
+Write-Host "[1/6] Checking & Installing Modern CLI Tools via WinGet..." -ForegroundColor Cyan
 $packages = @(
     "Microsoft.PowerShell",
     "Starship.Starship",
@@ -28,51 +28,51 @@ $packages = @(
 )
 
 foreach ($pkg in $packages) {
-    Write-Host "--> Memeriksa $pkg..." -NoNewline
+    Write-Host "--> Checking $pkg..." -NoNewline
     $installed = winget list --id $pkg --exact --accept-source-agreements 2>$null
     if ($LASTEXITCODE -eq 0 -and ($installed | Out-String) -match $pkg) {
-        Write-Host " [Sudah Ada]" -ForegroundColor Green
+        Write-Host " [Installed]" -ForegroundColor Green
     } else {
-        Write-Host " [Menginstal...]" -ForegroundColor Yellow
+        Write-Host " [Installing...]" -ForegroundColor Yellow
         winget install --id $pkg --source winget --accept-source-agreements --accept-package-agreements --silent
     }
 }
 
 # 2. Git Config for Delta
-Write-Host "`n[2/5] Mengonfigurasi Git Pager ke Delta..." -ForegroundColor Cyan
+Write-Host "`n[2/6] Configuring Git Pager to Delta..." -ForegroundColor Cyan
 if (Get-Command git -ErrorAction SilentlyContinue) {
     git config --global core.pager "delta"
     git config --global interactive.diffFilter "delta --color-only"
     git config --global delta.navigate true
     git config --global delta.line-numbers true
-    Write-Host "Git pager berhasil diarahkan ke Delta." -ForegroundColor Green
+    Write-Host "Git pager successfully routed to Delta." -ForegroundColor Green
 }
 
-# 3. Menyiapkan Repositori Lokal (~/.tridatu-shell)
-Write-Host "`n[3/6] Menyiapkan Direktori & Tema Tridatu-Shell (~/.tridatu-shell)..." -ForegroundColor Cyan
+# 3. Setup Local Repository Directory (~/.tridatu-shell)
+Write-Host "`n[3/6] Setting Up Tridatu-Shell Directory (~/.tridatu-shell)..." -ForegroundColor Cyan
 $installDir = Join-Path $HOME ".tridatu-shell"
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 if (Test-Path (Join-Path $scriptDir "themes\tridatu.toml")) {
-    # Dijalankan dari klon lokal
+    # Running from local clone
     if (!(Test-Path $installDir)) {
         Copy-Item $scriptDir $installDir -Recurse -Force | Out-Null
     }
 } else {
-    # Dijalankan via irm | iex
+    # Running remotely via irm | iex
     if (Get-Command git -ErrorAction SilentlyContinue) {
         if (!(Test-Path $installDir)) {
-            Write-Host "--> Mengkloning repositori ke $installDir..." -ForegroundColor DarkGray
+            Write-Host "--> Cloning repository to $installDir..." -ForegroundColor DarkGray
             git clone --quiet https://github.com/Andndre/tridatu-shell.git $installDir
         } else {
-            Write-Host "--> Memperbarui repositori di $installDir..." -ForegroundColor DarkGray
+            Write-Host "--> Updating repository in $installDir..." -ForegroundColor DarkGray
             git -C $installDir pull --quiet
         }
     }
 }
 
 # 4. Starship Config (Default: Tridatu Theme)
-Write-Host "`n[4/6] Menyiapkan Konfigurasi Starship (~/.config/starship.toml)..." -ForegroundColor Cyan
+Write-Host "`n[4/6] Setting Up Starship Configuration (~/.config/starship.toml)..." -ForegroundColor Cyan
 $starshipConfigDir = Join-Path $HOME ".config"
 if (!(Test-Path $starshipConfigDir)) {
     New-Item -ItemType Directory -Path $starshipConfigDir -Force | Out-Null
@@ -86,19 +86,19 @@ if (Test-Path $starshipConfigPath) {
 $sourceTridatuTheme = Join-Path $installDir "themes\tridatu.toml"
 if (Test-Path $sourceTridatuTheme) {
     Copy-Item $sourceTridatuTheme $starshipConfigPath -Force
-    Write-Host "Tema signature Tridatu berhasil diterapkan." -ForegroundColor Green
+    Write-Host "Tridatu signature theme applied successfully." -ForegroundColor Green
 } else {
     $remoteThemeUrl = "https://raw.githubusercontent.com/Andndre/tridatu-shell/main/themes/tridatu.toml"
     try {
         Invoke-RestMethod -Uri $remoteThemeUrl -OutFile $starshipConfigPath
-        Write-Host "Tema signature Tridatu berhasil diunduh dan diterapkan." -ForegroundColor Green
+        Write-Host "Tridatu signature theme downloaded and applied." -ForegroundColor Green
     } catch {
-        Write-Host "Catatan: Menggunakan konfigurasi default Starship." -ForegroundColor DarkGray
+        Write-Host "Note: Default Starship configuration used." -ForegroundColor DarkGray
     }
 }
 
 # 5. PowerShell 7 Profile Configuration
-Write-Host "`n[5/6] Menyiapkan Profil PowerShell 7 ($PROFILE)..." -ForegroundColor Cyan
+Write-Host "`n[5/6] Setting Up PowerShell 7 Profile ($PROFILE)..." -ForegroundColor Cyan
 $docsFolder = [Environment]::GetFolderPath('MyDocuments')
 $ps7Dir = Join-Path $docsFolder "PowerShell"
 
@@ -109,25 +109,25 @@ if (!(Test-Path $ps7Dir)) {
 $ps7ProfilePath = Join-Path $ps7Dir "Microsoft.PowerShell_profile.ps1"
 if (Test-Path $ps7ProfilePath) {
     Copy-Item $ps7ProfilePath "$ps7ProfilePath.bak" -Force
-    Write-Host "Backup profil lama dibuat di $ps7ProfilePath.bak" -ForegroundColor DarkGray
+    Write-Host "Existing profile backed up to $ps7ProfilePath.bak" -ForegroundColor DarkGray
 }
 
 $sourceProfile = Join-Path $installDir "configs\Microsoft.PowerShell_profile.ps1"
 if (Test-Path $sourceProfile) {
     Copy-Item $sourceProfile $ps7ProfilePath -Force
-    Write-Host "Profil PowerShell 7 berhasil dipasang." -ForegroundColor Green
+    Write-Host "PowerShell 7 profile installed successfully." -ForegroundColor Green
 } else {
     $remoteProfileUrl = "https://raw.githubusercontent.com/Andndre/tridatu-shell/main/configs/Microsoft.PowerShell_profile.ps1"
     try {
         Invoke-RestMethod -Uri $remoteProfileUrl -OutFile $ps7ProfilePath
-        Write-Host "Profil PowerShell 7 berhasil diunduh dan dipasang." -ForegroundColor Green
+        Write-Host "PowerShell 7 profile downloaded and installed." -ForegroundColor Green
     } catch {
-        Write-Host "Gagal mengunduh profil remote: $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host "Failed to download remote profile: $($_.Exception.Message)" -ForegroundColor Red
     }
 }
 
-# 5. Windows Terminal Settings (Silence Bell & Default Profile)
-Write-Host "`n[6/6] Mengatur Windows Terminal (Membisukan Bell & Menetapkan PS7 Default)..." -ForegroundColor Cyan
+# 6. Windows Terminal Settings (Silence Bell & Default Profile)
+Write-Host "`n[6/6] Configuring Windows Terminal (Silencing Bell & Setting PS7 Default)..." -ForegroundColor Cyan
 $wtSettingsPaths = @(
     "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
     "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
@@ -141,19 +141,19 @@ foreach ($wtPath in $wtSettingsPaths) {
                 $json.profiles.defaults | Add-Member -NotePropertyName "bellStyle" -NotePropertyValue "none" -Force
                 $json.defaultProfile = "{574e775e-4f2a-5b96-ac1e-a2962a402336}"
                 $json | ConvertTo-Json -Depth 32 | Set-Content -Path $wtPath -Encoding utf8
-                Write-Host "Windows Terminal berhasil dikonfigurasi." -ForegroundColor Green
+                Write-Host "Windows Terminal settings configured successfully." -ForegroundColor Green
             }
         } catch {
-            Write-Host "Peringatan: Windows Terminal settings tidak dapat diubah otomatis ($($_.Exception.Message))." -ForegroundColor DarkGray
+            Write-Host "Note: Windows Terminal settings could not be modified automatically ($($_.Exception.Message))." -ForegroundColor DarkGray
         }
     }
 }
 
 Write-Host "`n========================================================" -ForegroundColor Red
-Write-Host " INSTALASI TRIDATU-SHELL SELESAI!" -ForegroundColor Green
-Write-Host " Langkah Terakhir untuk Pengguna:" -ForegroundColor Yellow
-Write-Host " 1. Pastikan menginstal font Nerd Font (misal: CaskaydiaCove NF / JetBrainsMono NF)." -ForegroundColor White
-Write-Host " 2. Di Windows Terminal: Settings -> Defaults -> Appearance -> Font Face -> pilih 'CaskaydiaCove NF'." -ForegroundColor White
-Write-Host " 3. Buka tab baru di Windows Terminal untuk menikmati PowerShell 7." -ForegroundColor White
-Write-Host " 4. Ketik 'tridatu-shell theme' kapan saja untuk mengganti tema!" -ForegroundColor Green
+Write-Host " TRIDATU-SHELL INSTALLATION COMPLETE!" -ForegroundColor Green
+Write-Host " Next Steps for User:" -ForegroundColor Yellow
+Write-Host " 1. Ensure a Nerd Font is installed (e.g. CaskaydiaCove NF / JetBrainsMono NF)." -ForegroundColor White
+Write-Host " 2. In Windows Terminal: Settings -> Defaults -> Appearance -> Font Face -> select 'CaskaydiaCove NF'." -ForegroundColor White
+Write-Host " 3. Open a new tab in Windows Terminal to enjoy PowerShell 7." -ForegroundColor White
+Write-Host " 4. Type 'tridatu-shell theme' anytime to switch themes!" -ForegroundColor Green
 Write-Host "========================================================`n" -ForegroundColor Red

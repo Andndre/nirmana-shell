@@ -2,7 +2,7 @@
 .SYNOPSIS
     Tridatu-Shell Theme Switcher
 .DESCRIPTION
-    Mengganti tema visual Starship secara instan.
+    Instantly switches the Starship visual theme.
 .EXAMPLE
     .\switch-theme.ps1
     .\switch-theme.ps1 tridatu
@@ -20,7 +20,7 @@ $themesDir = Join-Path $scriptDir "themes"
 $targetConfig = Join-Path $HOME ".config\starship.toml"
 
 if (!(Test-Path $themesDir)) {
-    Write-Error "Folder themes tidak ditemukan di $themesDir"
+    Write-Error "Themes directory not found at $themesDir"
     exit 1
 }
 
@@ -28,30 +28,30 @@ $availableThemes = Get-ChildItem $themesDir -Filter "*.toml" | ForEach-Object { 
 
 if (-not $ThemeName) {
     if (Get-Command fzf -ErrorAction SilentlyContinue) {
-        $ThemeName = $availableThemes | fzf --prompt="Pilih Tema Tridatu-Shell> " --height=30% --reverse --border
+        $ThemeName = $availableThemes | fzf --prompt="Select Tridatu-Shell Theme> " --height=30% --reverse --border
     } else {
-        Write-Host "Tema yang tersedia:" -ForegroundColor Cyan
+        Write-Host "Available themes:" -ForegroundColor Cyan
         for ($i = 0; $i -lt $availableThemes.Count; $i++) {
             Write-Host "[$($i+1)] $($availableThemes[$i])"
         }
-        $pilihan = Read-Host "Masukkan nomor tema (1-$($availableThemes.Count))"
-        if ($pilihan -match '^\d+$' -and [int]$pilihan -le $availableThemes.Count -and [int]$pilihan -gt 0) {
-            $ThemeName = $availableThemes[[int]$pilihan - 1]
+        $choice = Read-Host "Enter theme number (1-$($availableThemes.Count))"
+        if ($choice -match '^\d+$' -and [int]$choice -le $availableThemes.Count -and [int]$choice -gt 0) {
+            $ThemeName = $availableThemes[[int]$choice - 1]
         }
     }
 }
 
 if (-not $ThemeName) {
-    Write-Host "Pemilihan tema dibatalkan." -ForegroundColor Yellow
+    Write-Host "Theme selection cancelled." -ForegroundColor Yellow
     exit 0
 }
 
 $sourceTheme = Join-Path $themesDir "$ThemeName.toml"
 if (!(Test-Path $sourceTheme)) {
-    Write-Error "Tema '$ThemeName' tidak ditemukan! Pilihan: $($availableThemes -join ', ')"
+    Write-Error "Theme '$ThemeName' not found! Available options: $($availableThemes -join ', ')"
     exit 1
 }
 
 Copy-Item $sourceTheme $targetConfig -Force
-Write-Host "Berhasil menerapkan tema: $ThemeName" -ForegroundColor Green
-Write-Host "Tema tersimpan di $targetConfig (Buka tab baru untuk melihat perubahan visual)." -ForegroundColor Cyan
+Write-Host "Successfully applied theme: $ThemeName" -ForegroundColor Green
+Write-Host "Theme saved to $targetConfig (Open a new tab to see visual changes)." -ForegroundColor Cyan

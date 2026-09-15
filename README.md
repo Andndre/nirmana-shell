@@ -1,100 +1,101 @@
 # Tridatu-Shell
 
-Automated modern terminal setup untuk Windows berbasis **PowerShell 7**, **Starship**, **PSReadLine**, **Zoxide**, **Eza**, **FZF**, **Delta**, dan **FD**.
+Automated modern terminal setup for Windows powered by **PowerShell 7**, **Starship**, **PSReadLine**, **Zoxide**, **Eza**, **FZF**, **Delta**, and **FD**.
 
 ---
 
-## Quick Start (Instalasi 1 Perintah)
+## Quick Start (One-Command Install)
 
-Buka PowerShell (*Run as Administrator* disarankan), lalu jalankan:
+Open PowerShell (*Run as Administrator* recommended), then run:
 
-### Opsi A: Instalasi Online (via GitHub)
+### Option A: Online Installation (via GitHub)
 ```powershell
 irm https://raw.githubusercontent.com/Andndre/tridatu-shell/main/setup.ps1 | iex
 ```
 
-### Opsi B: Instalasi Lokal
-Jika menyalin folder proyek ini secara langsung:
+### Option B: Local Installation
+If you have cloned or downloaded this repository directly:
 ```powershell
 cd tridatu-shell
 .\setup.ps1
 ```
 
-Script akan otomatis:
-1. Memasang seluruh tools via WinGet (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`).
-2. Mengonfigurasi Git Pager ke `delta` untuk syntax-highlighted diffs.
-3. Memasang profil PowerShell 7 dan konfigurasi Starship.
-4. Mematikan suara alert bell saat backspace di baris kosong.
-5. Menyetel PowerShell 7 sebagai default profile di Windows Terminal.
+The installer will automatically:
+1. Install all modern CLI tools via WinGet (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`).
+2. Route Git Pager to `delta` for syntax-highlighted, word-level diffs.
+3. Set up the local environment in `~/.tridatu-shell` and configure the PowerShell 7 profile.
+4. Apply the signature Tridatu theme to Starship.
+5. Silence the audio alert bell when backspacing at the beginning of a line.
+6. Set PowerShell 7 as the default profile in Windows Terminal.
 
 ---
 
-## Prasyarat: Nerd Font
+## Prerequisite: Nerd Font
 
-Semua ikon Starship dan Eza membutuhkan Nerd Font.
+All icons and glyphs in Starship and Eza require a **Nerd Font**.
 
-1. Pasang font via WinGet:
+1. Install Cascadia Code Nerd Font via WinGet:
    ```cmd
    winget install Microsoft.CascadiaCodeNF
    ```
-2. Di **Windows Terminal**: Buka **Settings (Ctrl + ,)** -> **Defaults** -> **Appearance** -> **Font face** -> Pilih **`CaskaydiaCove NF`**.
+2. In **Windows Terminal**: Go to **Settings (Ctrl + ,)** -> **Defaults** -> **Appearance** -> **Font face** -> Select **`CaskaydiaCove NF`**.
 
 ---
 
-## Fitur & Pintasan Keyboard
+## Features & Keyboard Shortcuts
 
-| Fitur | Pintasan / Perintah | Keterangan |
+| Feature | Shortcut / Command | Description |
 | :--- | :--- | :--- |
-| **Inline Autocomplete** | Teks abu-abu otomatis | Saran riwayat perintah ala Fish-shell |
-| **Terima Seluruh Saran** | `→` (Panah Kanan) / `End` | Menerima seluruh teks prediksi |
-| **Terima Per Kata** | `Ctrl + F` | Menerima prediksi kata demi kata |
-| **Toggle Tampilan Saran**| `F2` | Beralih antara *InlineView* (1 baris) dan *ListView* (dropdown) |
-| **Interactive History** | `Ctrl + R` | Fullscreen fuzzy search riwayat perintah via `fzf` |
-| **Menu Completion** | `Tab` | Grid menu interaktif untuk file/parameter |
-| **Smart Directory Jump** | `z <nama_folder>` | Lompat ke folder mana pun lintas drive |
-| **Interactive Jump** | `zi` | Menu seleksi direktori interaktif via `fzf` |
-| **Modern File Listing** | `ls`, `ll`, `la`, `lt` | Pengganti `ls` via `eza` (ikon + warna) |
-| **Enhanced Git Diff** | `git diff`, `git show` | Visual diff dua sisi dengan nomor baris via `delta` |
-| **Fast File Search** | `fd <nama_file>` | Pencarian file cepat (otomatis abaikan `.git` & `node_modules`) |
-| **Silent Backspace** | `Backspace` | Hening tanpa suara beep alert Windows |
+| **Inline Autocomplete** | Gray suggestion text | Fish-like command history predictions ahead of the cursor |
+| **Accept Full Suggestion**| `→` (Right Arrow) / `End` | Accept the entire inline prediction |
+| **Accept Word-by-Word** | `Ctrl + F` | Accept next word of prediction |
+| **Toggle Suggestion View**| `F2` | Switch between *InlineView* (single-line) and *ListView* (dropdown) |
+| **Interactive History** | `Ctrl + R` | Fullscreen fuzzy search of command history via `fzf` |
+| **Menu Completion** | `Tab` | Interactive searchable completion grid for commands and paths |
+| **Smart Directory Jump** | `z <folder>` | Jump to any visited folder across drives instantly |
+| **Interactive Jump** | `zi` | Interactive directory selection menu via `fzf` |
+| **Modern File Listing** | `ls`, `ll`, `la`, `lt` | Fast `eza` replacement with icons, colors, and permissions |
+| **Enhanced Git Diff** | `git diff`, `git show` | Side-by-side or line-numbered syntax-highlighted diffs via `delta` |
+| **Fast File Search** | `fd <filename>` | Blazing fast file finder (ignores `.git` & `node_modules` by default) |
+| **Silent Backspace** | `Backspace` | Zero audio chime / bell beeps |
 
 ---
 
-## Perintah CLI `tridatu-shell`
+## `tridatu-shell` CLI Commands
 
-Setelah terpasang, perintah `tridatu-shell` (atau alias `tridatu`) dapat diakses langsung dari mana saja di terminal:
+Once installed, the `tridatu-shell` command (or shorthand alias `tridatu`) is globally available:
 
-| Perintah | Deskripsi |
+| Command | Description |
 | :--- | :--- |
-| `tridatu-shell theme` | Buka menu interaktif `fzf` untuk memilih dan mengganti tema Starship |
-| `tridatu-shell theme <nama>` | Ganti ke tema tertentu secara instan (mendukung Tab autocomplete) |
-| `tridatu-shell doctor` | Periksa kesehatan seluruh utilitas CLI (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`, `rg`) |
-| `tridatu-shell update` | Perbarui konfigurasi dan tema Tridatu-Shell ke versi terbaru dari GitHub |
-| `tridatu-shell reload` | Muat ulang `$PROFILE` PowerShell pada tab aktif |
+| `tridatu-shell theme` | Open interactive `fzf` menu to select and apply Starship themes |
+| `tridatu-shell theme <name>` | Switch directly to a specific theme (supports **Tab autocomplete**) |
+| `tridatu-shell doctor` | Check the health of all CLI tools (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`, `rg`) |
+| `tridatu-shell update` | Pull the latest changes and themes from GitHub |
+| `tridatu-shell reload` | Reload the active PowerShell `$PROFILE` in the current session |
 
-### Pilihan Tema Bawaan:
-* **`tridatu`** (Default)
+### Available Themes:
+* **`tridatu`** (Signature Default)
 * **`tokyo-night`**
 * **`catppuccin-mocha`**
 * **`minimal-emerald`**
 
-Contoh pemakaian:
+Example:
 ```powershell
-tridatu-shell theme tokyo-night
+tridatu theme tokyo-night
 ```
-*(Tip: Anda juga bisa mengetik `tridatu theme` atau menekan `Tab` setelah kata `theme` untuk autocomplete nama tema).*
+*(Tip: Type `tridatu theme ` and press `Tab` to cycle through available themes).*
 
 ---
 
-## Struktur Folder
+## Repository Structure
 
 ```text
 tridatu-shell/
-├── README.md               # Dokumentasi instalasi dan penggunaan
-├── setup.ps1               # Script instalasi otomatis (One-liner)
-├── switch-theme.ps1        # Script ganti tema Starship
+├── README.md               # Documentation and usage guide
+├── setup.ps1               # Automated one-command installer script
+├── switch-theme.ps1        # Interactive theme switcher script
 ├── configs/
-│   └── Microsoft.PowerShell_profile.ps1 # File profil PowerShell 7
+│   └── Microsoft.PowerShell_profile.ps1 # Canonical PowerShell 7 profile
 └── themes/
     ├── tridatu.toml
     ├── tokyo-night.toml
@@ -104,17 +105,10 @@ tridatu-shell/
 
 ---
 
-## Cara Share ke GitHub
+## Sharing with Friends
 
-1. Buat repository baru di GitHub bernama `tridatu-shell`.
-2. Push folder ini:
-   ```bash
-   cd D:\tridatu-shell
-   git init
-   git add .
-   git commit -m "feat: initial commit tridatu-shell"
-   git remote add origin https://github.com/Andndre/tridatu-shell.git
-   git branch -M main
-   git push -u origin main
-   ```
-3. Ganti `Andndre` pada URL one-liner di file README ini dengan username GitHub Anda.
+Share this single command with anyone on Windows:
+
+```powershell
+irm https://raw.githubusercontent.com/Andndre/tridatu-shell/main/setup.ps1 | iex
+```
