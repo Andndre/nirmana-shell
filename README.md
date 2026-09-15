@@ -132,6 +132,40 @@ nirmana theme catppuccin-mocha
 
 ---
 
+## Why Starship?
+
+Nirmana-Shell selects [Starship](https://starship.rs) as its core prompt engine for distinct architectural advantages:
+
+* **High Performance (Rust-Native):** Starship is compiled to native machine code with zero runtime overhead. Prompt latency consistently remains under 10ms, eliminating terminal input stutter even in large repositories and complex directories.
+* **Universal Portability:** A single `starship.toml` configuration file works identically across PowerShell 7, Bash, Zsh, Fish, and NuShell on Windows, Linux, and macOS.
+* **Declarative Configuration:** Uses clean TOML syntax instead of complex shell script evaluation or deeply nested JSON/YAML structures.
+* **Intelligent Module Caching:** Modules for Git status, language runtimes, and command durations execute asynchronously and cache results, preventing terminal freezes during network or slow disk operations.
+
+---
+
+## Comparison with Alternatives
+
+How Nirmana-Shell compares against other popular Windows terminal configurations and prompt tools:
+
+| Feature / Aspect | Nirmana-Shell | Chris Titus Tech (`win-dotfiles`) | Oh My Posh (`oh-my-posh`) | Standalone Dotfiles |
+| :--- | :--- | :--- | :--- | :--- |
+| **Prompt Engine** | Starship (Rust) | Starship (Rust) | Oh My Posh (Go) | Varies (Starship / Custom) |
+| **Primary Scope** | Full Terminal Environment & Theme Suite | Windows Tweaks & General Dotfiles | Prompt Engine Only | Personal Configs |
+| **Installation** | 1-Line Remote (`irm ... \| iex`) | PowerShell / Batch Script | Package Manager (`winget`) | Manual Git Clone & Copy |
+| **Curated Themes** | 17 Custom (Right-Aligned) + 10 Presets | 1 Default Theme | 100+ Community Themes | 1 Custom Theme |
+| **Interactive TUI Switcher** | Built-in (`nirmana theme` via FZF) | None (Static Config) | CLI / Manual Config | None |
+| **Terminal Scheme Sync** | Automatic (Windows Terminal JSON) | Partial | Manual | Manual |
+| **CLI Toolchain Integration** | Complete (`eza`, `fzf`, `zoxide`, `delta`, `fd`) | Focused (`zoxide`, `fzf`) | None (Prompt only) | Varies |
+| **Version & Diagnostics** | Built-in (`nirmana version` & `doctor`) | Basic Script Checks | `oh-my-posh version` | None |
+
+### Key Distinctions
+
+* **Versus Chris Titus Tech (`win-dotfiles`):** While `win-dotfiles` offers a proven system-wide setup tailored to general Windows utilities with a single static Starship theme, Nirmana-Shell focuses exclusively on the terminal developer experience: providing an interactive 27-theme TUI switcher, right-aligned `$fill` layouts, automated visual galleries, and full Delta git pager integration.
+* **Versus Oh My Posh:** Oh My Posh is an outstanding prompt engine with a vast collection of community themes. However, Oh My Posh is solely a prompt engine. Nirmana-Shell integrates Starship into a cohesive terminal ecosystem that configures PSReadLine, predictive completions, syntax-highlighted git diffs, directory jumping, and automatic Windows Terminal color scheme synchronization.
+* **Versus Standalone Dotfiles / Community Presets:** Standalone dotfiles require manual package installations, manual font configuration, and editing TOML files by hand. Nirmana-Shell packages everything into an automated, idempotent setup with self-healing profile reloaders and versioned health checks.
+
+---
+
 ## Repository Layout
 
 ```text
