@@ -2,7 +2,7 @@
 .SYNOPSIS
     Nirmana-Shell — Automated Modern Terminal Setup for Windows
 .DESCRIPTION
-    Installs modern CLI tools (PowerShell 7, Starship, Zoxide, Eza, FZF, Delta, FD),
+    Installs modern CLI tools (PowerShell 7, Git, Starship, Zoxide, Eza, FZF, Delta, FD),
     configures optimized PowerShell 7 profile, sets Nirmana signature theme,
     disables terminal alert bell beeps, and optimizes Git diffs.
 .USAGE
@@ -19,6 +19,7 @@ Write-Host "========================================================`n" -Foregro
 Write-Host "[1/6] Checking & Installing Modern CLI Tools via WinGet..." -ForegroundColor Cyan
 $packages = @(
     "Microsoft.PowerShell",
+    "Git.Git",
     "Starship.Starship",
     "ajeetdsouza.zoxide",
     "eza-community.eza",
@@ -51,10 +52,10 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
 # 3. Setup Local Repository Directory (~/.nirmana-shell)
 Write-Host "`n[3/6] Setting Up Nirmana-Shell Directory (~/.nirmana-shell)..." -ForegroundColor Cyan
 $installDir = Join-Path $HOME ".nirmana-shell"
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$hasLocalSource = $MyInvocation.MyCommand.Path -and (Test-Path (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) "themes\nirmana.toml"))
 
-if (Test-Path (Join-Path $scriptDir "themes\nirmana.toml")) {
-    # Running from local clone
+if ($hasLocalSource) {
+    $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
     if (!(Test-Path $installDir)) {
         Copy-Item $scriptDir $installDir -Recurse -Force | Out-Null
     }
@@ -68,6 +69,19 @@ if (Test-Path (Join-Path $scriptDir "themes\nirmana.toml")) {
             Write-Host "--> Updating repository in $installDir..." -ForegroundColor DarkGray
             git -C $installDir pull --quiet
         }
+    } else {
+        # Fallback: Download archive if git is not yet available in current session PATH
+        Write-Host "--> Downloading Nirmana-Shell package..." -ForegroundColor DarkGray
+        $zipUrl = "https://github.com/Andndre/nirmana-shell/archive/refs/heads/main.zip"
+        $tempZip = Join-Path $env:TEMP "nirmana-shell.zip"
+        $tempExtract = Join-Path $env:TEMP "nirmana-shell-extract"
+        Invoke-RestMethod -Uri $zipUrl -OutFile $tempZip
+        Expand-Archive -Path $tempZip -DestinationPath $tempExtract -Force
+        if (!(Test-Path $installDir)) {
+            New-Item -ItemType Directory -Path $installDir -Force | Out-Null
+        }
+        Copy-Item (Join-Path $tempExtract "nirmana-shell-main\*") $installDir -Recurse -Force
+        Remove-Item $tempZip, $tempExtract -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
 
