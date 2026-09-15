@@ -210,6 +210,15 @@ function global:nirmana-shell {
                 if (Test-Path $switchScript) {
                     & $switchScript -UpdatePreviews
                 }
+                $genScript = Join-Path $root "scripts\generate-previews.py"
+                if (-not (Test-Path $genScript)) {
+                    $devGen = "D:\nirmana-shell\scripts\generate-previews.py"
+                    if (Test-Path $devGen) { $genScript = $devGen }
+                }
+                if (Test-Path $genScript) {
+                    Write-Host "Generating visual PNG preview..." -ForegroundColor DarkGray
+                    & uv run --with rich --with resvg-py python $genScript --theme $themeName
+                }
                 Write-Host "`nImport successful. Run 'nirmana theme $themeName' to activate.`n" -ForegroundColor Cyan
             } else {
                 Write-Error "Failed to transpile Oh My Posh theme."

@@ -96,6 +96,12 @@ def generate_preview_png(txt_path: Path, output_dir: Path, font_files: list[str]
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Generate PNG preview cards for Nirmana-Shell themes.")
+    parser.add_argument("-t", "--theme", help="Specific theme name to generate preview for (stem of .txt)")
+    parser.add_argument("--force", action="store_true", help="Regenerate even if PNG exists and is newer than .txt")
+    args = parser.parse_args()
+
     repo_root = Path(__file__).resolve().parent.parent
     preview_dir = repo_root / ".previews"
     output_dir = repo_root / "assets" / "previews"
@@ -105,10 +111,25 @@ def main():
         print(f"Error: Preview directory not found: {preview_dir}")
         sys.exit(1)
 
-    txt_files = sorted(preview_dir.glob("*.txt"))
+    if args.theme:
+        target_txt = preview_dir / f"{args.theme}.txt"
+        if not target_txt.exists():
+            print(f"Error: Preview file not found: {target_txt}")
+            sys.exit(1)
+        txt_files = [target_txt]
+    else:
+        txt_files = sorted(preview_dir.glob("*.txt"))
+        if not args.force:
+            pending = []
+            for t in txt_files:
+                png_path = output_dir / f"{t.stem}.png"
+                if not png_path.exists() or png_path.stat().st_mtime < t.stat().st_mtime:
+                    pending.append(t)
+            txt_files = pending
+
     if not txt_files:
-        print(f"Error: No preview text files found in {preview_dir}")
-        sys.exit(1)
+        print("All preview PNGs are already up to date.")
+        return
 
     nerd_fonts = find_nerd_fonts()
     if nerd_fonts:
@@ -120,7 +141,7 @@ def main():
     for idx, txt_path in enumerate(txt_files, 1):
         out = generate_preview_png(txt_path, output_dir, nerd_fonts)
         size_kb = out.stat().st_size / 1024
-        print(f"[{idx:02d}/{len(txt_files):02d}] {txt_path.stem:<24} -> {out.name} ({size_kb:.1f} KB)")
+        print(f"[{idx:02d}/{len(txt_files):02d}] {txt_path.stem:<28} -> {out.name} ({size_kb:.1f} KB)")
 
     print(f"\nCompleted successfully! Generated {len(txt_files)} images.")
 
