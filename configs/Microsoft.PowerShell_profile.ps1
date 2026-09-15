@@ -79,11 +79,19 @@ if ((Get-Module -Name PSReadLine -ErrorAction SilentlyContinue) -or (Import-Modu
     Set-PSReadLineKeyHandler -Chord 'Ctrl+f' -Function ForwardWord
 
     # - F2: Toggle between InlineView and ListView and persist preference
-    Set-PSReadLineKeyHandler -Chord 'F2' -ScriptBlock {
-        $curr = (Get-PSReadLineOption).PredictionViewStyle
-        $next = if ($curr -eq 'ListView') { 'InlineView' } else { 'ListView' }
-        Set-PSReadLineOption -PredictionViewStyle $next -ErrorAction SilentlyContinue
-        script:Set-NirmanaConfig "predictionViewStyle" $next
+    Set-PSReadLineKeyHandler -Key F2 -ScriptBlock {
+        param($key, $arg)
+        try {
+            [Microsoft.PowerShell.PSConsoleReadLine]::SwitchPredictionView($key, $arg)
+        } catch {
+            $curr = (Get-PSReadLineOption).PredictionViewStyle
+            $next = if ($curr -eq 'ListView') { 'InlineView' } else { 'ListView' }
+            Set-PSReadLineOption -PredictionViewStyle $next -ErrorAction SilentlyContinue
+        }
+        try {
+            $actual = (Get-PSReadLineOption).PredictionViewStyle.ToString()
+            script:Set-NirmanaConfig "predictionViewStyle" $actual
+        } catch {}
     }
 
     # - Ctrl+r: Interactive Fuzzy History Search via fzf with rounded TUI border
@@ -266,10 +274,17 @@ function global:nirmana-shell {
             }
         }
         'benchmark' {
+            $w = 62
+            $line = '─' * ($w - 2)
+            $title = "NIRMANA STARTUP BENCHMARK"
+            $padTotal = $w - 2 - $title.Length
+            $padLeft = [math]::Max(0, [int]($padTotal / 2))
+            $padRight = [math]::Max(0, $padTotal - $padLeft)
+
             Write-Host ""
-            Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Cyan
-            Write-Host "│                NIRMANA STARTUP BENCHMARK                    │" -ForegroundColor Cyan
-            Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor Cyan
+            Write-Host "╭$line╮" -ForegroundColor Cyan
+            Write-Host ("│" + (' ' * $padLeft) + $title + (' ' * $padRight) + "│") -ForegroundColor Cyan
+            Write-Host "├$line┤" -ForegroundColor Cyan
 
             $benchmarks = [ordered]@{}
 
@@ -309,15 +324,31 @@ function global:nirmana-shell {
                 $ms = [math]::Round($entry.Value, 1)
                 $totalMs += $ms
                 $color = if ($ms -lt 30) { "Green" } elseif ($ms -lt 80) { "Yellow" } else { "Red" }
-                $label = "  " + $entry.Key.PadRight(28)
-                $valStr = "$ms ms".PadLeft(10)
-                Write-Host "│ $label $valStr │" -ForegroundColor $color
+
+                $keyStr = "  " + $entry.Key
+                $valStr = "$ms ms  "
+                $spaceCount = ($w - 2) - $keyStr.Length - $valStr.Length
+                $spaces = ' ' * [math]::Max(0, $spaceCount)
+
+                Write-Host "│" -ForegroundColor Cyan -NoNewline
+                Write-Host $keyStr -ForegroundColor White -NoNewline
+                Write-Host $spaces -NoNewline
+                Write-Host $valStr -ForegroundColor $color -NoNewline
+                Write-Host "│" -ForegroundColor Cyan
             }
 
             $totalRounded = [math]::Round($totalMs, 1)
-            Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor Cyan
-            Write-Host "│  Estimated Profile Overhead: $($("$totalRounded ms").PadLeft(32))│" -ForegroundColor White
-            Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Cyan
+            $sumLabel = "  Estimated Profile Overhead:"
+            $sumVal = "$totalRounded ms  "
+            $sumSpaces = ' ' * [math]::Max(0, ($w - 2) - $sumLabel.Length - $sumVal.Length)
+
+            Write-Host "├$line┤" -ForegroundColor Cyan
+            Write-Host "│" -ForegroundColor Cyan -NoNewline
+            Write-Host $sumLabel -ForegroundColor White -NoNewline
+            Write-Host $sumSpaces -NoNewline
+            Write-Host $sumVal -ForegroundColor Cyan -NoNewline
+            Write-Host "│" -ForegroundColor Cyan
+            Write-Host "╰$line╯" -ForegroundColor Cyan
             Write-Host ""
         }
         'reload' {
@@ -340,44 +371,93 @@ function global:nirmana-shell {
             Write-Host "│              NIRMANA-SHELL UNINSTALLATION                   │" -ForegroundColor Red
             Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Red
             Write-Host "This will:" -ForegroundColor Yellow
-            Write-Host "  1. Restore your original PowerShell profile (from .orig or .bak)"
-            Write-Host "  2. Remove ~/.nirmana-shell directory"
-            Write-Host "  3. Remove ~/.config/nirmana directory"
+            Write-Host "  1. Remove Nirmana-Shell from PowerShell 7 profile (restoring original if available)"
+            Write-Host "  2. Remove legacy PowerShell 5.1 notification bridge"
+            Write-Host "  3. Remove ~/.nirmana-shell repository directory"
+            Write-Host "  4. Remove ~/.config/nirmana configuration directory"
+            Write-Host "  5. Unregister 'nirmana' command and aliases from active session"
             Write-Host ""
             $confirm = Read-Host "Are you sure you want to uninstall Nirmana-Shell? (y/N)"
             if ($confirm -match '^[Yy]$') {
-                $docsFolder = [Environment]::GetFolderPath('MyDocuments')
-                $ps7ProfilePath = Join-Path $docsFolder "PowerShell\Microsoft.PowerShell_profile.ps1"
-                $origBackup = "$ps7ProfilePath.orig"
-                $bakBackup = "$ps7ProfilePath.bak"
+                # 1. Purge PowerShell 7 profile across potential locations
+                $profilesToCheck = @(
+                    $PROFILE,
+                    (Join-Path ([Environment]::GetFolderPath('MyDocuments')) "PowerShell\Microsoft.PowerShell_profile.ps1")
+                ) | Select-Object -Unique
 
-                if (Test-Path $origBackup) {
-                    Copy-Item $origBackup $ps7ProfilePath -Force
-                    Remove-Item $origBackup, $bakBackup -Force -ErrorAction SilentlyContinue
-                    Write-Host "--> Restored original profile from $origBackup." -ForegroundColor Green
-                } elseif (Test-Path $bakBackup) {
-                    Copy-Item $bakBackup $ps7ProfilePath -Force
-                    Remove-Item $bakBackup -Force -ErrorAction SilentlyContinue
-                    Write-Host "--> Restored profile from $bakBackup." -ForegroundColor Green
-                } else {
-                    Remove-Item $ps7ProfilePath -Force -ErrorAction SilentlyContinue
-                    Write-Host "--> Nirmana profile removed." -ForegroundColor Green
+                foreach ($p in $profilesToCheck) {
+                    if (Test-Path $p) {
+                        $origFile = "$p.orig"
+                        $bakFile = "$p.bak"
+                        $restored = $false
+
+                        if (Test-Path $origFile) {
+                            $origRaw = Get-Content $origFile -Raw -ErrorAction SilentlyContinue
+                            if ($origRaw -and $origRaw -notmatch 'Nirmana-Shell') {
+                                Copy-Item $origFile $p -Force
+                                $restored = $true
+                                Write-Host "--> Restored pristine original profile from $origFile." -ForegroundColor Green
+                            }
+                            Remove-Item $origFile -Force -ErrorAction SilentlyContinue
+                        }
+
+                        if (-not $restored -and (Test-Path $bakFile)) {
+                            $bakRaw = Get-Content $bakFile -Raw -ErrorAction SilentlyContinue
+                            if ($bakRaw -and $bakRaw -notmatch 'Nirmana-Shell') {
+                                Copy-Item $bakFile $p -Force
+                                $restored = $true
+                                Write-Host "--> Restored profile from $bakFile." -ForegroundColor Green
+                            }
+                            Remove-Item $bakFile -Force -ErrorAction SilentlyContinue
+                        }
+
+                        if (-not $restored) {
+                            $currentRaw = Get-Content $p -Raw -ErrorAction SilentlyContinue
+                            if ($currentRaw -match 'Nirmana-Shell') {
+                                Remove-Item $p -Force -ErrorAction SilentlyContinue
+                                Write-Host "--> Removed Nirmana-Shell profile: $p" -ForegroundColor Green
+                            }
+                        }
+                    }
+                    Remove-Item "$p.orig", "$p.bak" -Force -ErrorAction SilentlyContinue
                 }
 
+                # 2. Remove Windows PowerShell 5.1 notification bridge
+                $ps5Profile = Join-Path ([Environment]::GetFolderPath('MyDocuments')) "WindowsPowerShell\Microsoft.PowerShell_profile.ps1"
+                if (Test-Path $ps5Profile) {
+                    $ps5Raw = Get-Content $ps5Profile -Raw -ErrorAction SilentlyContinue
+                    if ($ps5Raw -match 'Nirmana-Shell') {
+                        Remove-Item $ps5Profile -Force -ErrorAction SilentlyContinue
+                        Write-Host "--> Removed PS 5.1 notification bridge: $ps5Profile" -ForegroundColor Green
+                    }
+                }
+
+                # 3. Remove ~/.nirmana-shell repository directory
                 $nirmanaHome = Join-Path $HOME ".nirmana-shell"
                 if (Test-Path $nirmanaHome) {
                     Remove-Item $nirmanaHome -Recurse -Force -ErrorAction SilentlyContinue
                     Write-Host "--> Removed $nirmanaHome." -ForegroundColor Green
                 }
 
+                # 4. Remove ~/.config/nirmana directory
                 $nirmanaCfg = Join-Path $HOME ".config\nirmana"
                 if (Test-Path $nirmanaCfg) {
                     Remove-Item $nirmanaCfg -Recurse -Force -ErrorAction SilentlyContinue
                     Write-Host "--> Removed $nirmanaCfg." -ForegroundColor Green
                 }
 
-                Write-Host "`nNirmana-Shell has been completely uninstalled." -ForegroundColor Green
-                Write-Host "Please restart your terminal." -ForegroundColor White
+                # 5. Purge aliases and functions from active in-memory session
+                Remove-Item Alias:nirmana -Force -ErrorAction SilentlyContinue
+                Remove-Item Function:global:nirmana-shell -Force -ErrorAction SilentlyContinue
+                Remove-Item Function:nirmana-shell -Force -ErrorAction SilentlyContinue
+                Remove-Item Function:nirmana -Force -ErrorAction SilentlyContinue
+
+                Write-Host ""
+                Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
+                Write-Host "│  Nirmana-Shell has been completely uninstalled.             │" -ForegroundColor Green
+                Write-Host "│  Commands and profile associations have been purged.        │" -ForegroundColor Green
+                Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Green
+                Write-Host ""
             } else {
                 Write-Host "Uninstallation cancelled." -ForegroundColor Yellow
             }

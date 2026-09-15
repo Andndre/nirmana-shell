@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2026-09-16
+
+### Fixed
+
+- **Uninstallation Purge Completeness**: Hardened `nirmana uninstall` to inspect `.orig` and `.bak` backups for existing Nirmana profile signatures, preventing accidental self-restoration. Unregisters active in-memory aliases (`nirmana`) and functions from the running session, removes legacy PS 5.1 bridges, and deletes profiles cleanly if no pre-existing user profile existed.
+- **Mid-Command F2 Prediction Toggle**: Updated F2 keyhandler to pass key context into native `[Microsoft.PowerShell.PSConsoleReadLine]::SwitchPredictionView($key, $arg)`, resolving UI render stalls when toggling between InlineView and ListView with text already present on the command line.
+- **Benchmark TUI Box Alignment**: Fixed border width calculation and color bleeding in `nirmana benchmark`, ensuring borders are consistently rendered in cyan with aligned vertical lines across all rows.
+
 ## [1.0.6] - 2026-09-16
 
 ### Added

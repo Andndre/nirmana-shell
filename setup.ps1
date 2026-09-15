@@ -16,7 +16,7 @@ $setupScriptDir = if ($PSScriptRoot) {
     $null
 }
 $versionFile = if ($setupScriptDir) { Join-Path $setupScriptDir "VERSION" } else { $null }
-$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.6" }
+$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.7" }
 $isLegacyPS = $PSVersionTable.PSVersion.Major -lt 7
 
 Write-Host ""
@@ -229,8 +229,11 @@ $ps7ProfilePath = Join-Path $ps7Dir "Microsoft.PowerShell_profile.ps1"
 $ps7ProfileOrig = "$ps7ProfilePath.orig"
 if (Test-Path $ps7ProfilePath) {
     if (-not (Test-Path $ps7ProfileOrig)) {
-        Copy-Item $ps7ProfilePath $ps7ProfileOrig -Force
-        Write-Host "Pristine original profile preserved at $ps7ProfileOrig" -ForegroundColor DarkGray
+        $existingContent = Get-Content $ps7ProfilePath -Raw -ErrorAction SilentlyContinue
+        if ($existingContent -and $existingContent -notmatch 'Nirmana-Shell') {
+            Copy-Item $ps7ProfilePath $ps7ProfileOrig -Force
+            Write-Host "Pristine original profile preserved at $ps7ProfileOrig" -ForegroundColor DarkGray
+        }
     }
     Copy-Item $ps7ProfilePath "$ps7ProfilePath.bak" -Force
     Write-Host "Existing profile backed up to $ps7ProfilePath.bak" -ForegroundColor DarkGray
