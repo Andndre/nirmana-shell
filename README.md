@@ -1,6 +1,6 @@
 # Nirmana-Shell
 
-PowerShell 7 terminal environment for Windows. Configures Starship prompt, PSReadLine predictive completion, Zoxide directory navigation, Eza file listing, FZF history search, Delta git diffs, and FD.
+PowerShell 7 terminal environment for Windows. Configures Starship prompt, PSReadLine predictive completion, Zoxide directory navigation, Eza file listing, FZF history search, Delta git diffs, FD, and Ripgrep.
 
 ---
 
@@ -24,23 +24,22 @@ cd nirmana-shell
 
 The script performs the following tasks:
 
-1. Installs required tools via WinGet (`pwsh`, `git`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`).
+1. Installs required tools via WinGet (`pwsh`, `git`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`, `rg`, and Cascadia Code Nerd Font).
 2. Configures Git to use `delta` as the default pager.
-3. Sets up `~/.nirmana-shell` and installs the PowerShell 7 profile.
+3. Sets up `~/.nirmana-shell` and installs the PowerShell 7 profile (preserving pre-existing profiles in `.orig`).
 4. Sets the default Starship configuration.
 5. Disables the console bell on backspace.
-6. Sets PowerShell 7 as the default profile in Windows Terminal.
+6. Sets PowerShell 7 as the default profile in Windows Terminal with synchronized color schemes.
 
 ---
 
-## Prerequisite: Nerd Font
+## Font Configuration: Nerd Font
 
-Icons used by Starship and Eza require a patched Nerd Font.
+Icons used by Starship and Eza require a patched Nerd Font. `setup.ps1` automatically installs Cascadia Code Nerd Font via WinGet.
 
-1. Install Cascadia Code Nerd Font via WinGet:
-   ```cmd
-   winget install Microsoft.CascadiaCodeNF
-   ```
+If configuring manually or verifying:
+
+1. Ensure Cascadia Code Nerd Font is installed (or run `nirmana doctor --fix`).
 2. In Windows Terminal: Go to **Settings (Ctrl + ,)** > **Defaults** > **Appearance** > **Font face** > Select **`CaskaydiaCove NF`**.
 
 ---
@@ -61,6 +60,7 @@ Icons used by Starship and Eza require a patched Nerd Font.
 | File Listing        | `ls`, `ll`, `la`, `lt` | Directory listing using `eza`                                         |
 | Git Diffs           | `git diff`, `git show` | Syntax-highlighted diffs using `delta`                                |
 | File Search         | `fd <query>`           | Fast file search                                                      |
+| Text Search         | `rg <query>`           | Fast recursive regex text search                                      |
 
 > [!TIP]
 > **User Custom Extensions:** Place personal functions, tokens, and aliases in `~/.config/nirmana/custom.ps1`. This file is loaded automatically by your profile and is **never overwritten** during Nirmana-Shell updates.
@@ -77,9 +77,12 @@ The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 | `nirmana theme`        | Open interactive theme switcher with top prompt preview and rounded borders |
 | `nirmana theme <name>` | Apply a specific theme (supports Tab completion)                            |
 | `nirmana version`      | Display installed version, commit hash, and PowerShell environment          |
-| `nirmana doctor`       | Verify PATH and health of all CLI tools with version status                 |
+| `nirmana doctor`       | Verify PATH and health of all CLI tools and Nerd Font status                |
+| `nirmana doctor --fix` | Automatically install missing CLI dependencies and fonts via WinGet         |
+| `nirmana benchmark`    | Profile sub-second startup latency across profile components                |
 | `nirmana update`       | Pull latest updates from GitHub                                             |
 | `nirmana reload`       | Reload the active PowerShell profile                                        |
+| `nirmana uninstall`    | Interactively remove Nirmana and restore original profile backup            |
 
 ### Available Themes and Presets
 

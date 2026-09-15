@@ -239,7 +239,7 @@ $themeToWtScheme = @{
     'atomic'                = 'Catppuccin Mocha'
     'agnoster'              = 'Tokyo Night'
     'powerlevel10k_rainbow' = 'Catppuccin Mocha'
-    'dracula'               = 'Tokyo Night'
+    'dracula'               = 'Dracula'
     'paradox'               = 'Catppuccin Mocha'
     'half-life'             = 'Tokyo Night'
     'robbyrussell'          = 'Catppuccin Mocha'
@@ -262,12 +262,27 @@ if ($themeToWtScheme.ContainsKey($cleanThemeName)) {
             try {
                 $raw = Get-Content $wtPath -Raw -Encoding utf8
                 $modified = $false
-                if ($raw -match '"colorScheme"\s*:\s*"[^"]*"') {
-                    $raw = $raw -replace '("colorScheme"\s*:\s*)"[^"]*"', "`$1`"$targetWtScheme`""
-                    $modified = $true
-                } elseif ($raw -match '("defaults"\s*:\s*\{)') {
-                    $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"colorScheme`": `"$targetWtScheme`","
-                    $modified = $true
+                try {
+                    $jsonObj = $raw | ConvertFrom-Json
+                    if ($jsonObj.profiles.defaults) {
+                        $jsonObj.profiles.defaults.colorScheme = $targetWtScheme
+                        $raw = $jsonObj | ConvertTo-Json -Depth 10
+                        $modified = $true
+                    }
+                } catch {
+                    if ($raw -match '("defaults"\s*:\s*\{[\s\S]*?\n\s*\})(?=\s*,\s*("list"|\}))') {
+                        $defaultsBlock = $Matches[1]
+                        $updatedDefaults = $defaultsBlock
+                        if ($updatedDefaults -match '("colorScheme"\s*:\s*)"[^"]*"') {
+                            $updatedDefaults = [regex]::new('("colorScheme"\s*:\s*)"[^"]*"').Replace($updatedDefaults, "`$1`"$targetWtScheme`"", 1)
+                        } else {
+                            $updatedDefaults = $updatedDefaults -replace '("defaults"\s*:\s*\{)', "`$1`n      `"colorScheme`": `"$targetWtScheme`","
+                        }
+                        if ($updatedDefaults -ne $defaultsBlock) {
+                            $raw = $raw.Replace($defaultsBlock, $updatedDefaults)
+                            $modified = $true
+                        }
+                    }
                 }
                 if ($modified) {
                     Set-Content -Path $wtPath -Value $raw -Encoding utf8

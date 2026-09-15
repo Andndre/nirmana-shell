@@ -16,7 +16,7 @@ $setupScriptDir = if ($PSScriptRoot) {
     $null
 }
 $versionFile = if ($setupScriptDir) { Join-Path $setupScriptDir "VERSION" } else { $null }
-$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.5" }
+$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.6" }
 $isLegacyPS = $PSVersionTable.PSVersion.Major -lt 7
 
 Write-Host ""
@@ -31,24 +31,55 @@ Write-Host ""
 # 1. Package Installation via WinGet
 Write-Host "[1/6] Checking & Installing Modern CLI Tools via WinGet..." -ForegroundColor Cyan
 $packages = @(
-    "Microsoft.PowerShell",
-    "Git.Git",
-    "Starship.Starship",
-    "ajeetdsouza.zoxide",
-    "eza-community.eza",
-    "junegunn.fzf",
-    "dandavison.delta",
-    "sharkdp.fd"
+    @{ Id = "Microsoft.PowerShell"; Source = "winget" },
+    @{ Id = "Git.Git"; Source = "winget" },
+    @{ Id = "Starship.Starship"; Source = "winget" },
+    @{ Id = "ajeetdsouza.zoxide"; Source = "winget" },
+    @{ Id = "eza-community.eza"; Source = "winget" },
+    @{ Id = "junegunn.fzf"; Source = "winget" },
+    @{ Id = "dandavison.delta"; Source = "winget" },
+    @{ Id = "sharkdp.fd"; Source = "winget" },
+    @{ Id = "BurntSushi.ripgrep.MSVC"; Source = "winget" },
+    @{ Id = "ryanoasis.CaskaydiaCove"; Source = "winget-font" }
 )
 
-foreach ($pkg in $packages) {
+function Test-NerdFontInstalled {
+    $fontDirs = @(
+        "$env:LOCALAPPDATA\Microsoft\Windows\Fonts",
+        "$env:WINDIR\Fonts"
+    )
+    foreach ($d in $fontDirs) {
+        if (Test-Path $d) {
+            $found = Get-ChildItem -Path $d -Filter "*Caskaydia*Nerd*.ttf" -ErrorAction SilentlyContinue
+            if (-not $found) {
+                $found = Get-ChildItem -Path $d -Filter "*Caskaydia*NF*.ttf" -ErrorAction SilentlyContinue
+            }
+            if ($found) { return $true }
+        }
+    }
+    return $false
+}
+
+foreach ($item in $packages) {
+    $pkg = $item.Id
+    $src = $item.Source
     Write-Host "--> Checking $pkg..." -NoNewline
-    $installed = winget list --id $pkg --exact --accept-source-agreements 2>$null
-    if ($LASTEXITCODE -eq 0 -and ($installed | Out-String) -match $pkg) {
+    
+    $isInstalled = $false
+    if ($pkg -eq "ryanoasis.CaskaydiaCove" -and (Test-NerdFontInstalled)) {
+        $isInstalled = $true
+    } else {
+        $installed = winget list --id $pkg --exact --accept-source-agreements 2>$null
+        if ($LASTEXITCODE -eq 0 -and ($installed | Out-String) -match [regex]::Escape($pkg)) {
+            $isInstalled = $true
+        }
+    }
+
+    if ($isInstalled) {
         Write-Host " [Installed]" -ForegroundColor Green
     } else {
         Write-Host " [Installing...]" -ForegroundColor Yellow
-        winget install --id $pkg --source winget --accept-source-agreements --accept-package-agreements --silent
+        winget install --id $pkg --source $src --accept-source-agreements --accept-package-agreements --silent
     }
 }
 
@@ -195,7 +226,12 @@ if (!(Test-Path $ps7Dir)) {
 }
 
 $ps7ProfilePath = Join-Path $ps7Dir "Microsoft.PowerShell_profile.ps1"
+$ps7ProfileOrig = "$ps7ProfilePath.orig"
 if (Test-Path $ps7ProfilePath) {
+    if (-not (Test-Path $ps7ProfileOrig)) {
+        Copy-Item $ps7ProfilePath $ps7ProfileOrig -Force
+        Write-Host "Pristine original profile preserved at $ps7ProfileOrig" -ForegroundColor DarkGray
+    }
     Copy-Item $ps7ProfilePath "$ps7ProfilePath.bak" -Force
     Write-Host "Existing profile backed up to $ps7ProfilePath.bak" -ForegroundColor DarkGray
 }
@@ -255,6 +291,29 @@ $wtSettingsPaths = @(
 )
 
 $schemesToInject = @'
+    {
+      "name": "Dracula",
+      "background": "#282A36",
+      "foreground": "#F8F8F2",
+      "cursorColor": "#F8F8F2",
+      "selectionBackground": "#44475A",
+      "black": "#21222C",
+      "red": "#FF5555",
+      "green": "#50FA7B",
+      "yellow": "#F1FA8C",
+      "blue": "#BD93F9",
+      "purple": "#FF79C6",
+      "cyan": "#8BE9FD",
+      "white": "#F8F8F2",
+      "brightBlack": "#6272A4",
+      "brightRed": "#FF6E6E",
+      "brightGreen": "#69FF94",
+      "brightYellow": "#FFFFA5",
+      "brightBlue": "#D6ACFF",
+      "brightPurple": "#FF92DF",
+      "brightCyan": "#A4FFFF",
+      "brightWhite": "#FFFFFF"
+    },
     {
       "name": "Catppuccin Mocha",
       "background": "#1E1E2E",
@@ -332,6 +391,8 @@ foreach ($wtPath in $wtSettingsPaths) {
             $raw = Get-Content $wtPath -Raw -Encoding utf8
             if ($raw -notmatch '"Catppuccin Mocha"' -and $raw -match '("schemes"\s*:\s*\[)') {
                 $raw = $raw -replace '("schemes"\s*:\s*\[)', "`$1`n$schemesToInject,"
+            } elseif ($raw -notmatch '"Dracula"' -and $raw -match '("schemes"\s*:\s*\[)') {
+                $raw = $raw -replace '("schemes"\s*:\s*\[)', "`$1`n$schemesToInject,"
             }
             $themeToWtScheme = @{
                 'catppuccin-mocha'      = 'Catppuccin Mocha'
@@ -344,7 +405,7 @@ foreach ($wtPath in $wtSettingsPaths) {
                 'atomic'                = 'Catppuccin Mocha'
                 'agnoster'              = 'Tokyo Night'
                 'powerlevel10k_rainbow' = 'Catppuccin Mocha'
-                'dracula'               = 'Tokyo Night'
+                'dracula'               = 'Dracula'
                 'paradox'               = 'Catppuccin Mocha'
                 'half-life'             = 'Tokyo Night'
                 'robbyrussell'          = 'Catppuccin Mocha'
@@ -358,19 +419,53 @@ foreach ($wtPath in $wtSettingsPaths) {
                 $null
             }
 
-            if ($targetScheme -and $raw -match '("colorScheme"\s*:\s*)"[^"]*"') {
-                $raw = $raw -replace '("colorScheme"\s*:\s*)"[^"]*"', "`$1`"$targetScheme`""
-            } elseif ($raw -notmatch '"colorScheme"' -and $raw -match '("defaults"\s*:\s*\{)') {
-                $defaultScheme = if ($targetScheme) { $targetScheme } else { "Catppuccin Mocha" }
-                $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"colorScheme`": `"$defaultScheme`","
-            }
-            if ($raw -notmatch '"face"\s*:\s*"CaskaydiaCove NF"' -and $raw -match '("defaults"\s*:\s*\{)') {
-                $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"font`": { `"face`": `"CaskaydiaCove NF`" },"
-            }
-            if ($raw -match '"bellStyle"\s*:\s*"[^"]*"') {
-                $raw = $raw -replace '("bellStyle"\s*:\s*)"[^"]*"', '$1"none"'
-            } elseif ($raw -match '("defaults"\s*:\s*\{)') {
-                $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"bellStyle`": `"none`","
+            # Safely target profiles.defaults block without mutating custom profiles (e.g. WSL, CMD)
+            try {
+                $jsonObj = $raw | ConvertFrom-Json
+                if ($jsonObj.profiles.defaults) {
+                    if ($targetScheme) {
+                        $jsonObj.profiles.defaults.colorScheme = $targetScheme
+                    }
+                    if (-not $jsonObj.profiles.defaults.font -or $jsonObj.profiles.defaults.font.face -ne 'CaskaydiaCove NF') {
+                        $jsonObj.profiles.defaults.font = [pscustomobject]@{ face = 'CaskaydiaCove NF' }
+                    }
+                    $jsonObj.profiles.defaults.bellStyle = 'none'
+                    $raw = $jsonObj | ConvertTo-Json -Depth 10
+                }
+            } catch {
+                if ($raw -match '("defaults"\s*:\s*\{[\s\S]*?\n\s*\})(?=\s*,\s*("list"|\}))') {
+                    $defaultsBlock = $Matches[1]
+                    $updatedDefaults = $defaultsBlock
+
+                    if ($targetScheme) {
+                        if ($updatedDefaults -match '("colorScheme"\s*:\s*)"[^"]*"') {
+                            $updatedDefaults = [regex]::new('("colorScheme"\s*:\s*)"[^"]*"').Replace($updatedDefaults, "`$1`"$targetScheme`"", 1)
+                        } else {
+                            $updatedDefaults = $updatedDefaults -replace '("defaults"\s*:\s*\{)', "`$1`n      `"colorScheme`": `"$targetScheme`","
+                        }
+                    }
+
+                    if ($updatedDefaults -notmatch '"face"\s*:\s*"CaskaydiaCove NF"') {
+                        if ($updatedDefaults -match '("font"\s*:\s*\{[\s\S]*?\})') {
+                            $fontBlock = $Matches[1]
+                            $newFontBlock = $fontBlock -replace '("face"\s*:\s*)"[^"]*"', '$1"CaskaydiaCove NF"'
+                            if ($fontBlock -notmatch '"face"') {
+                                $newFontBlock = $fontBlock -replace '("font"\s*:\s*\{)', '$1`n        "face": "CaskaydiaCove NF",'
+                            }
+                            $updatedDefaults = $updatedDefaults.Replace($fontBlock, $newFontBlock)
+                        } else {
+                            $updatedDefaults = $updatedDefaults -replace '("defaults"\s*:\s*\{)', "`$1`n      `"font`": { `"face`": `"CaskaydiaCove NF`" },"
+                        }
+                    }
+
+                    if ($updatedDefaults -match '("bellStyle"\s*:\s*)"[^"]*"') {
+                        $updatedDefaults = [regex]::new('("bellStyle"\s*:\s*)"[^"]*"').Replace($updatedDefaults, '$1"none"', 1)
+                    } else {
+                        $updatedDefaults = $updatedDefaults -replace '("defaults"\s*:\s*\{)', "`$1`n      `"bellStyle`": `"none`","
+                    }
+
+                    $raw = $raw.Replace($defaultsBlock, $updatedDefaults)
+                }
             }
 
             # Set PowerShell 7 as defaultProfile in Windows Terminal

@@ -5,14 +5,6 @@
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Prioritize direct Dart SDK binary over dart.bat wrapper for 30x faster prompt rendering
-$flutterDartSdk = Join-Path $HOME "flutter\bin\cache\dart-sdk\bin"
-if (Test-Path $flutterDartSdk) {
-    if ($env:PATH -notlike "*$flutterDartSdk*") {
-        $env:PATH = "$flutterDartSdk;$env:PATH"
-    }
-}
-
 # 1. Starship Prompt Engine
 if (Get-Command starship -ErrorAction SilentlyContinue) {
     $starshipConfigPath = Join-Path $HOME ".config\starship.toml"
@@ -63,8 +55,7 @@ function script:Set-NirmanaConfig {
 }
 
 # 3. PSReadLine (Modern Autocomplete & Predictive IntelliSense)
-if (Get-Module -ListAvailable PSReadLine) {
-    Import-Module PSReadLine
+if ((Get-Module -Name PSReadLine -ErrorAction SilentlyContinue) -or (Import-Module PSReadLine -ErrorAction SilentlyContinue)) {
 
     # Disable audio bell chime on backspace at beginning of line
     Set-PSReadLineOption -BellStyle None
@@ -183,8 +174,18 @@ function global:nirmana-shell {
             }
         }
         'doctor' {
-            $tools = @('pwsh', 'starship', 'zoxide', 'eza', 'fzf', 'delta', 'fd', 'rg')
-            $w = 70
+            $toolDefinitions = [ordered]@{
+                'pwsh'     = @{ Id = 'Microsoft.PowerShell'; Source = 'winget'; Name = 'PowerShell 7' }
+                'starship' = @{ Id = 'Starship.Starship'; Source = 'winget'; Name = 'Starship Prompt' }
+                'zoxide'   = @{ Id = 'ajeetdsouza.zoxide'; Source = 'winget'; Name = 'Zoxide Jump' }
+                'eza'      = @{ Id = 'eza-community.eza'; Source = 'winget'; Name = 'Eza File Lister' }
+                'fzf'      = @{ Id = 'junegunn.fzf'; Source = 'winget'; Name = 'FZF Fuzzy Finder' }
+                'delta'    = @{ Id = 'dandavison.delta'; Source = 'winget'; Name = 'Git Delta Pager' }
+                'fd'       = @{ Id = 'sharkdp.fd'; Source = 'winget'; Name = 'FD File Search' }
+                'rg'       = @{ Id = 'BurntSushi.ripgrep.MSVC'; Source = 'winget'; Name = 'Ripgrep Text Search' }
+            }
+
+            $w = 72
             $line = '─' * ($w - 2)
             $title = "NIRMANA HEALTH CHECK (v$version)"
             $padTotal = $w - 2 - $title.Length
@@ -194,10 +195,14 @@ function global:nirmana-shell {
             Write-Host "╭$line╮" -ForegroundColor Cyan
             Write-Host ("│" + (' ' * $padLeft) + $title + (' ' * $padRight) + "│") -ForegroundColor Cyan
             Write-Host "├$line┤" -ForegroundColor Cyan
-            foreach ($t in $tools) {
-                $found = Get-Command $t -ErrorAction SilentlyContinue
+
+            $missingTools = @()
+            foreach ($entry in $toolDefinitions.GetEnumerator()) {
+                $cmdName = $entry.Key
+                $info = $entry.Value
+                $found = Get-Command $cmdName -ErrorAction SilentlyContinue
                 if ($found) {
-                    $label = "  [+] " + $t.PadRight(10)
+                    $label = "  [+] " + $cmdName.PadRight(10)
                     $rem = $w - 2 - $label.Length - 1 - $found.Source.Length
                     if ($rem -lt 0) {
                         $truncated = "..." + $found.Source.Substring($found.Source.Length - ($w - 2 - $label.Length - 4))
@@ -206,12 +211,113 @@ function global:nirmana-shell {
                         Write-Host ("│" + $label + $found.Source + (' ' * $rem) + "│") -ForegroundColor Green
                     }
                 } else {
-                    $label = "  [-] " + $t.PadRight(10) + "Not found in PATH"
+                    $label = "  [-] " + $cmdName.PadRight(10) + "Not found in PATH"
                     $rem = $w - 2 - $label.Length
                     Write-Host ("│" + $label + (' ' * [math]::Max(0, $rem)) + "│") -ForegroundColor Red
+                    $missingTools += $info
                 }
             }
+
+            # Check Nerd Font
+            $fontDirs = @(
+                "$env:LOCALAPPDATA\Microsoft\Windows\Fonts",
+                "$env:WINDIR\Fonts"
+            )
+            $fontFound = $false
+            foreach ($d in $fontDirs) {
+                if (Test-Path $d) {
+                    $ff = Get-ChildItem -Path $d -Filter "*Caskaydia*Nerd*.ttf" -ErrorAction SilentlyContinue
+                    if (-not $ff) { $ff = Get-ChildItem -Path $d -Filter "*Caskaydia*NF*.ttf" -ErrorAction SilentlyContinue }
+                    if ($ff) { $fontFound = $true; break }
+                }
+            }
+
+            if ($fontFound) {
+                $fontLabel = "  [+] Font      CaskaydiaCove NF installed"
+                $fontRem = $w - 2 - $fontLabel.Length
+                Write-Host ("│" + $fontLabel + (' ' * [math]::Max(0, $fontRem)) + "│") -ForegroundColor Green
+            } else {
+                $fontLabel = "  [-] Font      CaskaydiaCove NF missing"
+                $fontRem = $w - 2 - $fontLabel.Length
+                Write-Host ("│" + $fontLabel + (' ' * [math]::Max(0, $fontRem)) + "│") -ForegroundColor Yellow
+            }
+
             Write-Host "╰$line╯" -ForegroundColor Cyan
+            Write-Host ""
+
+            if ($Argument -eq '--fix') {
+                if ($missingTools.Count -eq 0 -and $fontFound) {
+                    Write-Host "All CLI tools and fonts are already installed and healthy." -ForegroundColor Green
+                } else {
+                    Write-Host "Self-Healing: Installing missing components via WinGet..." -ForegroundColor Cyan
+                    foreach ($m in $missingTools) {
+                        Write-Host "--> Installing $($m.Name) ($($m.Id))..." -ForegroundColor Yellow
+                        winget install --id $m.Id --source $m.Source --accept-source-agreements --accept-package-agreements --silent
+                    }
+                    if (-not $fontFound) {
+                        Write-Host "--> Installing CaskaydiaCove Nerd Font..." -ForegroundColor Yellow
+                        winget install --id ryanoasis.CaskaydiaCove --source winget-font --accept-source-agreements --accept-package-agreements --silent
+                    }
+                    Write-Host "`nSelf-healing complete. Please restart your terminal or run 'nirmana reload'." -ForegroundColor Green
+                }
+            } elseif ($missingTools.Count -gt 0 -or -not $fontFound) {
+                Write-Host "Tip: Run 'nirmana doctor --fix' to automatically install missing tools and fonts." -ForegroundColor Yellow
+                Write-Host ""
+            }
+        }
+        'benchmark' {
+            Write-Host ""
+            Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Cyan
+            Write-Host "│                NIRMANA STARTUP BENCHMARK                    │" -ForegroundColor Cyan
+            Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor Cyan
+
+            $benchmarks = [ordered]@{}
+
+            # 1. Starship init
+            $benchmarks['Starship Prompt'] = (Measure-Command {
+                if (Get-Command starship -ErrorAction SilentlyContinue) {
+                    & starship init powershell | Out-Null
+                }
+            }).TotalMilliseconds
+
+            # 2. PSReadLine
+            $benchmarks['PSReadLine Setup'] = (Measure-Command {
+                Get-PSReadLineOption | Out-Null
+            }).TotalMilliseconds
+
+            # 3. Zoxide init
+            $benchmarks['Zoxide Navigation'] = (Measure-Command {
+                if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+                    & zoxide init powershell | Out-Null
+                }
+            }).TotalMilliseconds
+
+            # 4. Settings read
+            $benchmarks['Settings JSON'] = (Measure-Command {
+                $cfgPath = Join-Path $HOME ".config\nirmana\settings.json"
+                if (Test-Path $cfgPath) { Get-Content $cfgPath -Raw | Out-Null }
+            }).TotalMilliseconds
+
+            # 5. User custom profile
+            $benchmarks['User Custom (custom.ps1)'] = (Measure-Command {
+                $cPath = Join-Path $HOME ".config\nirmana\custom.ps1"
+                if (Test-Path $cPath) { Get-Content $cPath -Raw | Out-Null }
+            }).TotalMilliseconds
+
+            $totalMs = 0
+            foreach ($entry in $benchmarks.GetEnumerator()) {
+                $ms = [math]::Round($entry.Value, 1)
+                $totalMs += $ms
+                $color = if ($ms -lt 30) { "Green" } elseif ($ms -lt 80) { "Yellow" } else { "Red" }
+                $label = "  " + $entry.Key.PadRight(28)
+                $valStr = "$ms ms".PadLeft(10)
+                Write-Host "│ $label $valStr │" -ForegroundColor $color
+            }
+
+            $totalRounded = [math]::Round($totalMs, 1)
+            Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor Cyan
+            Write-Host "│  Estimated Profile Overhead: $($("$totalRounded ms").PadLeft(32))│" -ForegroundColor White
+            Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Cyan
             Write-Host ""
         }
         'reload' {
@@ -228,6 +334,54 @@ function global:nirmana-shell {
             Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Green
             Write-Host ""
         }
+        'uninstall' {
+            Write-Host ""
+            Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Red
+            Write-Host "│              NIRMANA-SHELL UNINSTALLATION                   │" -ForegroundColor Red
+            Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Red
+            Write-Host "This will:" -ForegroundColor Yellow
+            Write-Host "  1. Restore your original PowerShell profile (from .orig or .bak)"
+            Write-Host "  2. Remove ~/.nirmana-shell directory"
+            Write-Host "  3. Remove ~/.config/nirmana directory"
+            Write-Host ""
+            $confirm = Read-Host "Are you sure you want to uninstall Nirmana-Shell? (y/N)"
+            if ($confirm -match '^[Yy]$') {
+                $docsFolder = [Environment]::GetFolderPath('MyDocuments')
+                $ps7ProfilePath = Join-Path $docsFolder "PowerShell\Microsoft.PowerShell_profile.ps1"
+                $origBackup = "$ps7ProfilePath.orig"
+                $bakBackup = "$ps7ProfilePath.bak"
+
+                if (Test-Path $origBackup) {
+                    Copy-Item $origBackup $ps7ProfilePath -Force
+                    Remove-Item $origBackup, $bakBackup -Force -ErrorAction SilentlyContinue
+                    Write-Host "--> Restored original profile from $origBackup." -ForegroundColor Green
+                } elseif (Test-Path $bakBackup) {
+                    Copy-Item $bakBackup $ps7ProfilePath -Force
+                    Remove-Item $bakBackup -Force -ErrorAction SilentlyContinue
+                    Write-Host "--> Restored profile from $bakBackup." -ForegroundColor Green
+                } else {
+                    Remove-Item $ps7ProfilePath -Force -ErrorAction SilentlyContinue
+                    Write-Host "--> Nirmana profile removed." -ForegroundColor Green
+                }
+
+                $nirmanaHome = Join-Path $HOME ".nirmana-shell"
+                if (Test-Path $nirmanaHome) {
+                    Remove-Item $nirmanaHome -Recurse -Force -ErrorAction SilentlyContinue
+                    Write-Host "--> Removed $nirmanaHome." -ForegroundColor Green
+                }
+
+                $nirmanaCfg = Join-Path $HOME ".config\nirmana"
+                if (Test-Path $nirmanaCfg) {
+                    Remove-Item $nirmanaCfg -Recurse -Force -ErrorAction SilentlyContinue
+                    Write-Host "--> Removed $nirmanaCfg." -ForegroundColor Green
+                }
+
+                Write-Host "`nNirmana-Shell has been completely uninstalled." -ForegroundColor Green
+                Write-Host "Please restart your terminal." -ForegroundColor White
+            } else {
+                Write-Host "Uninstallation cancelled." -ForegroundColor Yellow
+            }
+        }
         default {
             Write-Host ""
             Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Cyan
@@ -236,11 +390,13 @@ function global:nirmana-shell {
             Write-Host "│  Usage: nirmana <command> [arguments]                       │" -ForegroundColor White
             Write-Host "│                                                             │" -ForegroundColor White
             Write-Host "│  Commands:                                                  │" -ForegroundColor Yellow
-            Write-Host "│    theme [name]   Switch theme with top-preview TUI         │" -ForegroundColor White
-            Write-Host "│    version        Display version and system information    │" -ForegroundColor White
-            Write-Host "│    update         Update Nirmana-Shell from GitHub          │" -ForegroundColor White
-            Write-Host "│    doctor         Verify health and PATH of all CLI tools   │" -ForegroundColor White
-            Write-Host "│    reload         Reload PowerShell 7 profile               │" -ForegroundColor White
+            Write-Host "│    theme [name]     Switch theme with top-preview TUI       │" -ForegroundColor White
+            Write-Host "│    version          Display version and system info         │" -ForegroundColor White
+            Write-Host "│    update           Update Nirmana-Shell from GitHub        │" -ForegroundColor White
+            Write-Host "│    doctor [--fix]   Verify and self-heal CLI dependencies   │" -ForegroundColor White
+            Write-Host "│    benchmark        Profile shell startup latency           │" -ForegroundColor White
+            Write-Host "│    reload           Reload PowerShell 7 profile             │" -ForegroundColor White
+            Write-Host "│    uninstall        Cleanly remove Nirmana & restore backup │" -ForegroundColor White
             Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Cyan
             Write-Host ""
         }
@@ -251,10 +407,14 @@ Set-Alias -Name nirmana -Value nirmana-shell -Option AllScope -Scope Global -For
 # Argument completer for nirmana-shell
 Register-ArgumentCompleter -Native -CommandName 'nirmana-shell', 'nirmana' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
-    $subcommands = @('theme', 'version', 'update', 'doctor', 'reload')
+    $subcommands = @('theme', 'version', 'update', 'doctor', 'benchmark', 'reload', 'uninstall')
     $elements = $commandAst.CommandElements
     if ($elements.Count -eq 2) {
         $subcommands | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+    } elseif ($elements.Count -eq 3 -and $elements[1].Value -eq 'doctor') {
+        @('--fix') | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
             [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
         }
     } elseif ($elements.Count -eq 3 -and $elements[1].Value -eq 'theme') {
@@ -275,5 +435,9 @@ Register-ArgumentCompleter -Native -CommandName 'nirmana-shell', 'nirmana' -Scri
 # 7. Optional User Custom Extensions (~/.config/nirmana/custom.ps1)
 $userCustomProfile = Join-Path $HOME ".config\nirmana\custom.ps1"
 if (Test-Path $userCustomProfile) {
-    . $userCustomProfile
+    try {
+        . $userCustomProfile
+    } catch {
+        Write-Warning "[Nirmana-Shell] Error loading custom extensions (~/.config/nirmana/custom.ps1): $($_.Exception.Message)"
+    }
 }

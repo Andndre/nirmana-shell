@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-09-16
+
+### Added
+
+- **Self-Healing CLI (`nirmana doctor --fix`)**: Added `--fix` flag to automatically install missing CLI dependencies (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`, `rg`) and Cascadia Code Nerd Font via WinGet.
+- **Shell Startup Benchmark (`nirmana benchmark`)**: Added a profiling command that measures and displays sub-second latency across Starship initialization, PSReadLine configuration, Zoxide, settings deserialization, and user custom extensions.
+- **Clean Uninstallation Suite (`nirmana uninstall`)**: Added an interactive rollback command to restore original PowerShell profiles from `.orig` backup and cleanly purge Nirmana runtime and configuration directories.
+- **Automated Cascadia Code Nerd Font Provisioning**: Added `ryanoasis.CaskaydiaCove` from the `winget-font` source to `setup.ps1` with smart local font directory inspection.
+- **Dedicated Dracula Terminal Color Scheme**: Added authentic Dracula palette (`#282A36` background) to Windows Terminal schemes injection and mapped it to the `dracula` theme.
+- **Immutable Profile Preservation (`.orig`)**: `setup.ps1` now preserves pre-existing user profiles into `Microsoft.PowerShell_profile.ps1.orig` upon first run, ensuring pristine user configurations are never overwritten on subsequent updates.
+
+### Fixed
+
+- **Windows Terminal Scheme Clobbering**: Scoped Windows Terminal color scheme updates strictly to `profiles.defaults` in both `setup.ps1` and `switch-theme.ps1`, preventing unintentional mutation of independent profiles (WSL, Command Prompt).
+- **Missing Ripgrep in Setup Toolchain**: Added `BurntSushi.ripgrep.MSVC` to WinGet installation list in `setup.ps1`, resolving `[-] rg Not found in PATH` in `nirmana doctor`.
+- **PSReadLine Startup Latency**: Replaced disk-scanning `Get-Module -ListAvailable PSReadLine` with in-memory module validation, shaving 50-150ms from shell startup.
+- **Profile Environment Leak**: Removed developer-specific Flutter Dart SDK path check (`$HOME\flutter\bin\cache\dart-sdk\bin`) from profile.
+- **User Extension Error Boundary**: Wrapped user custom script (`custom.ps1`) execution in `try / catch` to isolate personal script syntax errors from breaking the core shell environment.
+
 ## [1.0.5] - 2026-09-15
 
 ### Added
