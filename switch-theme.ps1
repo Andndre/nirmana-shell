@@ -49,32 +49,34 @@ function Ensure-Previews ([switch]$Force) {
         if (!(Test-Path $previewDir)) { New-Item -ItemType Directory -Path $previewDir -Force | Out-Null }
         $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
         $esc = [char]27
+        $origConfig = $env:STARSHIP_CONFIG
 
-        $customMeta = @{
-            'nirmana'               = 'Signature theme with geometric accents & cyan/purple highlights'
-            'catppuccin-mocha'      = 'Soothing pastel aesthetic based on Catppuccin Mocha'
-            'tokyo-night'           = 'Cyberpunk dark theme inspired by Tokyo Night palette'
-            'minimal-emerald'       = 'Distraction-free minimalist prompt with emerald green accents'
-            'jetpack'               = 'Futuristic geometric prompt with unicode accents (Windows-adapted)'
-            'bubbles'               = 'Rounded capsule segments with deep indigo & vibrant accents (Bubble style)'
-            'jandedobbeleer'        = 'Signature powerline chevron theme with pink & yellow accents'
-            'atomic'                = 'Two-line rounded pill segments with warm orange/yellow highlights'
-            'agnoster'              = 'Classic legendary powerline chevron arrow theme'
-            'powerlevel10k_rainbow' = 'Iconic multi-color powerline rainbow theme (Powerlevel10k style)'
-            'dracula'               = 'Official Dracula gothic pastel palette with rounded capsules'
-            'paradox'               = 'Vibrant classic chevron theme with sky blue directory'
-            'half-life'             = 'Cyberpunk lambda prompt with electric green & orange accents'
-            'robbyrussell'          = 'Legendary minimal arrow prompt with colored git & runtime status'
-            'spaceship'             = 'Cosmic developer prompt with rocket execution symbol'
-            'clean-detailed'        = 'Modern two-line prompt with bracketed status segments'
-        }
+        try {
+            $customMeta = @{
+                'nirmana'               = 'Signature theme with geometric accents & cyan/purple highlights'
+                'catppuccin-mocha'      = 'Soothing pastel aesthetic based on Catppuccin Mocha'
+                'tokyo-night'           = 'Cyberpunk dark theme inspired by Tokyo Night palette'
+                'minimal-emerald'       = 'Distraction-free minimalist prompt with emerald green accents'
+                'jetpack'               = 'Futuristic geometric prompt with unicode accents (Windows-adapted)'
+                'bubbles'               = 'Rounded capsule segments with deep indigo & vibrant accents (Bubble style)'
+                'jandedobbeleer'        = 'Signature powerline chevron theme with pink & yellow accents'
+                'atomic'                = 'Two-line rounded pill segments with warm orange/yellow highlights'
+                'agnoster'              = 'Classic legendary powerline chevron arrow theme'
+                'powerlevel10k_rainbow' = 'Iconic multi-color powerline rainbow theme (Powerlevel10k style)'
+                'dracula'               = 'Official Dracula gothic pastel palette with rounded capsules'
+                'paradox'               = 'Vibrant classic chevron theme with sky blue directory'
+                'half-life'             = 'Cyberpunk lambda prompt with electric green & orange accents'
+                'robbyrussell'          = 'Legendary minimal arrow prompt with colored git & runtime status'
+                'spaceship'             = 'Cosmic developer prompt with rocket execution symbol'
+                'clean-detailed'        = 'Modern two-line prompt with bracketed status segments'
+            }
 
-        foreach ($c in $customThemes) {
-            $desc = if ($customMeta.ContainsKey($c)) { $customMeta[$c] } else { 'Custom Starship theme' }
-            $cfg = Join-Path $themesDir "$c.toml"
-            $env:STARSHIP_CONFIG = $cfg
-            $rendered = & starship prompt --path $scriptDir --status 0
-            $content = @"
+            foreach ($c in $customThemes) {
+                $desc = if ($customMeta.ContainsKey($c)) { $customMeta[$c] } else { 'Custom Starship theme' }
+                $cfg = Join-Path $themesDir "$c.toml"
+                $env:STARSHIP_CONFIG = $cfg
+                $rendered = & starship prompt --path $scriptDir --status 0
+                $content = @"
 
   $esc[1;36mCategory:$esc[0m   $esc[1;37m[Custom]$esc[0m
   $esc[1;36mTheme:$esc[0m      $esc[1;37m$c$esc[0m
@@ -87,16 +89,16 @@ function Ensure-Previews ([switch]$Force) {
   $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
   $esc[0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate$esc[0m
 "@
-            [System.IO.File]::WriteAllText((Join-Path $previewDir "$c.txt"), $content, $utf8NoBom)
-        }
+                [System.IO.File]::WriteAllText((Join-Path $previewDir "$c.txt"), $content, $utf8NoBom)
+            }
 
-        $tempToml = Join-Path $env:TEMP "temp_preset.toml"
-        foreach ($p in $starshipPresets) {
-            try {
-                & starship preset $p > $tempToml
-                $env:STARSHIP_CONFIG = $tempToml
-                $rendered = & starship prompt --path $scriptDir --status 0
-                $content = @"
+            $tempToml = Join-Path $env:TEMP "temp_preset.toml"
+            foreach ($p in $starshipPresets) {
+                try {
+                    & starship preset $p > $tempToml
+                    $env:STARSHIP_CONFIG = $tempToml
+                    $rendered = & starship prompt --path $scriptDir --status 0
+                    $content = @"
 
   $esc[1;34mCategory:$esc[0m   $esc[1;37m[Starship]$esc[0m
   $esc[1;34mPreset:$esc[0m     $esc[1;37m$p$esc[0m $esc[0;90m(Official Starship Preset)$esc[0m
@@ -109,10 +111,17 @@ function Ensure-Previews ([switch]$Force) {
   $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
   $esc[0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate$esc[0m
 "@
-                [System.IO.File]::WriteAllText((Join-Path $previewDir "$p.txt"), $content, $utf8NoBom)
-            } catch {}
+                    [System.IO.File]::WriteAllText((Join-Path $previewDir "$p.txt"), $content, $utf8NoBom)
+                } catch {}
+            }
+            Remove-Item $tempToml -ErrorAction SilentlyContinue
+        } finally {
+            if ($origConfig -and (Test-Path $origConfig)) {
+                $env:STARSHIP_CONFIG = $origConfig
+            } else {
+                Remove-Item Env:\STARSHIP_CONFIG -ErrorAction SilentlyContinue
+            }
         }
-        Remove-Item $tempToml -ErrorAction SilentlyContinue
     }
 }
 
@@ -240,6 +249,7 @@ if ($themeToWtScheme.ContainsKey($cleanThemeName)) {
 if ($isCustom) {
     $sourceTheme = Join-Path $themesDir "$cleanThemeName.toml"
     Copy-Item $sourceTheme $targetConfig -Force
+    $env:STARSHIP_CONFIG = $targetConfig
     Write-Host ""
     Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
     Write-Host "│  Custom Theme Applied: $($cleanThemeName.PadRight(44))│" -ForegroundColor Green
@@ -267,6 +277,7 @@ if ($isCustom) {
     $content = $content -replace "󰏗", ""
     $content = $content -replace "", ""
     Set-Content -Path $targetConfig -Value $content -Encoding utf8
+    $env:STARSHIP_CONFIG = $targetConfig
     
     Write-Host ""
     Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Blue

@@ -15,6 +15,13 @@ if (Test-Path $flutterDartSdk) {
 
 # 1. Starship Prompt Engine
 if (Get-Command starship -ErrorAction SilentlyContinue) {
+    $starshipConfigPath = Join-Path $HOME ".config\starship.toml"
+    if ($env:STARSHIP_CONFIG -and -not (Test-Path $env:STARSHIP_CONFIG)) {
+        Remove-Item Env:\STARSHIP_CONFIG -ErrorAction SilentlyContinue
+    }
+    if (Test-Path $starshipConfigPath) {
+        $env:STARSHIP_CONFIG = $starshipConfigPath
+    }
     Invoke-Expression (&starship init powershell)
 }
 
@@ -142,6 +149,12 @@ function global:nirmana-shell {
             Write-Host ""
         }
         'reload' {
+            $starshipConfigPath = Join-Path $HOME ".config\starship.toml"
+            if (Test-Path $starshipConfigPath) {
+                $env:STARSHIP_CONFIG = $starshipConfigPath
+            } else {
+                Remove-Item Env:\STARSHIP_CONFIG -ErrorAction SilentlyContinue
+            }
             . $PROFILE
             Write-Host ""
             Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
