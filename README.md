@@ -98,6 +98,7 @@ Supports custom themes and official Starship presets:
 
 Usage example:
 ```powershell
+nirmana theme
 nirmana theme bubbles
 nirmana theme robbyrussell
 nirmana theme spaceship
