@@ -41,9 +41,8 @@ GO_DATE_TO_STRFTIME = [
 def convert_go_date_format(go_fmt: str) -> str:
     """Convert Go time reference format to strftime format."""
     res = go_fmt
-    # Handle inline OMP color tags inside time format
-    res = re.sub(r"<#[0-9a-fA-F]{6}>(.*?)</>", r"\1", res)
-    res = re.sub(r"</>", "", res)
+    # Strip any inline OMP tags like <#fff>at</>, <#ffffff>...</>, <b>, etc.
+    res = re.sub(r"<[^>]+>", "", res)
 
     for go_pat, strftime_pat in GO_DATE_TO_STRFTIME:
         res = re.sub(r"\b" + re.escape(go_pat) + r"\b", strftime_pat, res)
@@ -57,37 +56,49 @@ def clean_template_tags(template_str: str, current_bg: Optional[str] = None, pal
 
     palette = palette or {}
 
+    def normalize_color(col: str) -> str:
+        if not col or col == "transparent":
+            return ""
+        if col.startswith("p:"):
+            key = col[2:]
+            col = palette.get(key, key)
+        else:
+            col = palette.get(col, col)
+
+        h = col[1:] if col.startswith("#") else col
+        if len(h) == 3 and all(c in "0123456789abcdefABCDEF" for c in h):
+            return f"#{h[0]*2}{h[1]*2}{h[2]*2}"
+        elif len(h) == 6 and all(c in "0123456789abcdefABCDEF" for c in h):
+            return f"#{h}"
+        return col
+
     def resolve_tag_col(c: str) -> str:
         if c == "background" and current_bg:
             return current_bg
-        if c.startswith("p:"):
-            key = c[2:]
-            return palette.get(key, key)
-        return palette.get(c, c)
+        return normalize_color(c)
 
     def repl_fg_bg(m):
         fg, bg = resolve_tag_col(m.group(1)), resolve_tag_col(m.group(2))
         txt = m.group(3)
         style = []
         if fg and fg != "transparent":
-            style.append(f"fg:#{fg}" if re.match(r"^[0-9a-fA-F]{6}$", fg) else f"fg:{fg}")
+            style.append(f"fg:{fg}")
         if bg and bg != "transparent":
-            style.append(f"bg:#{bg}" if re.match(r"^[0-9a-fA-F]{6}$", bg) else f"bg:{bg}")
+            style.append(f"bg:{bg}")
         return f"[{txt}]({' '.join(style)})" if style else txt
 
     def repl_color(m):
         col = resolve_tag_col(m.group(1))
         txt = m.group(2)
-        if col == "transparent":
+        if not col or col == "transparent":
             return txt
-        c = f"#{col}" if re.match(r"^[0-9a-fA-F]{6}$", col) else col
-        return f"[{txt}]({c})"
+        return f"[{txt}]({col})"
 
     # <#fg,#bg>text</>
     s = re.sub(r"<([^,>]+),([^>]+)>(.*?)</>", repl_fg_bg, template_str)
-    # <#hex>text</>
-    s = re.sub(r"<#?([0-9a-fA-F]{6}|[a-zA-Z0-9_\-:]+)>(.*?)</>", repl_color, s)
-    # Strip remaining XML-like tags
+    # <#hex>text</> or <color_name>text</>
+    s = re.sub(r"<#?([0-9a-fA-F]{3,6}|[a-zA-Z0-9_\-:]+)>(.*?)</>", repl_color, s)
+    # Strip remaining XML-like tags (e.g. <b>, </b>, unclosed <#...>, </>)
     s = re.sub(r"<[^>]+>", "", s)
     return s
 
@@ -142,12 +153,15 @@ class OmpTranspiler:
         # Handle OMP palette prefix "p:color_name"
         if col.startswith("p:"):
             key = col[2:]
-            if key in self.palette:
-                return self.palette[key]
-            return key
-        # Check palette lookup
-        if col in self.palette:
-            return self.palette[col]
+            col = self.palette.get(key, key)
+        elif col in self.palette:
+            col = self.palette[col]
+
+        h = col[1:] if col.startswith("#") else col
+        if len(h) == 3 and all(c in "0123456789abcdefABCDEF" for c in h):
+            return f"#{h[0]*2}{h[1]*2}{h[2]*2}"
+        elif len(h) == 6 and all(c in "0123456789abcdefABCDEF" for c in h):
+            return f"#{h}"
         return col
 
     def build_style(self, fg: Optional[str], bg: Optional[str]) -> str:
@@ -251,7 +265,7 @@ class OmpTranspiler:
         trailing = seg.get("trailing_diamond", "")
         powerline_sym = seg.get("powerline_symbol", "")
         template = seg.get("template", "")
-        options = seg.get("options", {})
+        options = seg.get("options") or seg.get("properties") or {}
 
         leading_fmt = clean_template_tags(leading, current_bg=bg, palette=self.palette)
         trailing_fmt = clean_template_tags(trailing, current_bg=bg, palette=self.palette)
@@ -280,9 +294,15 @@ class OmpTranspiler:
             return "$directory"
 
         elif stype == "git":
-            branch_icon = options.get("branch_icon", " ")
-            if "\ue725" in branch_icon or "\ue725" in template:
-                branch_icon = " "
+            raw_branch_icon = options.get("branch_icon", "")
+            branch_icon = re.sub(r"<[^>]+>", "", raw_branch_icon).strip()
+            if not branch_icon:
+                branch_icon = ""
+            if "\ue725" in raw_branch_icon or "\ue725" in template:
+                branch_icon = ""
+            elif "\ue0a0" in raw_branch_icon or "\ue0a0" in template:
+                branch_icon = ""
+            branch_icon = f"{branch_icon} "
             style_str = self.build_style(fg, bg)
 
             if leading_fmt:
@@ -417,9 +437,13 @@ class OmpTranspiler:
             success_color = fg or "green"
             err_color = "#ef5350"
             for t in seg.get("foreground_templates", []):
-                m = re.search(r"#([0-9a-fA-F]{6})", t)
+                m = re.search(r"#([0-9a-fA-F]{3,6})", t)
                 if m:
-                    err_color = f"#{m.group(1)}"
+                    raw_h = m.group(1)
+                    if len(raw_h) == 3:
+                        err_color = f"#{raw_h[0]*2}{raw_h[1]*2}{raw_h[2]*2}"
+                    else:
+                        err_color = f"#{raw_h}"
 
             self.modules["character"] = {
                 "success_symbol": f"[{sym}](bold {success_color}) ",

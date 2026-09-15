@@ -59,6 +59,5 @@ symbol = "⚡ "
 format = "[⚡ ](#ff0000)"
 
 [shell]
-symbol = " "
 format = "[ $indicator](#ffffff) "
 

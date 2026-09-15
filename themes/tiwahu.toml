@@ -104,6 +104,5 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [shell]
-symbol = " "
 format = "[ $indicator](#007ACC) "
 

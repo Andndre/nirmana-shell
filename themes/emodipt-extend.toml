@@ -30,7 +30,6 @@ time_format = "%H:%M"
 format = "[ $time](#E5C07B) "
 
 [shell]
-symbol = " "
 format = "[ $indicator](#E06C75) "
 
 [git_branch]

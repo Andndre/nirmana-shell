@@ -24,7 +24,6 @@ $character\
 symbol = " "
 
 [shell]
-symbol = " "
 format = "[](fg:p:white)[ $indicator](fg:p:black bg:p:white)[](fg:p:white) "
 
 [username]

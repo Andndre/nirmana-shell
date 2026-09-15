@@ -24,7 +24,6 @@ $character\
 symbol = " "
 
 [shell]
-symbol = " "
 format = "[ $indicator](#007acc) "
 
 [sudo]

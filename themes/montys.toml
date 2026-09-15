@@ -25,7 +25,7 @@ truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[](fg:#FCA17D)[ <#ffffff> </>$branch](fg:#ffffff bg:#FCA17D)"
+format = "[](fg:#FCA17D)[ $branch](fg:#ffffff bg:#FCA17D)"
 
 [git_status]
 format = "([$all_status$ahead_behind](fg:#ffffff bg:#FCA17D)[](fg:#FCA17D) )"

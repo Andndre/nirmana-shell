@@ -62,7 +62,6 @@ min_time = 1
 format = "[ $duration](fg:#d6deeb bg:#575656) "
 
 [shell]
-symbol = " "
 format = "[ $indicator](fg:#011627 bg:#d6deeb) "
 
 [memory_usage]

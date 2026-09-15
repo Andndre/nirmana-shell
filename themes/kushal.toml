@@ -28,7 +28,6 @@ $character\
 symbol = " "
 
 [shell]
-symbol = " "
 format = "[](fg:#00C7FC)[ $indicator](fg:#011627 bg:#00C7FC)[](fg:#00C7FC) "
 
 [sudo]

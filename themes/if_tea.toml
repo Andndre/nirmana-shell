@@ -48,7 +48,6 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [shell]
-symbol = " "
 format = "[ $indicator](fg:#000000 bg:#91f2ff)[](bg:#91f2ff) "
 
 [time]

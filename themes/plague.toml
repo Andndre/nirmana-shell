@@ -46,7 +46,6 @@ symbol = "󰎙 "
 format = "[](fg:#6CA35E)[󰎙 $indicator](fg:#ffffff bg:#6CA35E)[](fg:#6CA35E) "
 
 [shell]
-symbol = " "
 format = "[](fg:#203248)[ $indicator](fg:#ffffff bg:#203248)[](fg:#203248) "
 
 [sudo]

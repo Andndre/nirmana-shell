@@ -91,7 +91,6 @@ success_symbol = "[❯ ](bold #ffffff) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [shell]
-symbol = " "
 format = "[](fg:#0077c2)[ $indicator](fg:#ffffff bg:#0077c2)[](fg:#0077c2) "
 
 [battery]

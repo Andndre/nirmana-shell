@@ -64,6 +64,5 @@ show_always = true
 format = "[](fg:#DC291E)[ $user](fg:#ffffff bg:#DC291E)[](fg:#DC291E) "
 
 [shell]
-symbol = " "
 format = "[](fg:#000000)[ $indicator](fg:#666666 bg:#000000)[](fg:#000000) "
 

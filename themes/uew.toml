@@ -42,16 +42,16 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [shell]
-symbol = " "
+disabled = false
 format = "[ $indicator](#BFA8BF) "
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](#fff) "
+format = "[ $duration](#ffffff) "
 
 [time]
 disabled = false
-time_format = "%A <#fff>at %I:%M %p"
+time_format = "%A at %I:%M %p"
 format = "[ $time](#BBC4B9) "
 
 [sudo]
@@ -61,7 +61,7 @@ format = "[ ](yellow)"
 
 [nodejs]
 symbol = "󰎙 "
-format = "[󰎙 $indicator](#BBC4B9) "
+format = "[󰎙 $version](#BBC4B9) "
 
 [directory]
 format = "[~](#BFA8BF)[ $path](#B6D6F2) "
@@ -70,5 +70,4 @@ truncation_symbol = "…/"
 
 [character]
 success_symbol = "[❯ ](bold #BFA8BF) "
-error_symbol = "[❯ ](bold #ef5350) "
-
+error_symbol = "[❯ ](bold #ffffff) "
