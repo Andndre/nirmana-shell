@@ -1,0 +1,87 @@
+# =====================================================================
+# Tridatu-Shell — Signature Theme (Merah • Putih • Hitam)
+# =====================================================================
+
+scan_timeout = 30
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$php\
+$nodejs\
+$python\
+$cmd_duration\
+$line_break\
+$character"""
+
+# 1. Karakter Prompt (Merah Brahma & Putih Siwa)
+[character]
+success_symbol = "[❯](bold #E03131)"
+error_symbol = "[❯](bold #FFFFFF)"
+
+# 2. Direktori (Aksen Putih Bersih di atas latar gelap)
+[directory]
+truncation_length = 3
+truncation_symbol = "…/"
+style = "bold #F8F9FA"
+read_only = " 󰌾"
+
+# 3. Git Branch (Aksen Merah Bata) & Status (Hitam/Abu Arang & Putih)
+[git_branch]
+symbol = " "
+style = "bold #FA5252"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "bold #CED4DA"
+format = '([\[$all_status$ahead_behind\]]($style) )'
+conflicted = "󰞇 "
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = " "
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+# 4. Durasi Eksekusi
+[cmd_duration]
+min_time = 2_000
+style = "bold #ADB5BD"
+format = "took [$duration]($style) "
+
+# 5. Runtime Bahasa
+[php]
+symbol = " "
+style = "bold #C2255C"
+format = "[$symbol($version )]($style)"
+
+[nodejs]
+symbol = "󰎙 "
+style = "bold #F03E3E"
+format = "[$symbol($version )]($style)"
+
+[python]
+symbol = "󰌠 "
+style = "bold #E9ECEF"
+format = "[$symbol($version )]($style)"
+
+# 6. Modul non-aktif
+[package]
+disabled = true
+[battery]
+disabled = true
+[dotnet]
+disabled = true
+[aws]
+disabled = true
+[gcloud]
+disabled = true
+[azure]
+disabled = true
+[docker_context]
+disabled = true

@@ -1,0 +1,71 @@
+# =====================================================================
+# Tridatu-Shell — Minimal Emerald Theme
+# =====================================================================
+
+scan_timeout = 30
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$php\
+$nodejs\
+$python\
+$cmd_duration\
+$line_break\
+$character"""
+
+[character]
+success_symbol = "[❯](bold #2BD980)"
+error_symbol = "[❯](bold #FF5555)"
+
+[directory]
+truncation_length = 3
+truncation_symbol = "…/"
+style = "bold #5CE1E6"
+read_only = " 󰌾"
+
+[git_branch]
+symbol = " "
+style = "bold #B388FF"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "bold #FFD166"
+format = '([\[$all_status$ahead_behind\]]($style) )'
+
+[cmd_duration]
+min_time = 2_000
+style = "bold #6272A4"
+format = "took [$duration]($style) "
+
+[php]
+symbol = " "
+style = "bold #777BB4"
+format = "[$symbol($version )]($style)"
+
+[nodejs]
+symbol = "󰎙 "
+style = "bold #2BD980"
+format = "[$symbol($version )]($style)"
+
+[python]
+symbol = "󰌠 "
+style = "bold #FFD166"
+format = "[$symbol($version )]($style)"
+
+[package]
+disabled = true
+[battery]
+disabled = true
+[dotnet]
+disabled = true
+[aws]
+disabled = true
+[gcloud]
+disabled = true
+[azure]
+disabled = true
+[docker_context]
+disabled = true
