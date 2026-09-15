@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Nirmana-Shell — Automated Modern Terminal Setup for Windows
+    Nirmana-Shell: Automated Modern Terminal Setup for Windows
 .DESCRIPTION
     Installs modern CLI tools (PowerShell 7, Git, Starship, Zoxide, Eza, FZF, Delta, FD),
     configures optimized PowerShell 7 profile, sets Nirmana signature theme,
@@ -12,7 +12,7 @@
 $ErrorActionPreference = 'Stop'
 
 Write-Host "`n========================================================" -ForegroundColor Cyan
-Write-Host "   NIRMANA-SHELL — MODERN TERMINAL AUTOMATION" -ForegroundColor White
+Write-Host "   NIRMANA-SHELL: MODERN TERMINAL AUTOMATION" -ForegroundColor White
 Write-Host "========================================================`n" -ForegroundColor DarkGray
 
 # 1. Package Installation via WinGet

@@ -1,5 +1,5 @@
 # =====================================================================
-# Nirmana-Shell — PowerShell 7 Profile
+# Nirmana-Shell: PowerShell 7 Profile
 # =====================================================================
 
 # 1. Starship Prompt Engine
@@ -93,9 +93,9 @@ function global:nirmana-shell {
             foreach ($t in $tools) {
                 $found = Get-Command $t -ErrorAction SilentlyContinue
                 if ($found) {
-                    Write-Host " [✓] $t -> $($found.Source)" -ForegroundColor Green
+                    Write-Host " [+] $t -> $($found.Source)" -ForegroundColor Green
                 } else {
-                    Write-Host " [✗] $t -> Not found in PATH" -ForegroundColor Red
+                    Write-Host " [-] $t -> Not found in PATH" -ForegroundColor Red
                 }
             }
             Write-Host ""

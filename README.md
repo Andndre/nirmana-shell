@@ -1,109 +1,108 @@
 # Nirmana-Shell
 
-Automated modern terminal setup for Windows powered by **PowerShell 7**, **Starship**, **PSReadLine**, **Zoxide**, **Eza**, **FZF**, **Delta**, and **FD**.
+PowerShell 7 terminal environment for Windows. Configures Starship prompt, PSReadLine predictive completion, Zoxide directory navigation, Eza file listing, FZF history search, Delta git diffs, and FD.
 
 ---
 
-## Quick Start (One-Command Install)
+## Quick Start
 
-Open PowerShell (*Run as Administrator* recommended), then run:
+Open PowerShell as Administrator, then run:
 
-### Option A: Online Installation (via GitHub)
+### Remote Install
 ```powershell
 irm https://raw.githubusercontent.com/Andndre/nirmana-shell/main/setup.ps1 | iex
 ```
 
-### Option B: Local Installation
-If you have cloned or downloaded this repository directly:
+### Local Install
 ```powershell
+git clone https://github.com/Andndre/nirmana-shell.git
 cd nirmana-shell
 .\setup.ps1
 ```
 
-The installer will automatically:
-1. Install all modern CLI tools via WinGet (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`).
-2. Route Git Pager to `delta` for syntax-highlighted, word-level diffs.
-3. Set up the local environment in `~/.nirmana-shell` and configure the PowerShell 7 profile.
-4. Apply the signature Nirmana theme to Starship.
-5. Silence the audio alert bell when backspacing at the beginning of a line.
-6. Set PowerShell 7 as the default profile in Windows Terminal.
+The script performs the following tasks:
+1. Installs required tools via WinGet (`pwsh`, `git`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`).
+2. Configures Git to use `delta` as the default pager.
+3. Sets up `~/.nirmana-shell` and installs the PowerShell 7 profile.
+4. Sets the default Starship configuration.
+5. Disables the console bell on backspace.
+6. Sets PowerShell 7 as the default profile in Windows Terminal.
 
 ---
 
 ## Prerequisite: Nerd Font
 
-All icons and glyphs in Starship and Eza require a **Nerd Font**.
+Icons used by Starship and Eza require a patched Nerd Font.
 
 1. Install Cascadia Code Nerd Font via WinGet:
    ```cmd
    winget install Microsoft.CascadiaCodeNF
    ```
-2. In **Windows Terminal**: Go to **Settings (Ctrl + ,)** -> **Defaults** -> **Appearance** -> **Font face** -> Select **`CaskaydiaCove NF`**.
+2. In Windows Terminal: Go to **Settings (Ctrl + ,)** > **Defaults** > **Appearance** > **Font face** > Select **`CaskaydiaCove NF`**.
 
 ---
 
-## Features & Keyboard Shortcuts
+## Shortcuts and Commands
 
 | Feature | Shortcut / Command | Description |
 | :--- | :--- | :--- |
-| **Inline Autocomplete** | Gray suggestion text | Fish-like command history predictions ahead of the cursor |
-| **Accept Full Suggestion**| `→` (Right Arrow) / `End` | Accept the entire inline prediction |
-| **Accept Word-by-Word** | `Ctrl + F` | Accept next word of prediction |
-| **Toggle Suggestion View**| `F2` | Switch between *InlineView* (single-line) and *ListView* (dropdown) |
-| **Interactive History** | `Ctrl + R` | Fullscreen fuzzy search of command history via `fzf` |
-| **Menu Completion** | `Tab` | Interactive searchable completion grid for commands and paths |
-| **Smart Directory Jump** | `z <folder>` | Jump to any visited folder across drives instantly |
-| **Interactive Jump** | `zi` | Interactive directory selection menu via `fzf` |
-| **Modern File Listing** | `ls`, `ll`, `la`, `lt` | Fast `eza` replacement with icons, colors, and permissions |
-| **Enhanced Git Diff** | `git diff`, `git show` | Side-by-side or line-numbered syntax-highlighted diffs via `delta` |
-| **Fast File Search** | `fd <filename>` | Blazing fast file finder (ignores `.git` & `node_modules` by default) |
-| **Silent Backspace** | `Backspace` | Zero audio chime / bell beeps |
+| Inline Autocomplete | Gray text | History-based prediction |
+| Accept Suggestion | `Right Arrow` / `End` | Accept full prediction |
+| Accept Word | `Ctrl + F` | Accept next word of prediction |
+| Toggle View | `F2` | Switch between inline and list prediction styles |
+| History Search | `Ctrl + R` | Fullscreen fuzzy history search using `fzf` |
+| Menu Completion | `Tab` | Interactive completion menu |
+| Directory Jump | `z <folder>` | Jump to previously visited directory |
+| Interactive Jump | `zi` | Select directory interactively via `fzf` |
+| File Listing | `ls`, `ll`, `la`, `lt` | Directory listing using `eza` |
+| Git Diffs | `git diff`, `git show` | Syntax-highlighted diffs using `delta` |
+| File Search | `fd <query>` | Fast file search |
+| Console Bell | `Backspace` | Muted; no audio beep |
 
 ---
 
-## `nirmana-shell` CLI Commands
+## CLI Helper: `nirmana-shell`
 
-Once installed, the `nirmana-shell` command (or shorthand alias `nirmana`) is globally available:
+The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 
 | Command | Description |
 | :--- | :--- |
-| `nirmana-shell theme` | Open interactive `fzf` menu to select and apply Starship themes |
-| `nirmana-shell theme <name>` | Switch directly to a specific theme (supports **Tab autocomplete**) |
-| `nirmana-shell doctor` | Check the health of all CLI tools (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`, `rg`) |
-| `nirmana-shell update` | Pull the latest changes and themes from GitHub |
-| `nirmana-shell reload` | Reload the active PowerShell `$PROFILE` in the current session |
+| `nirmana theme` | Open interactive `fzf` picker to switch themes |
+| `nirmana theme <name>` | Apply a specific theme (supports Tab completion) |
+| `nirmana doctor` | Verify PATH and health of all CLI tools |
+| `nirmana update` | Pull latest updates from GitHub |
+| `nirmana reload` | Reload the active PowerShell profile |
 
-### Available Themes & Official Presets:
+### Available Themes and Presets
 
-You can switch to any of Nirmana-Shell's custom-tuned themes or official Starship community presets (from [starship.rs/presets](https://starship.rs/presets/)):
+Supports custom presets and official Starship presets:
 
-* **Custom Tuned Themes**:
-  * `nirmana` — Signature theme with vibrant cyan, amethyst accents, and clean contrast.
-  * `catppuccin-mocha` — Soothing pastel aesthetic.
-  * `tokyo-night` — Dark cyberpunk neon palette.
-  * `minimal-emerald` — Distraction-free emerald green theme.
-* **Official Starship Presets (Dynamic)**:
-  * `bracketed-segments`, `catppuccin-powerline`, `gruvbox-rainbow`, `jetpack`, `nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`, `pastel-powerline`, `plain-text-symbols`, `pure-preset`, `tokyo-night`.
+* **Custom Presets**:
+  * `nirmana`: Default theme with cyan and purple accents
+  * `catppuccin-mocha`: Catppuccin Mocha palette
+  * `tokyo-night`: Tokyo Night palette
+  * `minimal-emerald`: Emerald green accent theme
+* **Official Starship Presets**:
+  * `bracketed-segments`, `catppuccin-powerline`, `gruvbox-rainbow`, `jetpack`, `nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`, `pastel-powerline`, `plain-text-symbols`, `pure-preset`, `tokyo-night`
 
-Example:
+Usage example:
 ```powershell
 nirmana theme gruvbox-rainbow
 nirmana theme nirmana
 ```
-*(Tip: Type `nirmana theme ` and press `Tab` to cycle through all available themes and presets).*
 
 ---
 
-## Repository Structure
+## Repository Layout
 
 ```text
 nirmana-shell/
-├── LICENSE                 # MIT License & third-party acknowledgements
-├── README.md               # Documentation and usage guide
-├── setup.ps1               # Automated one-command installer script
-├── switch-theme.ps1        # Unified theme switcher script
+├── LICENSE                 # MIT license and acknowledgements
+├── README.md               # Documentation
+├── setup.ps1               # Automated installer
+├── switch-theme.ps1        # Theme switcher
 ├── configs/
-│   └── Microsoft.PowerShell_profile.ps1 # Canonical PowerShell 7 profile
+│   └── Microsoft.PowerShell_profile.ps1 # PowerShell 7 profile
 └── themes/
     ├── nirmana.toml
     ├── tokyo-night.toml
@@ -113,25 +112,15 @@ nirmana-shell/
 
 ---
 
-## Sharing with Friends
+## License
 
-Share this single command with anyone on Windows:
+MIT License. See [LICENSE](file:///D:/nirmana-shell/LICENSE) for details.
 
-```powershell
-irm https://raw.githubusercontent.com/Andndre/nirmana-shell/main/setup.ps1 | iex
-```
-
----
-
-## License & Legal Acknowledgements
-
-Nirmana-Shell is open-source under the [MIT License](file:///D:/nirmana-shell/LICENSE).
-
-It utilizes and integrates with the following open-source software under their respective licenses:
-* [Starship](https://starship.rs) — Licensed under the **ISC License** (Copyright © 2019-present, Starship Contributors). Presets are rendered via Starship's official first-party `starship preset` mechanism.
-* [Zoxide](https://github.com/ajeetdsouza/zoxide) — MIT License.
-* [Eza](https://github.com/eza-community/eza) — EUPL-1.2 License.
-* [FZF](https://github.com/junegunn/fzf) — MIT License.
-* [Delta](https://github.com/dandavison/delta) — MIT License.
-* [FD](https://github.com/sharkdp/fd) — MIT / Apache-2.0 License.
-* [PSReadLine](https://github.com/PowerShell/PSReadLine) — MIT License.
+Includes integrations with:
+* Starship (ISC License): https://starship.rs
+* Zoxide (MIT License): https://github.com/ajeetdsouza/zoxide
+* Eza (EUPL-1.2 License): https://github.com/eza-community/eza
+* FZF (MIT License): https://github.com/junegunn/fzf
+* Delta (MIT License): https://github.com/dandavison/delta
+* FD (MIT/Apache-2.0 License): https://github.com/sharkdp/fd
+* PSReadLine (MIT License): https://github.com/PowerShell/PSReadLine

@@ -26,17 +26,17 @@ SOFTWARE.
 
 Nirmana-Shell automates the installation and configuration of the following open-source tools:
 
-* **Starship** — ISC License. Copyright (c) 2019-present, Starship Contributors.
+* **Starship**: ISC License. Copyright (c) 2019-present, Starship Contributors.
   Website: https://starship.rs | GitHub: https://github.com/starship/starship
-* **Zoxide** — MIT License. Copyright (c) 2020-present, Ajeet D'Souza.
+* **Zoxide**: MIT License. Copyright (c) 2020-present, Ajeet D'Souza.
   GitHub: https://github.com/ajeetdsouza/zoxide
-* **Eza** — EUPL-1.2 License. Copyright (c) 2023-present, Eza Community.
+* **Eza**: EUPL-1.2 License. Copyright (c) 2023-present, Eza Community.
   GitHub: https://github.com/eza-community/eza
-* **FZF** — MIT License. Copyright (c) 2013-present, Junegunn Choi.
+* **FZF**: MIT License. Copyright (c) 2013-present, Junegunn Choi.
   GitHub: https://github.com/junegunn/fzf
-* **Delta** — MIT License. Copyright (c) 2019-present, Dan Davison.
+* **Delta**: MIT License. Copyright (c) 2019-present, Dan Davison.
   GitHub: https://github.com/dandavison/delta
-* **FD** — MIT / Apache-2.0 License. Copyright (c) 2017-present, David Peter.
+* **FD**: MIT / Apache-2.0 License. Copyright (c) 2017-present, David Peter.
   GitHub: https://github.com/sharkdp/fd
-* **PSReadLine** — MIT License. Copyright (c) Microsoft Corporation.
+* **PSReadLine**: MIT License. Copyright (c) Microsoft Corporation.
   GitHub: https://github.com/PowerShell/PSReadLine
