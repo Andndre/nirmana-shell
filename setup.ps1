@@ -16,7 +16,7 @@ $setupScriptDir = if ($PSScriptRoot) {
     $null
 }
 $versionFile = if ($setupScriptDir) { Join-Path $setupScriptDir "VERSION" } else { $null }
-$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.7" }
+$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.8" }
 $isLegacyPS = $PSVersionTable.PSVersion.Major -lt 7
 
 Write-Host ""
@@ -496,6 +496,27 @@ foreach ($wtPath in $wtSettingsPaths) {
     }
 }
 
+# 7. In-Session Profile Activation & PATH Refresh
+if (-not $isLegacyPS -and (Test-Path $ps7ProfilePath)) {
+    # Refresh current process PATH from registry (User & Machine) to discover WinGet tools
+    try {
+        $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
+        $machinePath = [System.Environment]::GetEnvironmentVariable("Path", "Machine")
+        $env:Path = "$userPath;$machinePath"
+        $wingetLinks = Join-Path $env:LOCALAPPDATA "Microsoft\WinGet\Links"
+        if ((Test-Path $wingetLinks) -and ($env:Path -split ';' -notcontains $wingetLinks)) {
+            $env:Path = "$wingetLinks;$env:Path"
+        }
+    } catch {}
+
+    # Dot-source the newly installed profile into active session
+    try {
+        . $ps7ProfilePath
+    } catch {
+        Write-Host "Note: Profile could not be automatically loaded into current session ($($_.Exception.Message))." -ForegroundColor DarkGray
+    }
+}
+
 Write-Host ""
 Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
 Write-Host "│            NIRMANA-SHELL INSTALLATION COMPLETE              │" -ForegroundColor Green
@@ -504,9 +525,10 @@ Write-Host "│  Next Steps:                                                │"
 Write-Host "│  1. Ensure a Nerd Font is selected (e.g. CaskaydiaCove NF)  │" -ForegroundColor White
 if ($isLegacyPS) {
 Write-Host "│  2. You are in PS 5.1: Type 'pwsh' to launch PowerShell 7   │" -ForegroundColor Yellow
-} else {
-Write-Host "│  2. Open a new tab in Windows Terminal to use PowerShell 7  │" -ForegroundColor White
-}
 Write-Host "│  3. Type 'nirmana theme' to launch the theme switcher       │" -ForegroundColor White
+} else {
+Write-Host "│  2. Type 'nirmana theme' to launch the theme switcher       │" -ForegroundColor White
+}
 Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Green
 Write-Host ""
+

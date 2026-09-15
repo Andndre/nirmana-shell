@@ -447,10 +447,24 @@ function global:nirmana-shell {
                 }
 
                 # 5. Purge aliases and functions from active in-memory session
-                Remove-Item Alias:nirmana -Force -ErrorAction SilentlyContinue
-                Remove-Item Function:global:nirmana-shell -Force -ErrorAction SilentlyContinue
-                Remove-Item Function:nirmana-shell -Force -ErrorAction SilentlyContinue
-                Remove-Item Function:nirmana -Force -ErrorAction SilentlyContinue
+                Remove-Alias -Name nirmana -Force -Scope Global -ErrorAction SilentlyContinue
+                Remove-Item 'Alias:\nirmana' -Force -ErrorAction SilentlyContinue
+                Remove-Item 'Function:\nirmana-shell' -Force -ErrorAction SilentlyContinue
+                Remove-Item 'Function:\nirmana' -Force -ErrorAction SilentlyContinue
+                Remove-Item 'Alias:\ls', 'Alias:\ll', 'Alias:\la', 'Alias:\lt' -Force -ErrorAction SilentlyContinue
+
+                # Restore original profile if available; otherwise reset prompt to default
+                $restoredProfile = $profilesToCheck | Where-Object { (Test-Path $_) -and ((Get-Content $_ -Raw -ErrorAction SilentlyContinue) -notmatch 'Nirmana-Shell') } | Select-Object -First 1
+                if ($restoredProfile) {
+                    try {
+                        . $restoredProfile
+                        Write-Host "--> Restored profile reloaded into active session." -ForegroundColor Green
+                    } catch {}
+                } else {
+                    function global:prompt {
+                        "PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
+                    }
+                }
 
                 Write-Host ""
                 Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
