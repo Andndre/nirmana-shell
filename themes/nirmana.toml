@@ -10,6 +10,7 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $php\
 $nodejs\
 $bun\
@@ -19,6 +20,9 @@ $package\
 $cmd_duration\
 $line_break\
 $character"""
+
+[fill]
+symbol = " "
 
 # 1. Prompt Character (Vibrant Cyan on success, Vivid Coral on error)
 [character]

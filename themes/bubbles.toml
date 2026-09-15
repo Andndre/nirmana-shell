@@ -10,6 +10,7 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $bun\
 $dart\
 $nodejs\
@@ -18,6 +19,9 @@ $package\
 $cmd_duration\
 $line_break\
 $character"""
+
+[fill]
+symbol = " "
 
 [character]
 success_symbol = "[❯](bold #43CCEA) "
