@@ -74,28 +74,50 @@ The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 
 ### Available Themes and Presets
 
-Supports custom themes and official Starship presets:
+Supports 17 custom themes and 10 official Starship presets. Preview images below are generated directly from the theme definitions.
 
-* **`[Custom]` Themes**:
-  * `nirmana`: Signature theme with cyan and purple accents
-  * `catppuccin-mocha`: Soothing pastel aesthetic based on Catppuccin Mocha
-  * `tokyo-night`: Cyberpunk dark theme inspired by Tokyo Night palette
-  * `minimal-emerald`: Distraction-free minimalist prompt with emerald green accents
-  * `jetpack`: Geometric futuristic prompt with unicode accents (Windows-adapted)
-  * `bubbles`: Rounded capsule segments with deep indigo background and vibrant accents
-  * `jandedobbeleer`: Signature powerline chevron theme with pink and yellow accents
-  * `atomic`: Two-line rounded pill segments with warm orange and yellow highlights
-  * `agnoster`: Classic legendary powerline chevron arrow theme
-  * `powerlevel10k_rainbow`: Iconic multi-color powerline rainbow theme (Powerlevel10k style)
-  * `dracula`: Official Dracula theme palette with rounded capsules and chevrons
-  * `paradox`: Vibrant chevron theme with sky blue directory
-  * `half-life`: Cyberpunk lambda prompt with electric green and orange accents
-  * `robbyrussell`: Legendary minimal arrow prompt with colored git and runtime status
-  * `spaceship`: Cosmic developer prompt with rocket execution symbol
-  * `clean-detailed`: Modern two-line prompt with right-aligned runtime and duration
-  * `takuya`: Craftzdog signature prompt with right-aligned runtime and clock
-* **`[Starship]` Official Presets**:
-  * `bracketed-segments`, `catppuccin-powerline`, `gruvbox-rainbow`, `nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`, `pastel-powerline`, `plain-text-symbols`, `pure-preset`
+<details open>
+<summary><b>Custom Themes Gallery (17 Themes)</b></summary>
+
+| Theme | Preview | Command |
+| :--- | :--- | :--- |
+| **nirmana**<br>_Signature cyan & purple_ | ![nirmana](assets/previews/nirmana.png) | `nirmana theme nirmana` |
+| **catppuccin-mocha**<br>_Pastel aesthetic_ | ![catppuccin-mocha](assets/previews/catppuccin-mocha.png) | `nirmana theme catppuccin-mocha` |
+| **takuya**<br>_Craftzdog capsule & clock_ | ![takuya](assets/previews/takuya.png) | `nirmana theme takuya` |
+| **tokyo-night**<br>_Cyberpunk dark palette_ | ![tokyo-night](assets/previews/tokyo-night.png) | `nirmana theme tokyo-night` |
+| **bubbles**<br>_Indigo capsules & vibrant accents_ | ![bubbles](assets/previews/bubbles.png) | `nirmana theme bubbles` |
+| **powerlevel10k_rainbow**<br>_Multi-color rainbow ribbon_ | ![powerlevel10k_rainbow](assets/previews/powerlevel10k_rainbow.png) | `nirmana theme powerlevel10k_rainbow` |
+| **minimal-emerald**<br>_Emerald green minimalist_ | ![minimal-emerald](assets/previews/minimal-emerald.png) | `nirmana theme minimal-emerald` |
+| **clean-detailed**<br>_Right-aligned runtime & duration_ | ![clean-detailed](assets/previews/clean-detailed.png) | `nirmana theme clean-detailed` |
+| **dracula**<br>_Official Dracula palette_ | ![dracula](assets/previews/dracula.png) | `nirmana theme dracula` |
+| **spaceship**<br>_Cosmic developer prompt_ | ![spaceship](assets/previews/spaceship.png) | `nirmana theme spaceship` |
+| **atomic**<br>_Warm orange & yellow pills_ | ![atomic](assets/previews/atomic.png) | `nirmana theme atomic` |
+| **half-life**<br>_Electric green & orange lambda_ | ![half-life](assets/previews/half-life.png) | `nirmana theme half-life` |
+| **paradox**<br>_Sky blue chevron segments_ | ![paradox](assets/previews/paradox.png) | `nirmana theme paradox` |
+| **jandedobbeleer**<br>_Pink & yellow chevron prompt_ | ![jandedobbeleer](assets/previews/jandedobbeleer.png) | `nirmana theme jandedobbeleer` |
+| **agnoster**<br>_Classic powerline ribbon_ | ![agnoster](assets/previews/agnoster.png) | `nirmana theme agnoster` |
+| **jetpack**<br>_Futuristic geometric single-line_ | ![jetpack](assets/previews/jetpack.png) | `nirmana theme jetpack` |
+| **robbyrussell**<br>_Legendary minimal arrow prompt_ | ![robbyrussell](assets/previews/robbyrussell.png) | `nirmana theme robbyrussell` |
+
+</details>
+
+<details>
+<summary><b>Official Starship Presets (10 Presets)</b></summary>
+
+| Preset | Preview | Command |
+| :--- | :--- | :--- |
+| **catppuccin-powerline** | ![catppuccin-powerline](assets/previews/catppuccin-powerline.png) | `nirmana theme catppuccin-powerline` |
+| **gruvbox-rainbow** | ![gruvbox-rainbow](assets/previews/gruvbox-rainbow.png) | `nirmana theme gruvbox-rainbow` |
+| **pastel-powerline** | ![pastel-powerline](assets/previews/pastel-powerline.png) | `nirmana theme pastel-powerline` |
+| **bracketed-segments** | ![bracketed-segments](assets/previews/bracketed-segments.png) | `nirmana theme bracketed-segments` |
+| **nerd-font-symbols** | ![nerd-font-symbols](assets/previews/nerd-font-symbols.png) | `nirmana theme nerd-font-symbols` |
+| **no-empty-icons** | ![no-empty-icons](assets/previews/no-empty-icons.png) | `nirmana theme no-empty-icons` |
+| **no-nerd-font** | ![no-nerd-font](assets/previews/no-nerd-font.png) | `nirmana theme no-nerd-font` |
+| **no-runtime-versions** | ![no-runtime-versions](assets/previews/no-runtime-versions.png) | `nirmana theme no-runtime-versions` |
+| **plain-text-symbols** | ![plain-text-symbols](assets/previews/plain-text-symbols.png) | `nirmana theme plain-text-symbols` |
+| **pure-preset** | ![pure-preset](assets/previews/pure-preset.png) | `nirmana theme pure-preset` |
+
+</details>
 
 Usage example:
 ```powershell
@@ -118,9 +140,13 @@ nirmana-shell/
 ├── setup.ps1               # Automated installer
 ├── switch-theme.ps1        # Theme switcher with real-time preview
 ├── preview.cmd             # Fast preview helper for FZF TUI
-├── .previews/              # Pre-rendered theme preview cards
+├── .previews/              # Pre-rendered theme preview cards (ANSI text)
+├── assets/
+│   └── previews/           # Pre-rendered PNG cards for documentation
 ├── configs/
 │   └── Microsoft.PowerShell_profile.ps1 # PowerShell 7 profile
+├── scripts/
+│   └── generate-previews.py # Tool to render previews to PNG
 └── themes/                 # 17 custom and adapted Starship themes (*.toml)
 ```
 
