@@ -115,6 +115,122 @@ Supports 18 curated custom themes, 108 ported Oh My Posh community themes, and 1
 
 </details>
 
+<details>
+<summary><b>Ported Oh My Posh Themes (108 Themes - Click to Expand)</b></summary>
+
+| Theme | Preview | Command |
+| :---- | :------ | :------ |
+| **agnoster.minimal** | ![agnoster.minimal](assets/previews/agnoster.minimal.png) | `nirmana theme agnoster.minimal` |
+| **agnosterplus** | ![agnosterplus](assets/previews/agnosterplus.png) | `nirmana theme agnosterplus` |
+| **aliens** | ![aliens](assets/previews/aliens.png) | `nirmana theme aliens` |
+| **amro** | ![amro](assets/previews/amro.png) | `nirmana theme amro` |
+| **atomicBit** | ![atomicBit](assets/previews/atomicBit.png) | `nirmana theme atomicBit` |
+| **avit** | ![avit](assets/previews/avit.png) | `nirmana theme avit` |
+| **blue-owl** | ![blue-owl](assets/previews/blue-owl.png) | `nirmana theme blue-owl` |
+| **blueish** | ![blueish](assets/previews/blueish.png) | `nirmana theme blueish` |
+| **bubblesextra** | ![bubblesextra](assets/previews/bubblesextra.png) | `nirmana theme bubblesextra` |
+| **bubblesline** | ![bubblesline](assets/previews/bubblesline.png) | `nirmana theme bubblesline` |
+| **capr4n** | ![capr4n](assets/previews/capr4n.png) | `nirmana theme capr4n` |
+| **catppuccin** | ![catppuccin](assets/previews/catppuccin.png) | `nirmana theme catppuccin` |
+| **catppuccin_frappe** | ![catppuccin_frappe](assets/previews/catppuccin_frappe.png) | `nirmana theme catppuccin_frappe` |
+| **catppuccin_latte** | ![catppuccin_latte](assets/previews/catppuccin_latte.png) | `nirmana theme catppuccin_latte` |
+| **catppuccin_macchiato** | ![catppuccin_macchiato](assets/previews/catppuccin_macchiato.png) | `nirmana theme catppuccin_macchiato` |
+| **cert** | ![cert](assets/previews/cert.png) | `nirmana theme cert` |
+| **chips** | ![chips](assets/previews/chips.png) | `nirmana theme chips` |
+| **cinnamon** | ![cinnamon](assets/previews/cinnamon.png) | `nirmana theme cinnamon` |
+| **cloud-context** | ![cloud-context](assets/previews/cloud-context.png) | `nirmana theme cloud-context` |
+| **cloud-native-azure** | ![cloud-native-azure](assets/previews/cloud-native-azure.png) | `nirmana theme cloud-native-azure` |
+| **cobalt2** | ![cobalt2](assets/previews/cobalt2.png) | `nirmana theme cobalt2` |
+| **craver** | ![craver](assets/previews/craver.png) | `nirmana theme craver` |
+| **darkblood** | ![darkblood](assets/previews/darkblood.png) | `nirmana theme darkblood` |
+| **di4am0nd** | ![di4am0nd](assets/previews/di4am0nd.png) | `nirmana theme di4am0nd` |
+| **easy-term** | ![easy-term](assets/previews/easy-term.png) | `nirmana theme easy-term` |
+| **emodipt** | ![emodipt](assets/previews/emodipt.png) | `nirmana theme emodipt` |
+| **emodipt-extend** | ![emodipt-extend](assets/previews/emodipt-extend.png) | `nirmana theme emodipt-extend` |
+| **fish** | ![fish](assets/previews/fish.png) | `nirmana theme fish` |
+| **free-ukraine** | ![free-ukraine](assets/previews/free-ukraine.png) | `nirmana theme free-ukraine` |
+| **froczh** | ![froczh](assets/previews/froczh.png) | `nirmana theme froczh` |
+| **gmay** | ![gmay](assets/previews/gmay.png) | `nirmana theme gmay` |
+| **grandpa-style** | ![grandpa-style](assets/previews/grandpa-style.png) | `nirmana theme grandpa-style` |
+| **gruvbox** | ![gruvbox](assets/previews/gruvbox.png) | `nirmana theme gruvbox` |
+| **honukai** | ![honukai](assets/previews/honukai.png) | `nirmana theme honukai` |
+| **hotstick.minimal** | ![hotstick.minimal](assets/previews/hotstick.minimal.png) | `nirmana theme hotstick.minimal` |
+| **hul10** | ![hul10](assets/previews/hul10.png) | `nirmana theme hul10` |
+| **hunk** | ![hunk](assets/previews/hunk.png) | `nirmana theme hunk` |
+| **huvix** | ![huvix](assets/previews/huvix.png) | `nirmana theme huvix` |
+| **if_tea** | ![if_tea](assets/previews/if_tea.png) | `nirmana theme if_tea` |
+| **illusi0n** | ![illusi0n](assets/previews/illusi0n.png) | `nirmana theme illusi0n` |
+| **iterm2** | ![iterm2](assets/previews/iterm2.png) | `nirmana theme iterm2` |
+| **jandedobbeleer-accessible** | ![jandedobbeleer-accessible](assets/previews/jandedobbeleer-accessible.png) | `nirmana theme jandedobbeleer-accessible` |
+| **jblab_2021** | ![jblab_2021](assets/previews/jblab_2021.png) | `nirmana theme jblab_2021` |
+| **jonnychipz** | ![jonnychipz](assets/previews/jonnychipz.png) | `nirmana theme jonnychipz` |
+| **json** | ![json](assets/previews/json.png) | `nirmana theme json` |
+| **jtracey93** | ![jtracey93](assets/previews/jtracey93.png) | `nirmana theme jtracey93` |
+| **jv_sitecorian** | ![jv_sitecorian](assets/previews/jv_sitecorian.png) | `nirmana theme jv_sitecorian` |
+| **kali** | ![kali](assets/previews/kali.png) | `nirmana theme kali` |
+| **kushal** | ![kushal](assets/previews/kushal.png) | `nirmana theme kushal` |
+| **lambda** | ![lambda](assets/previews/lambda.png) | `nirmana theme lambda` |
+| **lambdageneration** | ![lambdageneration](assets/previews/lambdageneration.png) | `nirmana theme lambdageneration` |
+| **larserikfinholt** | ![larserikfinholt](assets/previews/larserikfinholt.png) | `nirmana theme larserikfinholt` |
+| **lightgreen** | ![lightgreen](assets/previews/lightgreen.png) | `nirmana theme lightgreen` |
+| **M365Princess** | ![M365Princess](assets/previews/M365Princess.png) | `nirmana theme M365Princess` |
+| **marcduiker** | ![marcduiker](assets/previews/marcduiker.png) | `nirmana theme marcduiker` |
+| **markbull** | ![markbull](assets/previews/markbull.png) | `nirmana theme markbull` |
+| **material** | ![material](assets/previews/material.png) | `nirmana theme material` |
+| **microverse-power** | ![microverse-power](assets/previews/microverse-power.png) | `nirmana theme microverse-power` |
+| **mojada** | ![mojada](assets/previews/mojada.png) | `nirmana theme mojada` |
+| **montys** | ![montys](assets/previews/montys.png) | `nirmana theme montys` |
+| **mt** | ![mt](assets/previews/mt.png) | `nirmana theme mt` |
+| **multiverse-neon** | ![multiverse-neon](assets/previews/multiverse-neon.png) | `nirmana theme multiverse-neon` |
+| **negligible** | ![negligible](assets/previews/negligible.png) | `nirmana theme negligible` |
+| **neko** | ![neko](assets/previews/neko.png) | `nirmana theme neko` |
+| **night-owl** | ![night-owl](assets/previews/night-owl.png) | `nirmana theme night-owl` |
+| **nordtron** | ![nordtron](assets/previews/nordtron.png) | `nirmana theme nordtron` |
+| **nu4a** | ![nu4a](assets/previews/nu4a.png) | `nirmana theme nu4a` |
+| **onehalf.minimal** | ![onehalf.minimal](assets/previews/onehalf.minimal.png) | `nirmana theme onehalf.minimal` |
+| **pararussel** | ![pararussel](assets/previews/pararussel.png) | `nirmana theme pararussel` |
+| **patriksvensson** | ![patriksvensson](assets/previews/patriksvensson.png) | `nirmana theme patriksvensson` |
+| **peru** | ![peru](assets/previews/peru.png) | `nirmana theme peru` |
+| **pixelrobots** | ![pixelrobots](assets/previews/pixelrobots.png) | `nirmana theme pixelrobots` |
+| **plague** | ![plague](assets/previews/plague.png) | `nirmana theme plague` |
+| **poshmon** | ![poshmon](assets/previews/poshmon.png) | `nirmana theme poshmon` |
+| **powerlevel10k_classic** | ![powerlevel10k_classic](assets/previews/powerlevel10k_classic.png) | `nirmana theme powerlevel10k_classic` |
+| **powerlevel10k_lean** | ![powerlevel10k_lean](assets/previews/powerlevel10k_lean.png) | `nirmana theme powerlevel10k_lean` |
+| **powerlevel10k_modern** | ![powerlevel10k_modern](assets/previews/powerlevel10k_modern.png) | `nirmana theme powerlevel10k_modern` |
+| **powerline** | ![powerline](assets/previews/powerline.png) | `nirmana theme powerline` |
+| **probua.minimal** | ![probua.minimal](assets/previews/probua.minimal.png) | `nirmana theme probua.minimal` |
+| **pure** | ![pure](assets/previews/pure.png) | `nirmana theme pure` |
+| **quick-term** | ![quick-term](assets/previews/quick-term.png) | `nirmana theme quick-term` |
+| **remk** | ![remk](assets/previews/remk.png) | `nirmana theme remk` |
+| **rudolfs-dark** | ![rudolfs-dark](assets/previews/rudolfs-dark.png) | `nirmana theme rudolfs-dark` |
+| **rudolfs-light** | ![rudolfs-light](assets/previews/rudolfs-light.png) | `nirmana theme rudolfs-light` |
+| **sim-web** | ![sim-web](assets/previews/sim-web.png) | `nirmana theme sim-web` |
+| **slim** | ![slim](assets/previews/slim.png) | `nirmana theme slim` |
+| **slimfat** | ![slimfat](assets/previews/slimfat.png) | `nirmana theme slimfat` |
+| **smoothie** | ![smoothie](assets/previews/smoothie.png) | `nirmana theme smoothie` |
+| **sonicboom_dark** | ![sonicboom_dark](assets/previews/sonicboom_dark.png) | `nirmana theme sonicboom_dark` |
+| **sonicboom_light** | ![sonicboom_light](assets/previews/sonicboom_light.png) | `nirmana theme sonicboom_light` |
+| **sorin** | ![sorin](assets/previews/sorin.png) | `nirmana theme sorin` |
+| **space** | ![space](assets/previews/space.png) | `nirmana theme space` |
+| **star** | ![star](assets/previews/star.png) | `nirmana theme star` |
+| **stelbent-compact.minimal** | ![stelbent-compact.minimal](assets/previews/stelbent-compact.minimal.png) | `nirmana theme stelbent-compact.minimal` |
+| **stelbent.minimal** | ![stelbent.minimal](assets/previews/stelbent.minimal.png) | `nirmana theme stelbent.minimal` |
+| **the-unnamed** | ![the-unnamed](assets/previews/the-unnamed.png) | `nirmana theme the-unnamed` |
+| **thecyberden** | ![thecyberden](assets/previews/thecyberden.png) | `nirmana theme thecyberden` |
+| **tiwahu** | ![tiwahu](assets/previews/tiwahu.png) | `nirmana theme tiwahu` |
+| **tokyo** | ![tokyo](assets/previews/tokyo.png) | `nirmana theme tokyo` |
+| **tonybaloney** | ![tonybaloney](assets/previews/tonybaloney.png) | `nirmana theme tonybaloney` |
+| **uew** | ![uew](assets/previews/uew.png) | `nirmana theme uew` |
+| **unicorn** | ![unicorn](assets/previews/unicorn.png) | `nirmana theme unicorn` |
+| **velvet** | ![velvet](assets/previews/velvet.png) | `nirmana theme velvet` |
+| **wholespace** | ![wholespace](assets/previews/wholespace.png) | `nirmana theme wholespace` |
+| **wopian** | ![wopian](assets/previews/wopian.png) | `nirmana theme wopian` |
+| **xtoys** | ![xtoys](assets/previews/xtoys.png) | `nirmana theme xtoys` |
+| **ys** | ![ys](assets/previews/ys.png) | `nirmana theme ys` |
+| **zash** | ![zash](assets/previews/zash.png) | `nirmana theme zash` |
+
+</details>
+
 <details open>
 <summary><b>Official Starship Presets (10 Presets)</b></summary>
 
@@ -142,6 +258,40 @@ nirmana theme bubbles
 nirmana theme robbyrussell
 nirmana theme spaceship
 nirmana theme catppuccin-mocha
+```
+
+---
+
+## Oh My Posh Theme Transpiler (`nirmana import-theme`)
+
+Nirmana-Shell includes a built-in transpiler engine ([convert-omp.py](scripts/convert-omp.py)) that translates Oh My Posh JSON themes (`*.omp.json`) into native, high-performance Starship configurations (`*.toml`).
+
+### Key Capabilities
+
+- **Zero Runtime Overhead:** Enjoy community theme aesthetics on Starship's compiled Rust engine (<10ms latency), eliminating the 50ms - 150ms shell startup latency of Go-based prompt engines on Windows.
+- **Layout Normalization:** Adapts arbitrary block sequences into Nirmana's standard multi-line architecture with dynamic `$fill` right-alignment for execution duration and hardware metrics.
+- **Color & Powerline Preservation:** Accurately maps hex palettes, palette lookups (`p:color`), diamond capsules (``/``), and powerline chevrons (``/``).
+- **Automated Visual Previews:** Automatically generates both ANSI TUI preview cards (`.previews/`) and high-resolution rasterized PNG cards (`assets/previews/`) upon import.
+
+### How to Import
+
+Import any Oh My Posh theme using the `nirmana import-theme` command:
+
+```powershell
+# 1. Import by shorthand name directly from the official Oh My Posh repository
+nirmana import-theme quick-term
+
+# 2. Import from a custom remote URL (e.g. GitHub raw) with an optional custom name
+nirmana import-theme https://raw.githubusercontent.com/.../custom.omp.json my-theme
+
+# 3. Import from a local file
+nirmana import-theme .\my-theme.omp.json
+```
+
+Alternatively, run the transpiler script directly via `uv`:
+
+```powershell
+uv run python scripts/convert-omp.py quick-term --output themes/quick-term.toml
 ```
 
 ---
