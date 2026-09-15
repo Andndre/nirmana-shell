@@ -5,6 +5,14 @@
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
+# Prioritize direct Dart SDK binary over dart.bat wrapper for 30x faster prompt rendering
+$flutterDartSdk = Join-Path $HOME "flutter\bin\cache\dart-sdk\bin"
+if (Test-Path $flutterDartSdk) {
+    if ($env:PATH -notlike "*$flutterDartSdk*") {
+        $env:PATH = "$flutterDartSdk;$env:PATH"
+    }
+}
+
 # 1. Starship Prompt Engine
 if (Get-Command starship -ErrorAction SilentlyContinue) {
     Invoke-Expression (&starship init powershell)

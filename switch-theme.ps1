@@ -177,12 +177,15 @@ if ($isCustom) {
 } elseif ($isOfficial) {
     & starship preset $cleanThemeName -o $targetConfig -f
     
-    # Ensure scan_timeout = 30 is present for Windows NTFS performance
+    # Ensure scan_timeout = 30 and command_timeout = 1000 are present for Windows NTFS performance
     $content = Get-Content $targetConfig -Raw -Encoding utf8
     if ($content -notmatch 'scan_timeout\s*=') {
         $content = "scan_timeout = 30`n" + $content
-        Set-Content -Path $targetConfig -Value $content -Encoding utf8
     }
+    if ($content -notmatch 'command_timeout\s*=') {
+        $content = "command_timeout = 1000`n" + $content
+    }
+    Set-Content -Path $targetConfig -Value $content -Encoding utf8
     
     Write-Host ""
     Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
