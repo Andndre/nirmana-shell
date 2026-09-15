@@ -1,11 +1,11 @@
 <#
 .SYNOPSIS
-    Tridatu-Shell Theme Switcher
+    Nirmana-Shell Theme Switcher
 .DESCRIPTION
     Instantly switches the Starship visual theme.
 .EXAMPLE
     .\switch-theme.ps1
-    .\switch-theme.ps1 tridatu
+    .\switch-theme.ps1 nirmana
     .\switch-theme.ps1 tokyo-night
     .\switch-theme.ps1 catppuccin-mocha
     .\switch-theme.ps1 minimal-emerald
@@ -28,7 +28,7 @@ $availableThemes = Get-ChildItem $themesDir -Filter "*.toml" | ForEach-Object { 
 
 if (-not $ThemeName) {
     if (Get-Command fzf -ErrorAction SilentlyContinue) {
-        $ThemeName = $availableThemes | fzf --prompt="Select Tridatu-Shell Theme> " --height=30% --reverse --border
+        $ThemeName = $availableThemes | fzf --prompt="Select Nirmana-Shell Theme> " --height=30% --reverse --border
     } else {
         Write-Host "Available themes:" -ForegroundColor Cyan
         for ($i = 0; $i -lt $availableThemes.Count; $i++) {

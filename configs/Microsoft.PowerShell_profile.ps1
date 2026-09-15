@@ -1,5 +1,5 @@
 # =====================================================================
-# Tridatu-Shell — PowerShell 7 Profile
+# Nirmana-Shell — PowerShell 7 Profile
 # =====================================================================
 
 # 1. Starship Prompt Engine
@@ -58,8 +58,8 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
     function lt { eza --icons --tree --level=2 @args }
 }
 
-# 5. Tridatu-Shell CLI Helper & Commands
-function global:tridatu-shell {
+# 5. Nirmana-Shell CLI Helper & Commands
+function global:nirmana-shell {
     param(
         [Parameter(Position=0)]
         [string]$SubCommand,
@@ -67,7 +67,7 @@ function global:tridatu-shell {
         [string]$Argument
     )
 
-    $root = Join-Path $HOME ".tridatu-shell"
+    $root = Join-Path $HOME ".nirmana-shell"
     switch ($SubCommand) {
         'theme' {
             $switchScript = Join-Path $root "switch-theme.ps1"
@@ -79,16 +79,16 @@ function global:tridatu-shell {
         }
         'update' {
             if (Test-Path (Join-Path $root ".git")) {
-                Write-Host "Updating Tridatu-Shell from GitHub..." -ForegroundColor Cyan
+                Write-Host "Updating Nirmana-Shell from GitHub..." -ForegroundColor Cyan
                 git -C $root pull
                 & (Join-Path $root "setup.ps1")
             } else {
-                Write-Host "Re-running Tridatu-Shell setup..." -ForegroundColor Cyan
-                irm https://raw.githubusercontent.com/Andndre/tridatu-shell/main/setup.ps1 | iex
+                Write-Host "Re-running Nirmana-Shell setup..." -ForegroundColor Cyan
+                irm https://raw.githubusercontent.com/Andndre/nirmana-shell/main/setup.ps1 | iex
             }
         }
         'doctor' {
-            Write-Host "`n=== Tridatu-Shell Health Check ===" -ForegroundColor Cyan
+            Write-Host "`n=== Nirmana-Shell Health Check ===" -ForegroundColor Cyan
             $tools = @('pwsh', 'starship', 'zoxide', 'eza', 'fzf', 'delta', 'fd', 'rg')
             foreach ($t in $tools) {
                 $found = Get-Command $t -ErrorAction SilentlyContinue
@@ -105,20 +105,20 @@ function global:tridatu-shell {
             Write-Host "PowerShell 7 profile reloaded successfully." -ForegroundColor Green
         }
         default {
-            Write-Host "Tridatu-Shell CLI" -ForegroundColor Red
-            Write-Host "Usage: tridatu-shell <command> [arguments]`n" -ForegroundColor White
+            Write-Host "Nirmana-Shell CLI" -ForegroundColor Cyan
+            Write-Host "Usage: nirmana-shell <command> [arguments]`n" -ForegroundColor White
             Write-Host "Commands:" -ForegroundColor Yellow
             Write-Host "  theme [name]   Switch Starship theme interactively or directly"
-            Write-Host "  update         Update Tridatu-Shell to the latest version from GitHub"
+            Write-Host "  update         Update Nirmana-Shell to the latest version from GitHub"
             Write-Host "  doctor         Check health of CLI dependencies (pwsh, starship, zoxide, etc.)"
             Write-Host "  reload         Reload `$PROFILE in this active session"
         }
     }
 }
-Set-Alias -Name tridatu -Value tridatu-shell -Option AllScope -Scope Global -Force
+Set-Alias -Name nirmana -Value nirmana-shell -Option AllScope -Scope Global -Force
 
-# Argument completer for tridatu-shell
-Register-ArgumentCompleter -Native -CommandName 'tridatu-shell', 'tridatu' -ScriptBlock {
+# Argument completer for nirmana-shell
+Register-ArgumentCompleter -Native -CommandName 'nirmana-shell', 'nirmana' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
     $subcommands = @('theme', 'update', 'doctor', 'reload')
     $elements = $commandAst.CommandElements
@@ -127,7 +127,7 @@ Register-ArgumentCompleter -Native -CommandName 'tridatu-shell', 'tridatu' -Scri
             [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
         }
     } elseif ($elements.Count -eq 3 -and $elements[1].Value -eq 'theme') {
-        $root = Join-Path $HOME ".tridatu-shell"
+        $root = Join-Path $HOME ".nirmana-shell"
         if (Test-Path (Join-Path $root "themes")) {
             Get-ChildItem (Join-Path $root "themes") -Filter "*.toml" | ForEach-Object {
                 $themeName = $_.BaseName

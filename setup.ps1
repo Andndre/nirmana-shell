@@ -1,18 +1,18 @@
 <#
 .SYNOPSIS
-    Tridatu-Shell — Automated Modern Terminal Setup for Windows
+    Nirmana-Shell — Automated Modern Terminal Setup for Windows
 .DESCRIPTION
     Installs modern CLI tools (PowerShell 7, Starship, Zoxide, Eza, FZF, Delta, FD),
-    configures optimized PowerShell 7 profile, sets Tridatu signature theme,
+    configures optimized PowerShell 7 profile, sets Nirmana signature theme,
     disables terminal alert bell beeps, and optimizes Git diffs.
 .USAGE
-    irm https://raw.githubusercontent.com/Andndre/tridatu-shell/main/setup.ps1 | iex
+    irm https://raw.githubusercontent.com/Andndre/nirmana-shell/main/setup.ps1 | iex
 #>
 
 $ErrorActionPreference = 'Stop'
 
-Write-Host "`n========================================================" -ForegroundColor Red
-Write-Host "   TRIDATU-SHELL — MODERN TERMINAL AUTOMATION" -ForegroundColor White
+Write-Host "`n========================================================" -ForegroundColor Cyan
+Write-Host "   NIRMANA-SHELL — MODERN TERMINAL AUTOMATION" -ForegroundColor White
 Write-Host "========================================================`n" -ForegroundColor DarkGray
 
 # 1. Package Installation via WinGet
@@ -48,12 +48,12 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
     Write-Host "Git pager successfully routed to Delta." -ForegroundColor Green
 }
 
-# 3. Setup Local Repository Directory (~/.tridatu-shell)
-Write-Host "`n[3/6] Setting Up Tridatu-Shell Directory (~/.tridatu-shell)..." -ForegroundColor Cyan
-$installDir = Join-Path $HOME ".tridatu-shell"
+# 3. Setup Local Repository Directory (~/.nirmana-shell)
+Write-Host "`n[3/6] Setting Up Nirmana-Shell Directory (~/.nirmana-shell)..." -ForegroundColor Cyan
+$installDir = Join-Path $HOME ".nirmana-shell"
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-if (Test-Path (Join-Path $scriptDir "themes\tridatu.toml")) {
+if (Test-Path (Join-Path $scriptDir "themes\nirmana.toml")) {
     # Running from local clone
     if (!(Test-Path $installDir)) {
         Copy-Item $scriptDir $installDir -Recurse -Force | Out-Null
@@ -63,7 +63,7 @@ if (Test-Path (Join-Path $scriptDir "themes\tridatu.toml")) {
     if (Get-Command git -ErrorAction SilentlyContinue) {
         if (!(Test-Path $installDir)) {
             Write-Host "--> Cloning repository to $installDir..." -ForegroundColor DarkGray
-            git clone --quiet https://github.com/Andndre/tridatu-shell.git $installDir
+            git clone --quiet https://github.com/Andndre/nirmana-shell.git $installDir
         } else {
             Write-Host "--> Updating repository in $installDir..." -ForegroundColor DarkGray
             git -C $installDir pull --quiet
@@ -71,7 +71,7 @@ if (Test-Path (Join-Path $scriptDir "themes\tridatu.toml")) {
     }
 }
 
-# 4. Starship Config (Default: Tridatu Theme)
+# 4. Starship Config (Default: Nirmana Theme)
 Write-Host "`n[4/6] Setting Up Starship Configuration (~/.config/starship.toml)..." -ForegroundColor Cyan
 $starshipConfigDir = Join-Path $HOME ".config"
 if (!(Test-Path $starshipConfigDir)) {
@@ -83,15 +83,15 @@ if (Test-Path $starshipConfigPath) {
     Copy-Item $starshipConfigPath "$starshipConfigPath.bak" -Force
 }
 
-$sourceTridatuTheme = Join-Path $installDir "themes\tridatu.toml"
-if (Test-Path $sourceTridatuTheme) {
-    Copy-Item $sourceTridatuTheme $starshipConfigPath -Force
-    Write-Host "Tridatu signature theme applied successfully." -ForegroundColor Green
+$sourceNirmanaTheme = Join-Path $installDir "themes\nirmana.toml"
+if (Test-Path $sourceNirmanaTheme) {
+    Copy-Item $sourceNirmanaTheme $starshipConfigPath -Force
+    Write-Host "Nirmana signature theme applied successfully." -ForegroundColor Green
 } else {
-    $remoteThemeUrl = "https://raw.githubusercontent.com/Andndre/tridatu-shell/main/themes/tridatu.toml"
+    $remoteThemeUrl = "https://raw.githubusercontent.com/Andndre/nirmana-shell/main/themes/nirmana.toml"
     try {
         Invoke-RestMethod -Uri $remoteThemeUrl -OutFile $starshipConfigPath
-        Write-Host "Tridatu signature theme downloaded and applied." -ForegroundColor Green
+        Write-Host "Nirmana signature theme downloaded and applied." -ForegroundColor Green
     } catch {
         Write-Host "Note: Default Starship configuration used." -ForegroundColor DarkGray
     }
@@ -117,7 +117,7 @@ if (Test-Path $sourceProfile) {
     Copy-Item $sourceProfile $ps7ProfilePath -Force
     Write-Host "PowerShell 7 profile installed successfully." -ForegroundColor Green
 } else {
-    $remoteProfileUrl = "https://raw.githubusercontent.com/Andndre/tridatu-shell/main/configs/Microsoft.PowerShell_profile.ps1"
+    $remoteProfileUrl = "https://raw.githubusercontent.com/Andndre/nirmana-shell/main/configs/Microsoft.PowerShell_profile.ps1"
     try {
         Invoke-RestMethod -Uri $remoteProfileUrl -OutFile $ps7ProfilePath
         Write-Host "PowerShell 7 profile downloaded and installed." -ForegroundColor Green
@@ -149,11 +149,11 @@ foreach ($wtPath in $wtSettingsPaths) {
     }
 }
 
-Write-Host "`n========================================================" -ForegroundColor Red
-Write-Host " TRIDATU-SHELL INSTALLATION COMPLETE!" -ForegroundColor Green
+Write-Host "`n========================================================" -ForegroundColor Cyan
+Write-Host " NIRMANA-SHELL INSTALLATION COMPLETE!" -ForegroundColor Green
 Write-Host " Next Steps for User:" -ForegroundColor Yellow
 Write-Host " 1. Ensure a Nerd Font is installed (e.g. CaskaydiaCove NF / JetBrainsMono NF)." -ForegroundColor White
 Write-Host " 2. In Windows Terminal: Settings -> Defaults -> Appearance -> Font Face -> select 'CaskaydiaCove NF'." -ForegroundColor White
 Write-Host " 3. Open a new tab in Windows Terminal to enjoy PowerShell 7." -ForegroundColor White
-Write-Host " 4. Type 'tridatu-shell theme' anytime to switch themes!" -ForegroundColor Green
-Write-Host "========================================================`n" -ForegroundColor Red
+Write-Host " 4. Type 'nirmana-shell theme' anytime to switch themes!" -ForegroundColor Green
+Write-Host "========================================================`n" -ForegroundColor Cyan

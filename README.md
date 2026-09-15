@@ -1,4 +1,4 @@
-# Tridatu-Shell
+# Nirmana-Shell
 
 Automated modern terminal setup for Windows powered by **PowerShell 7**, **Starship**, **PSReadLine**, **Zoxide**, **Eza**, **FZF**, **Delta**, and **FD**.
 
@@ -10,21 +10,21 @@ Open PowerShell (*Run as Administrator* recommended), then run:
 
 ### Option A: Online Installation (via GitHub)
 ```powershell
-irm https://raw.githubusercontent.com/Andndre/tridatu-shell/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/Andndre/nirmana-shell/main/setup.ps1 | iex
 ```
 
 ### Option B: Local Installation
 If you have cloned or downloaded this repository directly:
 ```powershell
-cd tridatu-shell
+cd nirmana-shell
 .\setup.ps1
 ```
 
 The installer will automatically:
 1. Install all modern CLI tools via WinGet (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`).
 2. Route Git Pager to `delta` for syntax-highlighted, word-level diffs.
-3. Set up the local environment in `~/.tridatu-shell` and configure the PowerShell 7 profile.
-4. Apply the signature Tridatu theme to Starship.
+3. Set up the local environment in `~/.nirmana-shell` and configure the PowerShell 7 profile.
+4. Apply the signature Nirmana theme to Starship.
 5. Silence the audio alert bell when backspacing at the beginning of a line.
 6. Set PowerShell 7 as the default profile in Windows Terminal.
 
@@ -61,43 +61,43 @@ All icons and glyphs in Starship and Eza require a **Nerd Font**.
 
 ---
 
-## `tridatu-shell` CLI Commands
+## `nirmana-shell` CLI Commands
 
-Once installed, the `tridatu-shell` command (or shorthand alias `tridatu`) is globally available:
+Once installed, the `nirmana-shell` command (or shorthand alias `nirmana`) is globally available:
 
 | Command | Description |
 | :--- | :--- |
-| `tridatu-shell theme` | Open interactive `fzf` menu to select and apply Starship themes |
-| `tridatu-shell theme <name>` | Switch directly to a specific theme (supports **Tab autocomplete**) |
-| `tridatu-shell doctor` | Check the health of all CLI tools (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`, `rg`) |
-| `tridatu-shell update` | Pull the latest changes and themes from GitHub |
-| `tridatu-shell reload` | Reload the active PowerShell `$PROFILE` in the current session |
+| `nirmana-shell theme` | Open interactive `fzf` menu to select and apply Starship themes |
+| `nirmana-shell theme <name>` | Switch directly to a specific theme (supports **Tab autocomplete**) |
+| `nirmana-shell doctor` | Check the health of all CLI tools (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`, `rg`) |
+| `nirmana-shell update` | Pull the latest changes and themes from GitHub |
+| `nirmana-shell reload` | Reload the active PowerShell `$PROFILE` in the current session |
 
 ### Available Themes:
-* **`tridatu`** (Signature Default)
+* **`nirmana`** (Signature Default)
 * **`tokyo-night`**
 * **`catppuccin-mocha`**
 * **`minimal-emerald`**
 
 Example:
 ```powershell
-tridatu theme tokyo-night
+nirmana theme tokyo-night
 ```
-*(Tip: Type `tridatu theme ` and press `Tab` to cycle through available themes).*
+*(Tip: Type `nirmana theme ` and press `Tab` to cycle through available themes).*
 
 ---
 
 ## Repository Structure
 
 ```text
-tridatu-shell/
+nirmana-shell/
 ├── README.md               # Documentation and usage guide
 ├── setup.ps1               # Automated one-command installer script
 ├── switch-theme.ps1        # Interactive theme switcher script
 ├── configs/
 │   └── Microsoft.PowerShell_profile.ps1 # Canonical PowerShell 7 profile
 └── themes/
-    ├── tridatu.toml
+    ├── nirmana.toml
     ├── tokyo-night.toml
     ├── catppuccin-mocha.toml
     └── minimal-emerald.toml
@@ -110,5 +110,5 @@ tridatu-shell/
 Share this single command with anyone on Windows:
 
 ```powershell
-irm https://raw.githubusercontent.com/Andndre/tridatu-shell/main/setup.ps1 | iex
+irm https://raw.githubusercontent.com/Andndre/nirmana-shell/main/setup.ps1 | iex
 ```

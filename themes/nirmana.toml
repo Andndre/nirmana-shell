@@ -1,5 +1,5 @@
 # =====================================================================
-# Tridatu-Shell — Signature Theme (Merah • Putih • Hitam)
+# Nirmana-Shell — Signature Theme (Clean Contrast & Geometric Accents)
 # =====================================================================
 
 scan_timeout = 30
@@ -16,26 +16,26 @@ $cmd_duration\
 $line_break\
 $character"""
 
-# 1. Karakter Prompt (Merah Brahma & Putih Siwa)
+# 1. Prompt Character (Vibrant Cyan on success, Vivid Coral on error)
 [character]
-success_symbol = "[❯](bold #E03131)"
-error_symbol = "[❯](bold #FFFFFF)"
+success_symbol = "[❯](bold #00F0FF)"
+error_symbol = "[❯](bold #FF4757)"
 
-# 2. Direktori (Aksen Putih Bersih di atas latar gelap)
+# 2. Directory (Crisp White on dark background)
 [directory]
 truncation_length = 3
 truncation_symbol = "…/"
 style = "bold #F8F9FA"
 read_only = " 󰌾"
 
-# 3. Git Branch (Aksen Merah Bata) & Status (Hitam/Abu Arang & Putih)
+# 3. Git Branch (Amethyst Purple) & Status (Warm Amber & Silver)
 [git_branch]
 symbol = " "
-style = "bold #FA5252"
+style = "bold #A29BFE"
 format = "[$symbol$branch]($style) "
 
 [git_status]
-style = "bold #CED4DA"
+style = "bold #FED330"
 format = '([\[$all_status$ahead_behind\]]($style) )'
 conflicted = "󰞇 "
 ahead = "⇡${count}"
@@ -48,29 +48,29 @@ staged = "+${count}"
 renamed = "»${count}"
 deleted = "✘${count}"
 
-# 4. Durasi Eksekusi
+# 4. Command Duration
 [cmd_duration]
 min_time = 2_000
-style = "bold #ADB5BD"
+style = "bold #A4B0BE"
 format = "took [$duration]($style) "
 
-# 5. Runtime Bahasa
+# 5. Language Runtimes
 [php]
 symbol = " "
-style = "bold #C2255C"
+style = "bold #777BB4"
 format = "[$symbol($version )]($style)"
 
 [nodejs]
 symbol = "󰎙 "
-style = "bold #F03E3E"
+style = "bold #2ED573"
 format = "[$symbol($version )]($style)"
 
 [python]
 symbol = "󰌠 "
-style = "bold #E9ECEF"
+style = "bold #FFA502"
 format = "[$symbol($version )]($style)"
 
-# 6. Modul non-aktif
+# 6. Disabled unused modules
 [package]
 disabled = true
 [battery]
