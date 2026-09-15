@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Nirmana-Shell: Automated Modern Terminal Setup for Windows
 .DESCRIPTION
@@ -22,12 +22,16 @@ $setupScriptDir = if ($PSScriptRoot) {
     $null
 }
 $versionFile = if ($setupScriptDir) { Join-Path $setupScriptDir "VERSION" } else { $null }
-$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.0" }
+$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.1" }
+$isLegacyPS = $PSVersionTable.PSVersion.Major -lt 7
 
 Write-Host ""
 Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Cyan
 Write-Host "│      NIRMANA-SHELL: MODERN TERMINAL AUTOMATION (v$nirmanaVer)     │" -ForegroundColor White
 Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Cyan
+if ($isLegacyPS) {
+    Write-Host "Note: Running from Windows PowerShell $($PSVersionTable.PSVersion.Major).$($PSVersionTable.PSVersion.Minor). PowerShell 7 will be installed as default." -ForegroundColor DarkYellow
+}
 Write-Host ""
 
 # 1. Package Installation via WinGet
@@ -168,6 +172,22 @@ if (Test-Path $sourceProfile) {
     }
 }
 
+# Notification bridge for Windows PowerShell 5.1
+$ps5Dir = Join-Path $docsFolder "WindowsPowerShell"
+if (!(Test-Path $ps5Dir)) {
+    New-Item -ItemType Directory -Path $ps5Dir -Force | Out-Null
+}
+$ps5ProfilePath = Join-Path $ps5Dir "Microsoft.PowerShell_profile.ps1"
+if (!(Test-Path $ps5ProfilePath)) {
+    $ps5Bridge = @'
+# Nirmana-Shell: Legacy PowerShell Notification
+if (Get-Command pwsh -ErrorAction SilentlyContinue) {
+    Write-Host "`n[Nirmana-Shell] Running Windows PowerShell 5.1. Type 'pwsh' to switch to PowerShell 7.`n" -ForegroundColor DarkCyan
+}
+'@
+    Set-Content -Path $ps5ProfilePath -Value $ps5Bridge -Encoding utf8
+}
+
 # 6. Windows Terminal Settings (Silence Bell, Font, Schemes, & PS7 Default)
 Write-Host "`n[6/6] Configuring Windows Terminal (Bell, Font, Schemes & PS7 Default)..." -ForegroundColor Cyan
 $wtSettingsPaths = @(
@@ -268,6 +288,24 @@ foreach ($wtPath in $wtSettingsPaths) {
             } elseif ($raw -match '("defaults"\s*:\s*\{)') {
                 $raw = $raw -replace '("defaults"\s*:\s*\{)', "`$1`n      `"bellStyle`": `"none`","
             }
+
+            # Set PowerShell 7 as defaultProfile in Windows Terminal
+            try {
+                $jsonObj = $raw | ConvertFrom-Json
+                $ps7Profile = $jsonObj.profiles.list | Where-Object {
+                    $_.source -eq 'Windows.Terminal.PowershellCore' -or
+                    $_.commandline -like '*pwsh*' -or
+                    ($_.name -eq 'PowerShell' -and $_.guid -ne '{61c54bbd-c2c6-5271-96e7-009a87ff44bf}')
+                } | Select-Object -First 1
+
+                if ($ps7Profile -and $ps7Profile.guid) {
+                    $ps7Guid = $ps7Profile.guid
+                    if ($raw -match '"defaultProfile"\s*:\s*"[^"]*"') {
+                        $raw = $raw -replace '("defaultProfile"\s*:\s*)"[^"]*"', "`$1`"$ps7Guid`""
+                    }
+                }
+            } catch {}
+
             Set-Content -Path $wtPath -Value $raw -Encoding utf8
             Write-Host "Windows Terminal settings configured successfully at: $(Split-Path $wtPath -Leaf)" -ForegroundColor Green
         } catch {
@@ -282,7 +320,11 @@ Write-Host "│            NIRMANA-SHELL INSTALLATION COMPLETE              │"
 Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor Cyan
 Write-Host "│  Next Steps:                                                │" -ForegroundColor Yellow
 Write-Host "│  1. Ensure a Nerd Font is selected (e.g. CaskaydiaCove NF)  │" -ForegroundColor White
+if ($isLegacyPS) {
+Write-Host "│  2. You are in PS 5.1: Type 'pwsh' to launch PowerShell 7   │" -ForegroundColor Yellow
+} else {
 Write-Host "│  2. Open a new tab in Windows Terminal to use PowerShell 7  │" -ForegroundColor White
+}
 Write-Host "│  3. Type 'nirmana theme' to launch the theme switcher       │" -ForegroundColor White
 Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Green
 Write-Host ""

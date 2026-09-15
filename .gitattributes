@@ -1,0 +1,4 @@
+# Ensure PowerShell and Windows batch scripts always retain CRLF line endings
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
