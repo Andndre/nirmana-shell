@@ -69,10 +69,10 @@ if (Get-Command zoxide -ErrorAction SilentlyContinue) {
 # 5. Eza (Modern 'ls' replacement with icons & colors)
 if (Get-Command eza -ErrorAction SilentlyContinue) {
     if (Test-Path Alias:ls) { Remove-Item Alias:ls -Force }
-    function ls { eza --icons --group-directories-first @args }
-    function ll { eza --icons --group-directories-first -l @args }
-    function la { eza --icons --group-directories-first -la @args }
-    function lt { eza --icons --tree --level=2 @args }
+    function ls { eza --icons=auto --group-directories-first @args }
+    function ll { eza --icons=auto --group-directories-first -l @args }
+    function la { eza --icons=auto --group-directories-first -la @args }
+    function lt { eza --icons=auto --tree --level=2 @args }
 }
 
 # 6. Nirmana-Shell CLI Helper & Commands
