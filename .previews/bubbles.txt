@@ -1,10 +1,11 @@
 
-  [1;36mCategory:[0m   [1;37m[Custom][0m
-  [1;36mTheme:[0m      [1;37mjetpack[0m
+  [1;35mCategory:[0m   [1;37m[Oh-My-Posh][0m
+  [1;35mTheme:[0m      [1;37mbubbles[0m
+  [1;35mSource:[0m     [0;37mhttps://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 
-   [3;34m□ [0m[1;34mnirmana-shell[0m[3;34m[0m [1;94m△[0m [3;94mmain[0m [1;3;94m⎪[0m[3;33m●◦[93m◌◦[31m✕[1;94m⎥[0m  [1;3;93m◎[0m [1;32mgit status[0m
+   [38;2;41;49;90m[48;2;41;49;90;38;2;62;198;105m …\nirmana-shell[0m[38;2;41;49;90m[0m [38;2;41;49;90m[48;2;41;49;90;38;2;67;204;234m main ✘ ! ?[0m[38;2;41;49;90m[0m  [1;38;2;67;204;234m❯[0m  [1;32mgit status[0m
 
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m

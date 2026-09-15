@@ -1,10 +1,10 @@
 
-  [1;36mTheme:[0m      [1;37mtokyo-night[0m [0;90m(Custom Theme)[0m
-  [1;36mDetails:[0m    [0;37mCyberpunk dark theme inspired by Tokyo Night palette[0m
+  [1;36mCategory:[0m   [1;37m[Custom][0m
+  [1;36mTheme:[0m      [1;37mtokyo-night[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 
-   [1;38;2;42;195;222m…\nirmana-shell[0m [1;38;2;187;154;247m main[0m [1;38;2;224;175;104m[?][0m  [1;38;2;122;162;247m❯[0m [1;32mgit status[0m
+   [1;38;2;42;195;222m…\nirmana-shell[0m [1;38;2;187;154;247m main[0m [1;38;2;224;175;104m[✘!?][0m  [1;38;2;122;162;247m❯[0m [1;32mgit status[0m
 
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m
