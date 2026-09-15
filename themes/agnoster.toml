@@ -1,5 +1,5 @@
 # =====================================================================
-# Nirmana-Shell - Oh-My-Posh Port: Powerlevel10k Rainbow Theme
+# Nirmana-Shell - Custom Theme: Agnoster Classic Powerline Theme
 # =====================================================================
 
 scan_timeout = 30
@@ -7,7 +7,6 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$os\
 $directory\
 $git_branch\
 $git_status\
@@ -20,21 +19,21 @@ $cmd_duration\
 $line_break\
 $character"""
 
-[os]
-format = "[ 󰍲 ](bg:#d3d7cf fg:#000000)[](fg:#d3d7cf bg:#3465a4)"
-disabled = false
+[character]
+success_symbol = "[❯](bold #95ffa4) "
+error_symbol = "[❯](bold #ff8080) "
 
 [directory]
-format = "[  $path ](bg:#3465a4 fg:#e4e4e4)[](fg:#3465a4 bg:#4e9a06)"
+format = "[  $path ](bg:#91ddff fg:#100e23)[](fg:#91ddff bg:#95ffa4)"
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[  $branch](bg:#4e9a06 fg:#000000)"
+format = "[  $branch](bg:#95ffa4 fg:#193549)"
 
 [git_status]
-format = "[$all_status$ahead_behind](bg:#4e9a06 fg:#000000)[](fg:#4e9a06) "
-style = "bg:#4e9a06 fg:#000000"
+format = "[$all_status$ahead_behind](bg:#95ffa4 fg:#193549)[](fg:#95ffa4) "
+style = "bg:#95ffa4 fg:#193549"
 conflicted = " 󰞇"
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
@@ -52,29 +51,25 @@ version_format = "v${raw}"
 
 [dart]
 symbol = " "
-format = "[](fg:#00acd7)[$symbol$version](bg:#00acd7 fg:#111111)[](fg:#00acd7) "
+format = "[](fg:#00897b)[$symbol$version](bg:#00897b fg:#ffffff)[](fg:#00897b) "
 version_format = "v${raw}"
 
 [nodejs]
 symbol = "󰎙 "
-format = "[](fg:#689f63)[$symbol$version](bg:#689f63 fg:#ffffff)[](fg:#689f63) "
+format = "[](fg:#6CA35E)[$symbol$version](bg:#6CA35E fg:#ffffff)[](fg:#6CA35E) "
 version_format = "v${raw}"
 
 [python]
 symbol = "󰌠 "
-format = "[](fg:#FFDE57)[$symbol$version](bg:#FFDE57 fg:#111111)[](fg:#FFDE57) "
+format = "[](fg:#906cff)[$symbol$version](bg:#906cff fg:#ffffff)[](fg:#906cff) "
 version_format = "v${raw}"
 
 [package]
 symbol = "󰏗 "
-format = "[](fg:#c4a000)[$symbol$version](bg:#c4a000 fg:#000000)[](fg:#c4a000) "
+format = "[](fg:#83769c)[$symbol$version](bg:#83769c fg:#ffffff)[](fg:#83769c) "
 version_format = "v${raw}"
 disabled = false
 
 [cmd_duration]
 min_time = 2_000
-format = "[](fg:#c4a000)[ $duration](bg:#c4a000 fg:#000000)[](fg:#c4a000) "
-
-[character]
-success_symbol = "[❯](bold #3465a4) "
-error_symbol = "[❯](bold #cc0000) "
+format = "[](fg:#83769c)[ $duration](bg:#83769c fg:#ffffff)[](fg:#83769c) "

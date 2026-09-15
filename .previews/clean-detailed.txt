@@ -1,11 +1,11 @@
 
   [1;36mCategory:[0m   [1;37m[Custom][0m
-  [1;36mTheme:[0m      [1;37mdracula[0m
-  [1;36mDetails:[0m    [0;37mOfficial Dracula gothic pastel palette with rounded capsules[0m
+  [1;36mTheme:[0m      [1;37mclean-detailed[0m
+  [1;36mDetails:[0m    [0;37mModern two-line prompt with bracketed status segments[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 
-   [38;2;189;147;249m[48;2;189;147;249;38;2;40;42;54m …\nirmana-shell [48;2;255;184;108;38;2;189;147;249m[38;2;40;42;54m  main ✘ ! ?[0m[38;2;255;184;108m[0m  [1;38;2;80;250;123m❯[0m  [1;32mgit status[0m
+   [1;38;2;108;112;134m╭─[0m [1;38;2;137;220;235m …\nirmana-shell[0m [38;2;108;112;134mon [1;38;2;203;166;247m main[0m [1;38;2;249;226;175m✘! ? [0m  [1;38;2;108;112;134m╰─[38;2;0;240;255m❯[0m  [1;32mgit status[0m
 
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m

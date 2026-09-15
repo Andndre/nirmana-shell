@@ -1,5 +1,5 @@
 # =====================================================================
-# Nirmana-Shell - Oh-My-Posh Port: Half-Life Theme
+# Nirmana-Shell - Spaceship Custom Theme
 # =====================================================================
 
 scan_timeout = 30
@@ -20,66 +20,61 @@ $line_break\
 $character"""
 
 [character]
-success_symbol = "[λ](bold #D75F00) "
-error_symbol = "[λ](bold #ff0055) "
+success_symbol = "[🚀](bold) "
+error_symbol = "[💥](bold) "
 
 [directory]
-style = "bold #87FF00"
+style = "bold cyan"
 format = "[$path]($style) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
+style = "bold purple"
 symbol = " "
-style = "bold #5FD7FF"
-format = "[$symbol$branch]($style) "
+format = "on [$symbol$branch]($style) "
 
 [git_status]
-style = "bold #FFD700"
+style = "bold red"
 format = '([\[$all_status$ahead_behind\]]($style) )'
-conflicted = "󰞇 "
-ahead = "⇡${count}"
-behind = "⇣${count}"
-diverged = "⇕⇡${ahead_count}⇣${behind_count}"
-untracked = "?${count}"
-stashed = " "
-modified = "!${count}"
-staged = "+${count}"
-renamed = "»${count}"
-deleted = "✘${count}"
+modified = "!"
+untracked = "?"
+staged = "+"
+ahead = "⇡"
+behind = "⇣"
 
 [bun]
+style = "bold #FEAC19"
 symbol = " "
-style = "bold #D75F00"
-format = "[$symbol($version )]($style)"
+format = "via [$symbol$version]($style) "
 version_format = "v${raw}"
 
 [dart]
+style = "bold #00acd7"
 symbol = " "
-style = "bold #5FD7FF"
-format = "[$symbol($version )]($style)"
+format = "via [$symbol$version]($style) "
 version_format = "v${raw}"
 
 [nodejs]
+style = "bold green"
 symbol = "󰎙 "
-style = "bold #87FF00"
-format = "[$symbol($version )]($style)"
+format = "via [$symbol$version]($style) "
 version_format = "v${raw}"
 
 [python]
+style = "bold yellow"
 symbol = "󰌠 "
-style = "bold #FFD700"
-format = "[$symbol($version )]($style)"
+format = "via [$symbol$version]($style) "
 version_format = "v${raw}"
 
 [package]
+style = "bold #CBA6F7"
 symbol = "󰏗 "
-style = "bold #7E46B6"
-format = "[$symbol$version]($style) "
+format = "is [$symbol$version]($style) "
 version_format = "v${raw}"
 disabled = false
 
 [cmd_duration]
 min_time = 2_000
-style = "bold #808080"
+style = "bold yellow"
 format = "took [$duration]($style) "

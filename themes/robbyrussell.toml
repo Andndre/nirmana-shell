@@ -1,0 +1,74 @@
+# =====================================================================
+# Nirmana-Shell - RobbyRussell Custom Theme
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$character\
+$directory\
+$git_branch\
+$git_status\
+$bun\
+$dart\
+$nodejs\
+$python\
+$package\
+$cmd_duration"""
+
+[character]
+success_symbol = "[➜](bold green) "
+error_symbol = "[➜](bold red) "
+
+[directory]
+style = "bold cyan"
+format = "[$path]($style) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+style = "bold red"
+symbol = ""
+format = "[git:($branch)]($style) "
+
+[git_status]
+style = "bold red"
+format = "[$all_status$ahead_behind]($style) "
+modified = "*"
+untracked = "?"
+staged = "+"
+ahead = "⇡"
+behind = "⇣"
+
+[bun]
+style = "bold #FEAC19"
+format = "[bun:($version)]($style) "
+version_format = "v${raw}"
+
+[dart]
+style = "bold #00acd7"
+format = "[dart:($version)]($style) "
+version_format = "v${raw}"
+
+[nodejs]
+style = "bold green"
+format = "[node:($version)]($style) "
+version_format = "v${raw}"
+
+[python]
+style = "bold yellow"
+format = "[py:($version)]($style) "
+version_format = "v${raw}"
+
+[package]
+style = "bold #7E46B6"
+format = "[pkg:($version)]($style) "
+version_format = "v${raw}"
+disabled = false
+
+[cmd_duration]
+min_time = 2_000
+style = "bold yellow"
+format = "took [$duration]($style)"

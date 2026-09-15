@@ -1,7 +1,7 @@
 
-  [1;35mCategory:[0m   [1;37m[Oh-My-Posh][0m
-  [1;35mTheme:[0m      [1;37mjandedobbeleer[0m
-  [1;35mSource:[0m     [0;37mhttps://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes[0m
+  [1;36mCategory:[0m   [1;37m[Custom][0m
+  [1;36mTheme:[0m      [1;37mjandedobbeleer[0m
+  [1;36mDetails:[0m    [0;37mSignature powerline chevron theme with pink & yellow accents[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 

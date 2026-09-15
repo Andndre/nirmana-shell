@@ -1,5 +1,5 @@
 # =====================================================================
-# Nirmana-Shell - Oh-My-Posh Port: Atomic Theme
+# Nirmana-Shell - Custom Theme: JanDeDobbeleer Signature Theme
 # =====================================================================
 
 scan_timeout = 30
@@ -20,20 +20,20 @@ $line_break\
 $character"""
 
 [character]
-success_symbol = "[❯](bold #FF9248) "
+success_symbol = "[❯](bold #ff479c) "
 error_symbol = "[❯](bold #ef5350) "
 
 [directory]
-format = "[](fg:#FF9248)[ $path ](bg:#FF9248 fg:#2d3436)[](fg:#FF9248 bg:#FFFB38)"
+format = "[](fg:#ff479c)[ $path](bg:#ff479c fg:#ffffff)[](fg:#ff479c bg:#fffb38)"
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[  $branch](bg:#FFFB38 fg:#011627)"
+format = "[  $branch](bg:#fffb38 fg:#193549)"
 
 [git_status]
-format = "[$all_status$ahead_behind](bg:#FFFB38 fg:#011627)[](fg:#FFFB38) "
-style = "bg:#FFFB38 fg:#011627"
+format = "[$all_status$ahead_behind](bg:#fffb38 fg:#193549)[](fg:#fffb38) "
+style = "bg:#fffb38 fg:#193549"
 conflicted = " 󰞇"
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
@@ -46,22 +46,22 @@ renamed = " »"
 deleted = " ✘"
 
 [bun]
-format = "[](fg:#303030)[ $version](bg:#303030 fg:#FF9F43)[](fg:#303030) "
+format = "[](fg:#FEAC19)[ $version](bg:#FEAC19 fg:#ffffff)[](fg:#FEAC19) "
 version_format = "v${raw}"
 
 [dart]
 symbol = " "
-format = "[](fg:#306998)[$symbol$version](bg:#306998 fg:#ffffff)[](fg:#306998) "
+format = "[](fg:#00897b)[$symbol$version](bg:#00897b fg:#ffffff)[](fg:#00897b) "
 version_format = "v${raw}"
 
 [nodejs]
 symbol = "󰎙 "
-format = "[](fg:#303030)[$symbol$version](bg:#303030 fg:#3C873A)[](fg:#303030) "
+format = "[](fg:#6CA35E)[$symbol$version](bg:#6CA35E fg:#ffffff)[](fg:#6CA35E) "
 version_format = "v${raw}"
 
 [python]
 symbol = "󰌠 "
-format = "[](fg:#306998)[$symbol$version](bg:#306998 fg:#FFE873)[](fg:#306998) "
+format = "[](fg:#FFDE57)[$symbol$version](bg:#FFDE57 fg:#111111)[](fg:#FFDE57) "
 version_format = "v${raw}"
 
 [package]

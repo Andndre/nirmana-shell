@@ -1,0 +1,85 @@
+# =====================================================================
+# Nirmana-Shell - Custom Theme: Half-Life Theme
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$bun\
+$dart\
+$nodejs\
+$python\
+$package\
+$cmd_duration\
+$line_break\
+$character"""
+
+[character]
+success_symbol = "[λ](bold #D75F00) "
+error_symbol = "[λ](bold #ff0055) "
+
+[directory]
+style = "bold #87FF00"
+format = "[$path]($style) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = " "
+style = "bold #5FD7FF"
+format = "[$symbol$branch]($style) "
+
+[git_status]
+style = "bold #FFD700"
+format = '([\[$all_status$ahead_behind\]]($style) )'
+conflicted = "󰞇 "
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?${count}"
+stashed = " "
+modified = "!${count}"
+staged = "+${count}"
+renamed = "»${count}"
+deleted = "✘${count}"
+
+[bun]
+symbol = " "
+style = "bold #D75F00"
+format = "[$symbol($version )]($style)"
+version_format = "v${raw}"
+
+[dart]
+symbol = " "
+style = "bold #5FD7FF"
+format = "[$symbol($version )]($style)"
+version_format = "v${raw}"
+
+[nodejs]
+symbol = "󰎙 "
+style = "bold #87FF00"
+format = "[$symbol($version )]($style)"
+version_format = "v${raw}"
+
+[python]
+symbol = "󰌠 "
+style = "bold #FFD700"
+format = "[$symbol($version )]($style)"
+version_format = "v${raw}"
+
+[package]
+symbol = "󰏗 "
+style = "bold #7E46B6"
+format = "[$symbol$version]($style) "
+version_format = "v${raw}"
+disabled = false
+
+[cmd_duration]
+min_time = 2_000
+style = "bold #808080"
+format = "took [$duration]($style) "

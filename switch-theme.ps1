@@ -11,7 +11,8 @@
 #>
 
 param (
-    [string]$ThemeName
+    [string]$ThemeName,
+    [switch]$UpdatePreviews
 )
 
 $scriptDir = if ($MyInvocation.MyCommand.Path) {
@@ -23,54 +24,49 @@ $scriptDir = if ($MyInvocation.MyCommand.Path) {
 $themesDir = Join-Path $scriptDir "themes"
 $previewDir = Join-Path $scriptDir ".previews"
 $targetConfig = Join-Path $HOME ".config\starship.toml"
-$ompThemesDir = Join-Path $themesDir "oh-my-posh"
 
-# 1. Discover Custom Themes (excluding subdirectories)
+# 1. Discover Custom Themes
 $customThemes = @()
 if (Test-Path $themesDir) {
     $customThemes = Get-ChildItem $themesDir -File -Filter "*.toml" | ForEach-Object { $_.BaseName }
 }
 
-# 2. Discover Oh-My-Posh Ported Themes
-$ompThemes = @()
-if (Test-Path $ompThemesDir) {
-    $ompThemes = Get-ChildItem $ompThemesDir -File -Filter "*.toml" | ForEach-Object { $_.BaseName }
-}
-
-# 3. Discover Official Starship Presets Dynamically (Excluding Custom & OMP Overrides)
+# 2. Discover Starship Presets Dynamically (Excluding Custom Overrides)
 $starshipPresets = @()
 if (Get-Command starship -ErrorAction SilentlyContinue) {
     try {
         $starshipPresets = & starship preset --list 2>$null | Where-Object {
-            -not [string]::IsNullOrWhiteSpace($_) -and ($customThemes -notcontains $_) -and ($ompThemes -notcontains $_)
+            -not [string]::IsNullOrWhiteSpace($_) -and ($customThemes -notcontains $_)
         }
     } catch {}
 }
 
-# 4. Ensure Preview Cache Exists
-function Ensure-Previews {
-    if (-not (Test-Path $previewDir) -or (Get-ChildItem $previewDir -Filter "*.txt").Count -eq 0) {
+# 3. Ensure Preview Cache Exists
+function Ensure-Previews ([switch]$Force) {
+    $previewCount = if (Test-Path $previewDir) { (Get-ChildItem $previewDir -Filter "*.txt").Count } else { 0 }
+    $expectedCount = $customThemes.Count + $starshipPresets.Count
+    if ($Force -or -not (Test-Path $previewDir) -or $previewCount -lt $expectedCount) {
         if (!(Test-Path $previewDir)) { New-Item -ItemType Directory -Path $previewDir -Force | Out-Null }
         $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
         $esc = [char]27
 
         $customMeta = @{
-            'nirmana'          = 'Clean contrast with geometric accents & cyan/purple highlights'
-            'catppuccin-mocha' = 'Soothing pastel aesthetic based on Catppuccin Mocha'
-            'tokyo-night'      = 'Cyberpunk dark theme inspired by Tokyo Night palette'
-            'minimal-emerald'  = 'Distraction-free minimalist prompt with emerald green accents'
-            'jetpack'          = 'Futuristic geometric prompt with unicode accents (Windows-adapted)'
-        }
-
-        $ompMeta = @{
-            'bubbles'               = 'Rounded capsule segments with deep indigo & vibrant accents (Oh-My-Posh)'
-            'jandedobbeleer'        = 'Signature powerline chevron theme by Jan De Dobbeleer (Oh-My-Posh)'
+            'nirmana'               = 'Signature theme with geometric accents & cyan/purple highlights'
+            'catppuccin-mocha'      = 'Soothing pastel aesthetic based on Catppuccin Mocha'
+            'tokyo-night'           = 'Cyberpunk dark theme inspired by Tokyo Night palette'
+            'minimal-emerald'       = 'Distraction-free minimalist prompt with emerald green accents'
+            'jetpack'               = 'Futuristic geometric prompt with unicode accents (Windows-adapted)'
+            'bubbles'               = 'Rounded capsule segments with deep indigo & vibrant accents (Bubble style)'
+            'jandedobbeleer'        = 'Signature powerline chevron theme with pink & yellow accents'
             'atomic'                = 'Two-line rounded pill segments with warm orange/yellow highlights'
-            'agnoster'              = 'Classic legendary powerline arrow theme ported for Starship'
+            'agnoster'              = 'Classic legendary powerline chevron arrow theme'
             'powerlevel10k_rainbow' = 'Iconic multi-color powerline rainbow theme (Powerlevel10k style)'
-            'dracula'               = 'Dracula gothic pastel palette with rounded capsules & chevrons'
-            'paradox'               = 'Original Oh-My-Posh vibrant chevron theme with sky blue directory'
-            'half-life'             = 'Cyberpunk lambda theme with electric green & orange accents'
+            'dracula'               = 'Official Dracula gothic pastel palette with rounded capsules'
+            'paradox'               = 'Vibrant classic chevron theme with sky blue directory'
+            'half-life'             = 'Cyberpunk lambda prompt with electric green & orange accents'
+            'robbyrussell'          = 'Legendary minimal arrow prompt with colored git & runtime status'
+            'spaceship'             = 'Cosmic developer prompt with rocket execution symbol'
+            'clean-detailed'        = 'Modern two-line prompt with bracketed status segments'
         }
 
         foreach ($c in $customThemes) {
@@ -92,28 +88,6 @@ function Ensure-Previews {
   $esc[0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate$esc[0m
 "@
             [System.IO.File]::WriteAllText((Join-Path $previewDir "$c.txt"), $content, $utf8NoBom)
-        }
-
-        foreach ($o in $ompThemes) {
-            $desc = if ($ompMeta.ContainsKey($o)) { $ompMeta[$o] } else { 'Oh-My-Posh theme ported to Starship' }
-            $cfg = Join-Path $ompThemesDir "$o.toml"
-            $env:STARSHIP_CONFIG = $cfg
-            $rendered = & starship prompt --path $scriptDir --status 0
-            $content = @"
-
-  $esc[1;35mCategory:$esc[0m   $esc[1;37m[Oh-My-Posh]$esc[0m
-  $esc[1;35mTheme:$esc[0m      $esc[1;37m$o$esc[0m
-  $esc[1;35mSource:$esc[0m     $esc[0;37mhttps://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes$esc[0m
-  $esc[1;35mDetails:$esc[0m    $esc[0;37m$desc$esc[0m
-  $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
-  $esc[1;33mRendered Prompt:$esc[0m
-
-  $rendered$esc[1;32mgit status$esc[0m
-
-  $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
-  $esc[0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate$esc[0m
-"@
-            [System.IO.File]::WriteAllText((Join-Path $previewDir "$o.txt"), $content, $utf8NoBom)
         }
 
         $tempToml = Join-Path $env:TEMP "temp_preset.toml"
@@ -142,16 +116,20 @@ function Ensure-Previews {
     }
 }
 
-# 5. Interactive Selection via FZF if ThemeName is omitted
+if ($UpdatePreviews) {
+    Ensure-Previews -Force
+    $count = (Get-ChildItem $previewDir -Filter "*.txt").Count
+    Write-Host "Preview cache generated successfully: $count previews in $previewDir" -ForegroundColor Green
+    exit 0
+}
+
+# 4. Interactive Selection via FZF if ThemeName is omitted
 if (-not $ThemeName) {
     Ensure-Previews
 
     $menuItems = @()
     foreach ($c in $customThemes) {
         $menuItems += "[Custom]     $c"
-    }
-    foreach ($o in $ompThemes) {
-        $menuItems += "[Oh-My-Posh] $o"
     }
     foreach ($s in $starshipPresets) {
         $menuItems += "[Starship]   $s"
@@ -177,7 +155,7 @@ if (-not $ThemeName) {
         )
         $selected = $menuItems | & fzf $fzfArgs
         if ($selected) {
-            $ThemeName = ($selected -replace '^\[(Custom|Official)\]\s+', '').Trim()
+            $ThemeName = ($selected -replace '^\[(Custom|Starship|Official|Oh-My-Posh)\]\s+', '').Trim()
         }
     } else {
         Write-Host "`nAvailable Themes & Presets:" -ForegroundColor Cyan
@@ -187,7 +165,7 @@ if (-not $ThemeName) {
         $choice = Read-Host "`nEnter number (1-$($menuItems.Count))"
         if ($choice -match '^\d+$' -and [int]$choice -le $menuItems.Count -and [int]$choice -gt 0) {
             $selected = $menuItems[[int]$choice - 1]
-            $ThemeName = ($selected -replace '^\[(Custom|Oh-My-Posh|Starship|Official)\]\s+', '').Trim()
+            $ThemeName = ($selected -replace '^\[(Custom|Starship|Official|Oh-My-Posh)\]\s+', '').Trim()
         }
     }
 }
@@ -198,7 +176,7 @@ if (-not $ThemeName) {
 }
 
 # Clean input if user passed bracketed label
-$cleanThemeName = ($ThemeName -replace '^\[(Custom|Oh-My-Posh|Starship|Official)\]\s+', '').Trim()
+$cleanThemeName = ($ThemeName -replace '^\[(Custom|Starship|Official|Oh-My-Posh)\]\s+', '').Trim()
 
 # 6. Apply Theme or Preset
 $targetConfigDir = Split-Path -Parent $targetConfig
@@ -207,7 +185,6 @@ if (!(Test-Path $targetConfigDir)) {
 }
 
 $isCustom = $customThemes -contains $cleanThemeName
-$isOmp = $ompThemes -contains $cleanThemeName
 $isStarship = $starshipPresets -contains $cleanThemeName
 
 # 7. Windows Terminal Scheme Synchronization
@@ -225,6 +202,9 @@ $themeToWtScheme = @{
     'dracula'               = 'Tokyo Night'
     'paradox'               = 'Catppuccin Mocha'
     'half-life'             = 'Tokyo Night'
+    'robbyrussell'          = 'Catppuccin Mocha'
+    'spaceship'             = 'Tokyo Night'
+    'clean-detailed'        = 'Nirmana'
 }
 
 $wtCandidatePaths = @(
@@ -272,22 +252,6 @@ if ($isCustom) {
     Write-Host "│  Reload session: nirmana reload                             │" -ForegroundColor DarkGray
     Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Green
     Write-Host ""
-} elseif ($isOmp) {
-    $sourceTheme = Join-Path $ompThemesDir "$cleanThemeName.toml"
-    Copy-Item $sourceTheme $targetConfig -Force
-    Write-Host ""
-    Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Magenta
-    Write-Host "│  Oh-My-Posh Port Applied: $($cleanThemeName.PadRight(41))│" -ForegroundColor Magenta
-    if ($syncedWtScheme) {
-        Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor DarkGray
-        Write-Host "│  Terminal Scheme: $($syncedWtScheme.PadRight(47))│" -ForegroundColor Cyan
-    }
-    Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor DarkGray
-    Write-Host "│  Source: github.com/JanDeDobbeleer/oh-my-posh/tree/main     │" -ForegroundColor DarkGray
-    Write-Host "│  Saved to: ~/.config/starship.toml                          │" -ForegroundColor DarkGray
-    Write-Host "│  Reload session: nirmana reload                             │" -ForegroundColor DarkGray
-    Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Magenta
-    Write-Host ""
 } elseif ($isStarship) {
     & starship preset $cleanThemeName -o $targetConfig -f
     
@@ -318,6 +282,6 @@ if ($isCustom) {
     Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Blue
     Write-Host ""
 } else {
-    Write-Error "Theme '$cleanThemeName' not found in [Custom] ($($customThemes -join ', ')), [Oh-My-Posh] ($($ompThemes -join ', ')), or [Starship] presets."
+    Write-Error "Theme '$cleanThemeName' not found in [Custom] ($($customThemes -join ', ')) or [Starship] presets."
     exit 1
 }

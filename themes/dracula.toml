@@ -1,5 +1,5 @@
 # =====================================================================
-# Nirmana-Shell - Oh-My-Posh Port: Agnoster Classic Powerline Theme
+# Nirmana-Shell - Custom Theme: Dracula Theme
 # =====================================================================
 
 scan_timeout = 30
@@ -20,20 +20,20 @@ $line_break\
 $character"""
 
 [character]
-success_symbol = "[❯](bold #95ffa4) "
-error_symbol = "[❯](bold #ff8080) "
+success_symbol = "[❯](bold #50fa7b) "
+error_symbol = "[❯](bold #ff5555) "
 
 [directory]
-format = "[  $path ](bg:#91ddff fg:#100e23)[](fg:#91ddff bg:#95ffa4)"
+format = "[](fg:#bd93f9)[ $path ](bg:#bd93f9 fg:#282a36)[](fg:#bd93f9 bg:#ffb86c)"
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[  $branch](bg:#95ffa4 fg:#193549)"
+format = "[  $branch](bg:#ffb86c fg:#282a36)"
 
 [git_status]
-format = "[$all_status$ahead_behind](bg:#95ffa4 fg:#193549)[](fg:#95ffa4) "
-style = "bg:#95ffa4 fg:#193549"
+format = "[$all_status$ahead_behind](bg:#ffb86c fg:#282a36)[](fg:#ffb86c) "
+style = "bg:#ffb86c fg:#282a36"
 conflicted = " 󰞇"
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
@@ -46,30 +46,30 @@ renamed = " »"
 deleted = " ✘"
 
 [bun]
-format = "[](fg:#FEAC19)[ $version](bg:#FEAC19 fg:#ffffff)[](fg:#FEAC19) "
+format = "[](fg:#6272a4)[ $version](bg:#6272a4 fg:#ffb86c)[](fg:#6272a4) "
 version_format = "v${raw}"
 
 [dart]
 symbol = " "
-format = "[](fg:#00897b)[$symbol$version](bg:#00897b fg:#ffffff)[](fg:#00897b) "
+format = "[](fg:#6272a4)[$symbol$version](bg:#6272a4 fg:#8be9fd)[](fg:#6272a4) "
 version_format = "v${raw}"
 
 [nodejs]
 symbol = "󰎙 "
-format = "[](fg:#6CA35E)[$symbol$version](bg:#6CA35E fg:#ffffff)[](fg:#6CA35E) "
+format = "[](fg:#6272a4)[$symbol$version](bg:#6272a4 fg:#50fa7b)[](fg:#6272a4) "
 version_format = "v${raw}"
 
 [python]
 symbol = "󰌠 "
-format = "[](fg:#906cff)[$symbol$version](bg:#906cff fg:#ffffff)[](fg:#906cff) "
+format = "[](fg:#6272a4)[$symbol$version](bg:#6272a4 fg:#f1fa8c)[](fg:#6272a4) "
 version_format = "v${raw}"
 
 [package]
 symbol = "󰏗 "
-format = "[](fg:#83769c)[$symbol$version](bg:#83769c fg:#ffffff)[](fg:#83769c) "
+format = "[](fg:#6272a4)[$symbol$version](bg:#6272a4 fg:#ff79c6)[](fg:#6272a4) "
 version_format = "v${raw}"
 disabled = false
 
 [cmd_duration]
 min_time = 2_000
-format = "[](fg:#83769c)[ $duration](bg:#83769c fg:#ffffff)[](fg:#83769c) "
+format = "[](fg:#6272a4)[ $duration](bg:#6272a4 fg:#f8f8f2)[](fg:#6272a4) "

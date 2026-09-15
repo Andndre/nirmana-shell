@@ -1,6 +1,6 @@
 
   [1;34mCategory:[0m   [1;37m[Starship][0m
-  [1;34mPreset:[0m     [1;37mno-empty-icons[0m
+  [1;34mPreset:[0m     [1;37mno-empty-icons[0m [0;90m(Official Starship Preset)[0m
   [1;34mSource:[0m     [0;37mhttps://starship.rs/presets/[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m

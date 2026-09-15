@@ -1,10 +1,11 @@
 
   [1;36mCategory:[0m   [1;37m[Custom][0m
   [1;36mTheme:[0m      [1;37mnirmana[0m
+  [1;36mDetails:[0m    [0;37mSignature theme with geometric accents & cyan/purple highlights[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 
-   [1;38;2;248;249;250m…\nirmana-shell[0m [1;38;2;162;155;254m main[0m [1;38;2;254;211;48m[✘12!4?4][0m  [1;38;2;0;240;255m❯[0m [1;32mgit status[0m
+   [1;38;2;248;249;250m…\nirmana-shell[0m [1;38;2;162;155;254m main[0m [1;38;2;254;211;48m[✘8!24?14][0m  [1;38;2;0;240;255m❯[0m [1;32mgit status[0m
 
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m

@@ -1,6 +1,7 @@
 
   [1;36mCategory:[0m   [1;37m[Custom][0m
   [1;36mTheme:[0m      [1;37mcatppuccin-mocha[0m
+  [1;36mDetails:[0m    [0;37mSoothing pastel aesthetic based on Catppuccin Mocha[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 

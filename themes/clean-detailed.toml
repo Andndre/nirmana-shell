@@ -1,0 +1,72 @@
+# =====================================================================
+# Nirmana-Shell - Clean Detailed Custom Theme
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+[╭─](bold #6C7086) $directory$git_branch$git_status$bun$dart$nodejs$python$package$cmd_duration\
+$line_break\
+[╰─](bold #6C7086)$character"""
+
+[character]
+success_symbol = "[❯](bold #00F0FF) "
+error_symbol = "[❯](bold #FF4757) "
+
+[directory]
+style = "bold #89DCEB"
+format = "[ $path]($style) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+style = "bold #CBA6F7"
+symbol = " "
+format = "[on ](#6C7086)[$symbol$branch]($style) "
+
+[git_status]
+style = "bold #F9E2AF"
+format = "[$all_status$ahead_behind]($style) "
+ahead = "⇡${count}"
+behind = "⇣${count}"
+modified = "! "
+untracked = "? "
+stashed = " "
+
+[bun]
+style = "bold #FAB387"
+symbol = " "
+format = "[via ](#6C7086)[$symbol$version]($style) "
+version_format = "v${raw}"
+
+[dart]
+style = "bold #74C7EC"
+symbol = " "
+format = "[via ](#6C7086)[$symbol$version]($style) "
+version_format = "v${raw}"
+
+[nodejs]
+style = "bold #A6E3A1"
+symbol = "󰎙 "
+format = "[via ](#6C7086)[$symbol$version]($style) "
+version_format = "v${raw}"
+
+[python]
+style = "bold #F9E2AF"
+symbol = "󰌠 "
+format = "[via ](#6C7086)[$symbol$version]($style) "
+version_format = "v${raw}"
+
+[package]
+style = "bold #F5C2E7"
+symbol = " "
+format = "[is ](#6C7086)[$symbol$version]($style) "
+version_format = "v${raw}"
+disabled = false
+
+[cmd_duration]
+min_time = 2_000
+style = "bold #6C7086"
+format = "[took ]($style)[$duration]($style) "

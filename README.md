@@ -75,7 +75,7 @@ The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 
 ### Available Themes and Presets
 
-Supports custom presets, Oh-My-Posh ported themes, and official Starship presets:
+Supports custom themes and official Starship presets:
 
 * **`[Custom]` Themes**:
   * `nirmana`: Signature theme with cyan and purple accents
@@ -83,22 +83,25 @@ Supports custom presets, Oh-My-Posh ported themes, and official Starship presets
   * `tokyo-night`: Cyberpunk dark theme inspired by Tokyo Night palette
   * `minimal-emerald`: Distraction-free minimalist prompt with emerald green accents
   * `jetpack`: Geometric futuristic prompt with unicode accents (Windows-adapted)
-* **`[Oh-My-Posh]` Ported Themes**:
   * `bubbles`: Rounded capsule segments with deep indigo background and vibrant accents
-  * `jandedobbeleer`: Signature powerline chevron theme by Oh-My-Posh creator
+  * `jandedobbeleer`: Signature powerline chevron theme with pink and yellow accents
   * `atomic`: Two-line rounded pill segments with warm orange and yellow highlights
   * `agnoster`: Classic legendary powerline chevron arrow theme
   * `powerlevel10k_rainbow`: Iconic multi-color powerline rainbow theme (Powerlevel10k style)
   * `dracula`: Official Dracula theme palette with rounded capsules and chevrons
-  * `paradox`: Original Oh-My-Posh vibrant chevron theme with sky blue directory
+  * `paradox`: Vibrant chevron theme with sky blue directory
   * `half-life`: Cyberpunk lambda prompt with electric green and orange accents
+  * `robbyrussell`: Legendary minimal arrow prompt with colored git and runtime status
+  * `spaceship`: Cosmic developer prompt with rocket execution symbol
+  * `clean-detailed`: Modern two-line prompt with bracketed status segments
 * **`[Starship]` Official Presets**:
   * `bracketed-segments`, `catppuccin-powerline`, `gruvbox-rainbow`, `nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`, `pastel-powerline`, `plain-text-symbols`, `pure-preset`
 
 Usage example:
 ```powershell
 nirmana theme bubbles
-nirmana theme jandedobbeleer
+nirmana theme robbyrussell
+nirmana theme spaceship
 nirmana theme catppuccin-mocha
 ```
 
@@ -116,11 +119,7 @@ nirmana-shell/
 ├── .previews/              # Pre-rendered theme preview cards
 ├── configs/
 │   └── Microsoft.PowerShell_profile.ps1 # PowerShell 7 profile
-└── themes/
-    ├── nirmana.toml
-    ├── tokyo-night.toml
-    ├── catppuccin-mocha.toml
-    └── minimal-emerald.toml
+└── themes/                 # 16 custom and adapted Starship themes (*.toml)
 ```
 
 ---
