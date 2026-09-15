@@ -5,12 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-09-15
+
+### Fixed
+- **UTF-8 BOM Stripped from Setup Script**: Removed UTF-8 Byte Order Mark (`\uFEFF` / `EF BB BF`) from `setup.ps1` that caused `Invoke-Expression` pipeline execution (`irm ... | iex`) to fail with command-not-found errors on comment block headers (`The term '<#' is not recognized...`).
+- **Comment Block Standardization**: Converted script headers to line comments (`#`) for resilience across varying PowerShell hosts and remote execution wrappers.
+- **Fallback Version String**: Updated default version fallback in `setup.ps1` to `1.0.3`.
+
 ## [1.0.2] - 2026-09-15
 
 ### Added
 - **Windows PowerShell 5.1 Compatibility**: Automatically detects execution from legacy PowerShell 5.1, installs PowerShell 7 via WinGet, sets it as the default profile in Windows Terminal, and provides dynamic next-step guidance.
 - **Windows Terminal Default Profile Automation**: Automatically parses `settings.json` and updates `defaultProfile` to the PowerShell 7 profile GUID.
-- **CRLFF Line Ending Enforcement**: Added `.gitattributes` to ensure scripts retain Windows CRLF line endings, preventing parser errors in legacy PowerShell 5.1 here-strings.
+- **CRLF Line Ending Enforcement**: Added `.gitattributes` to ensure scripts retain Windows CRLF line endings, preventing parser errors in legacy PowerShell 5.1 here-strings.
 
 ## [1.0.1] - 2026-09-15
 

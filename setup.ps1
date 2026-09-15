@@ -1,13 +1,7 @@
-﻿<#
-.SYNOPSIS
-    Nirmana-Shell: Automated Modern Terminal Setup for Windows
-.DESCRIPTION
-    Installs modern CLI tools (PowerShell 7, Git, Starship, Zoxide, Eza, FZF, Delta, FD),
-    configures optimized PowerShell 7 profile, sets Nirmana signature theme,
-    disables terminal alert bell beeps, and optimizes Git diffs.
-.USAGE
-    irm https://raw.githubusercontent.com/Andndre/nirmana-shell/main/setup.ps1 | iex
-#>
+# =====================================================================
+# Nirmana-Shell: Automated Modern Terminal Setup for Windows
+# Usage: irm https://raw.githubusercontent.com/Andndre/nirmana-shell/main/setup.ps1 | iex
+# =====================================================================
 
 $ErrorActionPreference = 'Stop'
 
@@ -22,7 +16,7 @@ $setupScriptDir = if ($PSScriptRoot) {
     $null
 }
 $versionFile = if ($setupScriptDir) { Join-Path $setupScriptDir "VERSION" } else { $null }
-$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.1" }
+$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.3" }
 $isLegacyPS = $PSVersionTable.PSVersion.Major -lt 7
 
 Write-Host ""
