@@ -14,9 +14,13 @@ $ErrorActionPreference = 'Stop'
 $OutputEncoding = [System.Text.Encoding]::UTF8
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
+$setupScriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
+$versionFile = if ($setupScriptDir) { Join-Path $setupScriptDir "VERSION" } else { $null }
+$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.0" }
+
 Write-Host ""
 Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Cyan
-Write-Host "│          NIRMANA-SHELL: MODERN TERMINAL AUTOMATION          │" -ForegroundColor White
+Write-Host "│      NIRMANA-SHELL: MODERN TERMINAL AUTOMATION (v$nirmanaVer)     │" -ForegroundColor White
 Write-Host "╰─────────────────────────────────────────────────────────────╯" -ForegroundColor Cyan
 Write-Host ""
 

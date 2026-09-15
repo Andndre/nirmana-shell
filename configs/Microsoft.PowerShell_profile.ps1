@@ -100,7 +100,24 @@ function global:nirmana-shell {
     )
 
     $root = Join-Path $HOME ".nirmana-shell"
+    $versionFile = Join-Path $root "VERSION"
+    $version = if (Test-Path $versionFile) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.0" }
+
     switch ($SubCommand) {
+        'version' {
+            $gitCommit = $null
+            if (Test-Path (Join-Path $root ".git")) {
+                try { $gitCommit = (git -C $root rev-parse --short HEAD 2>$null).Trim() } catch {}
+            }
+            $commitStr = if ($gitCommit) { " (commit $gitCommit)" } else { "" }
+            $osDesc = [System.Runtime.InteropServices.RuntimeInformation]::OSDescription
+            Write-Host ""
+            Write-Host "nirmana-shell v$version$commitStr" -ForegroundColor Cyan
+            Write-Host "PowerShell $($PSVersionTable.PSVersion) on $osDesc" -ForegroundColor Gray
+            Write-Host ""
+        }
+        '-v' { & nirmana-shell version }
+        '--version' { & nirmana-shell version }
         'theme' {
             $switchScript = Join-Path $root "switch-theme.ps1"
             if (Test-Path $switchScript) {
@@ -124,9 +141,13 @@ function global:nirmana-shell {
             $tools = @('pwsh', 'starship', 'zoxide', 'eza', 'fzf', 'delta', 'fd', 'rg')
             $w = 70
             $line = '─' * ($w - 2)
+            $title = "NIRMANA HEALTH CHECK (v$version)"
+            $padTotal = $w - 2 - $title.Length
+            $padLeft = [math]::Max(0, [int]($padTotal / 2))
+            $padRight = [math]::Max(0, $padTotal - $padLeft)
             Write-Host ""
             Write-Host "╭$line╮" -ForegroundColor Cyan
-            Write-Host "│                      NIRMANA HEALTH CHECK                          │" -ForegroundColor Cyan
+            Write-Host ("│" + (' ' * $padLeft) + $title + (' ' * $padRight) + "│") -ForegroundColor Cyan
             Write-Host "├$line┤" -ForegroundColor Cyan
             foreach ($t in $tools) {
                 $found = Get-Command $t -ErrorAction SilentlyContinue
@@ -171,6 +192,7 @@ function global:nirmana-shell {
             Write-Host "│                                                             │" -ForegroundColor White
             Write-Host "│  Commands:                                                  │" -ForegroundColor Yellow
             Write-Host "│    theme [name]   Switch theme with top-preview TUI         │" -ForegroundColor White
+            Write-Host "│    version        Display version and system information    │" -ForegroundColor White
             Write-Host "│    update         Update Nirmana-Shell from GitHub          │" -ForegroundColor White
             Write-Host "│    doctor         Verify health and PATH of all CLI tools   │" -ForegroundColor White
             Write-Host "│    reload         Reload PowerShell 7 profile               │" -ForegroundColor White
@@ -184,7 +206,7 @@ Set-Alias -Name nirmana -Value nirmana-shell -Option AllScope -Scope Global -For
 # Argument completer for nirmana-shell
 Register-ArgumentCompleter -Native -CommandName 'nirmana-shell', 'nirmana' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
-    $subcommands = @('theme', 'update', 'doctor', 'reload')
+    $subcommands = @('theme', 'version', 'update', 'doctor', 'reload')
     $elements = $commandAst.CommandElements
     if ($elements.Count -eq 2) {
         $subcommands | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {

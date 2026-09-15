@@ -68,7 +68,8 @@ The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 | :--- | :--- |
 | `nirmana theme` | Open interactive theme switcher with top prompt preview and rounded borders |
 | `nirmana theme <name>` | Apply a specific theme (supports Tab completion) |
-| `nirmana doctor` | Verify PATH and health of all CLI tools |
+| `nirmana version` | Display installed version, commit hash, and PowerShell environment |
+| `nirmana doctor` | Verify PATH and health of all CLI tools with version status |
 | `nirmana update` | Pull latest updates from GitHub |
 | `nirmana reload` | Reload the active PowerShell profile |
 
@@ -137,6 +138,8 @@ nirmana theme catppuccin-mocha
 nirmana-shell/
 ├── LICENSE                 # MIT license and acknowledgements
 ├── README.md               # Documentation
+├── VERSION                 # Single source of truth for version number
+├── CHANGELOG.md            # Standard Keep a Changelog documentation
 ├── setup.ps1               # Automated installer
 ├── switch-theme.ps1        # Theme switcher with real-time preview
 ├── preview.cmd             # Fast preview helper for FZF TUI
