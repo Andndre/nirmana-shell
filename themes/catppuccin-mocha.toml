@@ -12,7 +12,10 @@ $git_branch\
 $git_status\
 $php\
 $nodejs\
+$bun\
+$dart\
 $python\
+$package\
 $cmd_duration\
 $line_break\
 $character"""
@@ -51,13 +54,25 @@ symbol = "󰎙 "
 style = "bold #A6E3A1"
 format = "[$symbol($version )]($style)"
 
+[bun]
+symbol = " "
+style = "bold #FAB387"
+format = "[$symbol($version )]($style)"
+
+[dart]
+symbol = " "
+style = "bold #74C7EC"
+format = "[$symbol($version )]($style)"
+
 [python]
 symbol = "󰌠 "
 style = "bold #F9E2AF"
 format = "[$symbol($version )]($style)"
 
 [package]
-disabled = true
+symbol = "󰏗 "
+style = "bold #F5C2E7"
+format = "[$symbol$version]($style) "
 [battery]
 disabled = true
 [dotnet]

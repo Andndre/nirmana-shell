@@ -12,7 +12,10 @@ $git_branch\
 $git_status\
 $php\
 $nodejs\
+$bun\
+$dart\
 $python\
+$package\
 $cmd_duration\
 $line_break\
 $character"""
@@ -66,14 +69,25 @@ symbol = "󰎙 "
 style = "bold #2ED573"
 format = "[$symbol($version )]($style)"
 
+[bun]
+symbol = " "
+style = "bold #FF9F43"
+format = "[$symbol($version )]($style)"
+
+[dart]
+symbol = " "
+style = "bold #00D2D3"
+format = "[$symbol($version )]($style)"
+
 [python]
 symbol = "󰌠 "
 style = "bold #FFA502"
 format = "[$symbol($version )]($style)"
 
-# 6. Disabled unused modules
 [package]
-disabled = true
+symbol = "󰏗 "
+style = "bold #54A0FF"
+format = "[$symbol$version]($style) "
 [battery]
 disabled = true
 [dotnet]

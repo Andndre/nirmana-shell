@@ -163,12 +163,48 @@ if (!(Test-Path $targetConfigDir)) {
 $isCustom = $customThemes -contains $cleanThemeName
 $isOfficial = $officialPresets -contains $cleanThemeName
 
+# 6. Windows Terminal Scheme Synchronization
+$themeToWtScheme = @{
+    'catppuccin-mocha' = 'Catppuccin Mocha'
+    'tokyo-night'      = 'Tokyo Night'
+    'nirmana'          = 'Nirmana'
+    'minimal-emerald'  = 'Catppuccin Mocha'
+}
+
+$wtCandidatePaths = @(
+    "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json",
+    "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminalPreview_8wekyb3d8bbwe\LocalState\settings.json",
+    "$env:LOCALAPPDATA\Microsoft\Windows Terminal\settings.json"
+)
+
+$syncedWtScheme = $null
+if ($themeToWtScheme.ContainsKey($cleanThemeName)) {
+    $targetWtScheme = $themeToWtScheme[$cleanThemeName]
+    foreach ($wtPath in $wtCandidatePaths) {
+        if (Test-Path $wtPath) {
+            try {
+                $raw = Get-Content $wtPath -Raw -Encoding utf8
+                if ($raw -match '"colorScheme"\s*:\s*"[^"]*"') {
+                    $updated = $raw -replace '("colorScheme"\s*:\s*)"[^"]*"', "`$1`"$targetWtScheme`""
+                    Set-Content -Path $wtPath -Value $updated -Encoding utf8
+                    $syncedWtScheme = $targetWtScheme
+                    break
+                }
+            } catch {}
+        }
+    }
+}
+
 if ($isCustom) {
     $sourceTheme = Join-Path $themesDir "$cleanThemeName.toml"
     Copy-Item $sourceTheme $targetConfig -Force
     Write-Host ""
     Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
     Write-Host "│  Custom Theme Applied: $($cleanThemeName.PadRight(44))│" -ForegroundColor Green
+    if ($syncedWtScheme) {
+        Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor DarkGray
+        Write-Host "│  Terminal Scheme: $($syncedWtScheme.PadRight(47))│" -ForegroundColor Cyan
+    }
     Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor DarkGray
     Write-Host "│  Saved to: ~/.config/starship.toml                          │" -ForegroundColor DarkGray
     Write-Host "│  Reload session: nirmana reload                             │" -ForegroundColor DarkGray
@@ -193,6 +229,10 @@ if ($isCustom) {
     Write-Host ""
     Write-Host "╭─────────────────────────────────────────────────────────────╮" -ForegroundColor Green
     Write-Host "│  Official Preset Applied: $($cleanThemeName.PadRight(42))│" -ForegroundColor Green
+    if ($syncedWtScheme) {
+        Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor DarkGray
+        Write-Host "│  Terminal Scheme: $($syncedWtScheme.PadRight(47))│" -ForegroundColor Cyan
+    }
     Write-Host "├─────────────────────────────────────────────────────────────┤" -ForegroundColor DarkGray
     Write-Host "│  Source: https://starship.rs/presets/                       │" -ForegroundColor DarkGray
     Write-Host "│  Saved to: ~/.config/starship.toml                          │" -ForegroundColor DarkGray
