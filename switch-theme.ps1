@@ -76,7 +76,11 @@ function Ensure-Previews ([switch]$Force) {
                 $desc = if ($customMeta.ContainsKey($c)) { $customMeta[$c] } else { 'Custom Starship theme' }
                 $cfg = Join-Path $themesDir "$c.toml"
                 $env:STARSHIP_CONFIG = $cfg
-                $rendered = & starship prompt --path $scriptDir --status 0
+                $lines = & starship prompt --path $scriptDir --status 0 --terminal-width 68
+                while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[0])) {
+                    $lines = $lines[1..($lines.Count - 1)]
+                }
+                $indented = ($lines | ForEach-Object { "  $_" }) -join "`n"
                 $content = @"
 
   $esc[1;36mCategory:$esc[0m   $esc[1;37m[Custom]$esc[0m
@@ -85,7 +89,7 @@ function Ensure-Previews ([switch]$Force) {
   $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
   $esc[1;33mRendered Prompt:$esc[0m
 
-  $rendered$esc[1;32mgit status$esc[0m
+$indented$esc[1;32mgit status$esc[0m
 
   $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
   $esc[0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate$esc[0m
@@ -98,7 +102,11 @@ function Ensure-Previews ([switch]$Force) {
                 try {
                     & starship preset $p > $tempToml
                     $env:STARSHIP_CONFIG = $tempToml
-                    $rendered = & starship prompt --path $scriptDir --status 0
+                    $lines = & starship prompt --path $scriptDir --status 0 --terminal-width 68
+                    while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[0])) {
+                        $lines = $lines[1..($lines.Count - 1)]
+                    }
+                    $indented = ($lines | ForEach-Object { "  $_" }) -join "`n"
                     $content = @"
 
   $esc[1;34mCategory:$esc[0m   $esc[1;37m[Starship]$esc[0m
@@ -107,7 +115,7 @@ function Ensure-Previews ([switch]$Force) {
   $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
   $esc[1;33mRendered Prompt:$esc[0m
 
-  $rendered$esc[1;32mgit status$esc[0m
+$indented$esc[1;32mgit status$esc[0m
 
   $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
   $esc[0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate$esc[0m

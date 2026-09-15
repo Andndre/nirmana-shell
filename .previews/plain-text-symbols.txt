@@ -5,7 +5,8 @@
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 
-   [1;36mnirmana-shell[0m on [1;35mgit main[0m [1;31m[!?][0m  [1;32m>[0m [1;32mgit status[0m
+  [1;36mnirmana-shell[0m on [1;35mgit main[0m [1;31m[!][0m 
+  [1;32m>[0m [1;32mgit status[0m
 
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m
