@@ -57,3 +57,84 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
     function la { eza --icons --group-directories-first -la @args }
     function lt { eza --icons --tree --level=2 @args }
 }
+
+# 5. Tridatu-Shell CLI Helper & Commands
+function global:tridatu-shell {
+    param(
+        [Parameter(Position=0)]
+        [string]$SubCommand,
+        [Parameter(Position=1)]
+        [string]$Argument
+    )
+
+    $root = Join-Path $HOME ".tridatu-shell"
+    switch ($SubCommand) {
+        'theme' {
+            $switchScript = Join-Path $root "switch-theme.ps1"
+            if (Test-Path $switchScript) {
+                & $switchScript $Argument
+            } else {
+                Write-Error "Skrip tema tidak ditemukan di $root"
+            }
+        }
+        'update' {
+            if (Test-Path (Join-Path $root ".git")) {
+                Write-Host "Memperbarui Tridatu-Shell dari GitHub..." -ForegroundColor Cyan
+                git -C $root pull
+                & (Join-Path $root "setup.ps1")
+            } else {
+                Write-Host "Mengunduh ulang setup Tridatu-Shell..." -ForegroundColor Cyan
+                irm https://raw.githubusercontent.com/Andndre/tridatu-shell/main/setup.ps1 | iex
+            }
+        }
+        'doctor' {
+            Write-Host "`n=== Pemeriksaan Kesehatan Tridatu-Shell ===" -ForegroundColor Cyan
+            $tools = @('pwsh', 'starship', 'zoxide', 'eza', 'fzf', 'delta', 'fd', 'rg')
+            foreach ($t in $tools) {
+                $found = Get-Command $t -ErrorAction SilentlyContinue
+                if ($found) {
+                    Write-Host " [✓] $t -> $($found.Source)" -ForegroundColor Green
+                } else {
+                    Write-Host " [✗] $t -> Tidak ditemukan di PATH" -ForegroundColor Red
+                }
+            }
+            Write-Host ""
+        }
+        'reload' {
+            . $PROFILE
+            Write-Host "Profil PowerShell 7 berhasil dimuat ulang." -ForegroundColor Green
+        }
+        default {
+            Write-Host "Tridatu-Shell CLI" -ForegroundColor Red
+            Write-Host "Penggunaan: tridatu-shell <perintah> [argumen]`n" -ForegroundColor White
+            Write-Host "Perintah:" -ForegroundColor Yellow
+            Write-Host "  theme [nama]   Ganti tema Starship secara interaktif atau langsung"
+            Write-Host "  update         Perbarui tridatu-shell ke versi terbaru dari GitHub"
+            Write-Host "  doctor         Periksa status dependensi CLI (pwsh, starship, zoxide, dll.)"
+            Write-Host "  reload         Muat ulang `$PROFILE sesi aktif ini"
+        }
+    }
+}
+Set-Alias -Name tridatu -Value tridatu-shell -Option AllScope -Scope Global -Force
+
+# Autocomplete untuk perintah tridatu-shell
+Register-ArgumentCompleter -Native -CommandName 'tridatu-shell', 'tridatu' -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+    $subcommands = @('theme', 'update', 'doctor', 'reload')
+    $elements = $commandAst.CommandElements
+    if ($elements.Count -eq 2) {
+        $subcommands | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+    } elseif ($elements.Count -eq 3 -and $elements[1].Value -eq 'theme') {
+        $root = Join-Path $HOME ".tridatu-shell"
+        if (Test-Path (Join-Path $root "themes")) {
+            Get-ChildItem (Join-Path $root "themes") -Filter "*.toml" | ForEach-Object {
+                $themeName = $_.BaseName
+                if ($themeName -like "$wordToComplete*") {
+                    [System.Management.Automation.CompletionResult]::new($themeName, $themeName, 'ParameterValue', $themeName)
+                }
+            }
+        }
+    }
+}

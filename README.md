@@ -60,23 +60,29 @@ Semua ikon Starship dan Eza membutuhkan Nerd Font.
 
 ---
 
-## Ganti Tema (Theme Switcher)
+## Perintah CLI `tridatu-shell`
 
-Tridatu-Shell menyediakan script pengalih tema Starship secara instan:
+Setelah terpasang, perintah `tridatu-shell` (atau alias `tridatu`) dapat diakses langsung dari mana saja di terminal:
 
-```powershell
-.\switch-theme.ps1
-```
-Pilihan tema yang tersedia:
+| Perintah | Deskripsi |
+| :--- | :--- |
+| `tridatu-shell theme` | Buka menu interaktif `fzf` untuk memilih dan mengganti tema Starship |
+| `tridatu-shell theme <nama>` | Ganti ke tema tertentu secara instan (mendukung Tab autocomplete) |
+| `tridatu-shell doctor` | Periksa kesehatan seluruh utilitas CLI (`pwsh`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`, `rg`) |
+| `tridatu-shell update` | Perbarui konfigurasi dan tema Tridatu-Shell ke versi terbaru dari GitHub |
+| `tridatu-shell reload` | Muat ulang `$PROFILE` PowerShell pada tab aktif |
+
+### Pilihan Tema Bawaan:
 * **`tridatu`** (Default)
 * **`tokyo-night`**
 * **`catppuccin-mocha`**
 * **`minimal-emerald`**
 
-Atau langsung lewat argumen:
+Contoh pemakaian:
 ```powershell
-.\switch-theme.ps1 tokyo-night
+tridatu-shell theme tokyo-night
 ```
+*(Tip: Anda juga bisa mengetik `tridatu theme` atau menekan `Tab` setelah kata `theme` untuk autocomplete nama tema).*
 
 ---
 
