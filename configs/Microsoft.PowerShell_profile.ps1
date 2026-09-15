@@ -140,7 +140,9 @@ function global:nirmana-shell {
         [Parameter(Position=0)]
         [string]$SubCommand,
         [Parameter(Position=1)]
-        [string]$Argument
+        [string]$Argument,
+        [Parameter(Position=2)]
+        [string]$Option
     )
 
     $root = Join-Path $HOME ".nirmana-shell"
@@ -168,6 +170,49 @@ function global:nirmana-shell {
                 & $switchScript $Argument
             } else {
                 Write-Error "Theme switch script not found at $root"
+            }
+        }
+        'import-theme' {
+            if (-not $Argument) {
+                Write-Host "`nUsage: nirmana import-theme <url-or-file.omp.json> [theme-name]`n" -ForegroundColor Yellow
+                return
+            }
+
+            $convertScript = Join-Path $root "scripts\convert-omp.py"
+            if (-not (Test-Path $convertScript)) {
+                $devScript = "D:\nirmana-shell\scripts\convert-omp.py"
+                if (Test-Path $devScript) { $convertScript = $devScript }
+            }
+
+            if (-not (Test-Path $convertScript)) {
+                Write-Error "Transpiler script not found at $convertScript"
+                return
+            }
+
+            $targetThemesDir = Join-Path $root "themes"
+            if (-not (Test-Path $targetThemesDir)) {
+                New-Item -ItemType Directory -Path $targetThemesDir -Force | Out-Null
+            }
+
+            $themeName = if ($Option) { $Option } else {
+                $raw = Split-Path $Argument -Leaf
+                $raw = $raw -replace '\.omp\.json$', '' -replace '\.json$', ''
+                $raw
+            }
+
+            Write-Host "`nTranspiling Oh My Posh theme '$themeName'..." -ForegroundColor Cyan
+            $destToml = Join-Path $targetThemesDir "$themeName.toml"
+            & uv run python $convertScript $Argument -o $destToml -n $themeName
+
+            if ($LASTEXITCODE -eq 0 -and (Test-Path $destToml)) {
+                Write-Host "--> Theme generated: $destToml" -ForegroundColor Green
+                $switchScript = Join-Path $root "switch-theme.ps1"
+                if (Test-Path $switchScript) {
+                    & $switchScript -UpdatePreviews
+                }
+                Write-Host "`nImport successful. Run 'nirmana theme $themeName' to activate.`n" -ForegroundColor Cyan
+            } else {
+                Write-Error "Failed to transpile Oh My Posh theme."
             }
         }
         'update' {
@@ -485,6 +530,7 @@ function global:nirmana-shell {
             Write-Host "│                                                             │" -ForegroundColor White
             Write-Host "│  Commands:                                                  │" -ForegroundColor Yellow
             Write-Host "│    theme [name]     Switch theme with top-preview TUI       │" -ForegroundColor White
+            Write-Host "│    import-theme     Import & transpile Oh My Posh theme     │" -ForegroundColor White
             Write-Host "│    version          Display version and system info         │" -ForegroundColor White
             Write-Host "│    update           Update Nirmana-Shell from GitHub        │" -ForegroundColor White
             Write-Host "│    doctor [--fix]   Verify and self-heal CLI dependencies   │" -ForegroundColor White
@@ -501,7 +547,7 @@ Set-Alias -Name nirmana -Value nirmana-shell -Option AllScope -Scope Global -For
 # Argument completer for nirmana-shell
 Register-ArgumentCompleter -Native -CommandName 'nirmana-shell', 'nirmana' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
-    $subcommands = @('theme', 'version', 'update', 'doctor', 'benchmark', 'reload', 'uninstall')
+    $subcommands = @('theme', 'import-theme', 'version', 'update', 'doctor', 'benchmark', 'reload', 'uninstall')
     $elements = $commandAst.CommandElements
     if ($elements.Count -eq 2) {
         $subcommands | Where-Object { $_ -like "$wordToComplete*" } | ForEach-Object {

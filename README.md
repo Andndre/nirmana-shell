@@ -72,24 +72,25 @@ If configuring manually or verifying:
 
 The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 
-| Command                | Description                                                                 |
-| :--------------------- | :-------------------------------------------------------------------------- |
-| `nirmana theme`        | Open interactive theme switcher with top prompt preview and rounded borders |
-| `nirmana theme <name>` | Apply a specific theme (supports Tab completion)                            |
-| `nirmana version`      | Display installed version, commit hash, and PowerShell environment          |
-| `nirmana doctor`       | Verify PATH and health of all CLI tools and Nerd Font status                |
-| `nirmana doctor --fix` | Automatically install missing CLI dependencies and fonts via WinGet         |
-| `nirmana benchmark`    | Profile sub-second startup latency across profile components                |
-| `nirmana update`       | Pull latest updates from GitHub                                             |
-| `nirmana reload`       | Reload the active PowerShell profile                                        |
-| `nirmana uninstall`    | Interactively remove Nirmana and restore original profile backup            |
+| Command                                  | Description                                                                 |
+| :--------------------------------------- | :-------------------------------------------------------------------------- |
+| `nirmana theme`                          | Open interactive theme switcher with top prompt preview and rounded borders |
+| `nirmana theme <name>`                   | Apply a specific theme (supports Tab completion)                            |
+| `nirmana import-theme <url/file> [name]` | Import & transpile Oh My Posh theme JSON to Starship TOML                   |
+| `nirmana version`                        | Display installed version, commit hash, and PowerShell environment          |
+| `nirmana doctor`                         | Verify PATH and health of all CLI tools and Nerd Font status                |
+| `nirmana doctor --fix`                   | Automatically install missing CLI dependencies and fonts via WinGet         |
+| `nirmana benchmark`                      | Profile sub-second startup latency across profile components                |
+| `nirmana update`                         | Pull latest updates from GitHub                                             |
+| `nirmana reload`                         | Reload the active PowerShell profile                                        |
+| `nirmana uninstall`                      | Interactively remove Nirmana and restore original profile backup            |
 
 ### Available Themes and Presets
 
-Supports 17 custom themes and 10 official Starship presets. Preview images below are generated directly from the theme definitions.
+Supports 18 custom themes and 10 official Starship presets. Preview images below are generated directly from the theme definitions.
 
 <details open>
-<summary><b>Custom Themes Gallery (17 Themes)</b></summary>
+<summary><b>Custom Themes Gallery (18 Themes)</b></summary>
 
 | Theme                                                     | Preview                                                             | Command                               |
 | :-------------------------------------------------------- | :------------------------------------------------------------------ | :------------------------------------ |
@@ -110,6 +111,7 @@ Supports 17 custom themes and 10 official Starship presets. Preview images below
 | **agnoster**<br>_Classic powerline ribbon_                | ![agnoster](assets/previews/agnoster.png)                           | `nirmana theme agnoster`              |
 | **jetpack**<br>_Futuristic geometric single-line_         | ![jetpack](assets/previews/jetpack.png)                             | `nirmana theme jetpack`               |
 | **robbyrussell**<br>_Legendary minimal arrow prompt_      | ![robbyrussell](assets/previews/robbyrussell.png)                   | `nirmana theme robbyrussell`          |
+| **1_shell**<br>_Pastel system info prompt (OMP)_          | ![1_shell](assets/previews/1_shell.png)                             | `nirmana theme 1_shell`               |
 
 </details>
 
@@ -164,7 +166,7 @@ How Nirmana-Shell compares against other popular Windows terminal configurations
 | **Prompt Engine**             | Starship (Rust)                                  | Starship (Rust)                   | Oh My Posh (Go)            | Varies (Starship / Custom) |
 | **Primary Scope**             | Full Terminal Environment & Theme Suite          | Windows Tweaks & General Dotfiles | Prompt Engine Only         | Personal Configs           |
 | **Installation**              | 1-Line Remote (`irm ... \| iex`)                 | PowerShell / Batch Script         | Package Manager (`winget`) | Manual Git Clone & Copy    |
-| **Curated Themes**            | 17 Custom (Right-Aligned) + 10 Presets           | 1 Default Theme                   | 100+ Community Themes      | 1 Custom Theme             |
+| **Curated Themes**            | 18 Custom (Right-Aligned) + 10 Presets           | 1 Default Theme                   | 100+ Community Themes      | 1 Custom Theme             |
 | **Interactive TUI Switcher**  | Built-in (`nirmana theme` via FZF)               | None (Static Config)              | CLI / Manual Config        | None                       |
 | **Terminal Scheme Sync**      | Automatic (Windows Terminal JSON)                | Partial                           | Manual                     | Manual                     |
 | **CLI Toolchain Integration** | Complete (`eza`, `fzf`, `zoxide`, `delta`, `fd`) | Focused (`zoxide`, `fzf`)         | None (Prompt only)         | Varies                     |

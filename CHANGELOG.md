@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2026-09-16
+
+### Added
+
+- **Oh My Posh Transpiler (`scripts/convert-omp.py`)**: Built an automated transpiler engine that converts Oh My Posh JSON themes (`*.omp.json`) into high-performance Starship TOML themes, parsing segment metadata, colors, Go time formats to `strftime`, and multi-line layouts with right-aligned `$fill`.
+- **Theme Importer CLI (`nirmana import-theme`)**: Added a first-class CLI command to import and transpile Oh My Posh themes directly from local files or remote GitHub URLs (`nirmana import-theme <url/file> [name]`), automatically generating preview cards and integrating them into the FZF theme switcher.
+- **Curated Theme `1_shell`**: Ported the iconic `1_shell` pastel system information theme from Oh My Posh, featuring multi-line metrics (user, time, git, duration, memory usage) and clean directory styling.
+
 ## [1.0.8] - 2026-09-16
 
 ### Added

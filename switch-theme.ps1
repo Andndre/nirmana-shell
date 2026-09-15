@@ -89,6 +89,7 @@ function Ensure-Previews ([switch]$Force) {
                 'spaceship'             = 'Cosmic developer prompt with rocket execution symbol'
                 'clean-detailed'        = 'Modern two-line prompt with right-aligned runtime & duration'
                 'takuya'                = 'Craftzdog signature prompt with right-aligned runtime & clock'
+                '1_shell'               = 'Clean pastel two-line prompt with system info ported from Oh My Posh'
             }
 
             foreach ($c in $customThemes) {
