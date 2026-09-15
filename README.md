@@ -57,7 +57,6 @@ Icons used by Starship and Eza require a patched Nerd Font.
 | File Listing | `ls`, `ll`, `la`, `lt` | Directory listing using `eza` |
 | Git Diffs | `git diff`, `git show` | Syntax-highlighted diffs using `delta` |
 | File Search | `fd <query>` | Fast file search |
-| Console Bell | `Backspace` | Muted; no audio beep |
 
 ---
 
