@@ -63,10 +63,14 @@ function Ensure-Previews {
         }
 
         $ompMeta = @{
-            'bubbles'        = 'Rounded capsule segments with deep indigo & vibrant accents (Oh-My-Posh)'
-            'jandedobbeleer' = 'Signature powerline chevron theme by Jan De Dobbeleer (Oh-My-Posh)'
-            'atomic'         = 'Two-line rounded pill segments with warm orange/yellow highlights'
-            'agnoster'       = 'Classic legendary powerline arrow theme ported for Starship'
+            'bubbles'               = 'Rounded capsule segments with deep indigo & vibrant accents (Oh-My-Posh)'
+            'jandedobbeleer'        = 'Signature powerline chevron theme by Jan De Dobbeleer (Oh-My-Posh)'
+            'atomic'                = 'Two-line rounded pill segments with warm orange/yellow highlights'
+            'agnoster'              = 'Classic legendary powerline arrow theme ported for Starship'
+            'powerlevel10k_rainbow' = 'Iconic multi-color powerline rainbow theme (Powerlevel10k style)'
+            'dracula'               = 'Dracula gothic pastel palette with rounded capsules & chevrons'
+            'paradox'               = 'Original Oh-My-Posh vibrant chevron theme with sky blue directory'
+            'half-life'             = 'Cyberpunk lambda theme with electric green & orange accents'
         }
 
         foreach ($c in $customThemes) {
@@ -208,15 +212,19 @@ $isStarship = $starshipPresets -contains $cleanThemeName
 
 # 7. Windows Terminal Scheme Synchronization
 $themeToWtScheme = @{
-    'catppuccin-mocha' = 'Catppuccin Mocha'
-    'tokyo-night'      = 'Tokyo Night'
-    'nirmana'          = 'Nirmana'
-    'minimal-emerald'  = 'Catppuccin Mocha'
-    'jetpack'          = 'Tokyo Night'
-    'bubbles'          = 'Tokyo Night'
-    'jandedobbeleer'   = 'Catppuccin Mocha'
-    'atomic'           = 'Catppuccin Mocha'
-    'agnoster'         = 'Tokyo Night'
+    'catppuccin-mocha'      = 'Catppuccin Mocha'
+    'tokyo-night'           = 'Tokyo Night'
+    'nirmana'               = 'Nirmana'
+    'minimal-emerald'       = 'Catppuccin Mocha'
+    'jetpack'               = 'Tokyo Night'
+    'bubbles'               = 'Tokyo Night'
+    'jandedobbeleer'        = 'Catppuccin Mocha'
+    'atomic'                = 'Catppuccin Mocha'
+    'agnoster'              = 'Tokyo Night'
+    'powerlevel10k_rainbow' = 'Catppuccin Mocha'
+    'dracula'               = 'Tokyo Night'
+    'paradox'               = 'Catppuccin Mocha'
+    'half-life'             = 'Tokyo Night'
 }
 
 $wtCandidatePaths = @(

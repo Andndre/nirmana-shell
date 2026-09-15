@@ -88,6 +88,10 @@ Supports custom presets, Oh-My-Posh ported themes, and official Starship presets
   * `jandedobbeleer`: Signature powerline chevron theme by Oh-My-Posh creator
   * `atomic`: Two-line rounded pill segments with warm orange and yellow highlights
   * `agnoster`: Classic legendary powerline chevron arrow theme
+  * `powerlevel10k_rainbow`: Iconic multi-color powerline rainbow theme (Powerlevel10k style)
+  * `dracula`: Official Dracula theme palette with rounded capsules and chevrons
+  * `paradox`: Original Oh-My-Posh vibrant chevron theme with sky blue directory
+  * `half-life`: Cyberpunk lambda prompt with electric green and orange accents
 * **`[Starship]` Official Presets**:
   * `bracketed-segments`, `catppuccin-powerline`, `gruvbox-rainbow`, `nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`, `pastel-powerline`, `plain-text-symbols`, `pure-preset`
 

@@ -1,0 +1,80 @@
+# =====================================================================
+# Nirmana-Shell - Oh-My-Posh Port: Powerlevel10k Rainbow Theme
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$os\
+$directory\
+$git_branch\
+$git_status\
+$bun\
+$dart\
+$nodejs\
+$python\
+$package\
+$cmd_duration\
+$line_break\
+$character"""
+
+[os]
+format = "[ 󰍲 ](bg:#d3d7cf fg:#000000)[](fg:#d3d7cf bg:#3465a4)"
+disabled = false
+
+[directory]
+format = "[  $path ](bg:#3465a4 fg:#e4e4e4)[](fg:#3465a4 bg:#4e9a06)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[  $branch](bg:#4e9a06 fg:#000000)"
+
+[git_status]
+format = "[$all_status$ahead_behind](bg:#4e9a06 fg:#000000)[](fg:#4e9a06) "
+style = "bg:#4e9a06 fg:#000000"
+conflicted = " 󰞇"
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+untracked = " ?"
+stashed = " "
+modified = " !"
+staged = " +"
+renamed = " »"
+deleted = " ✘"
+
+[bun]
+format = "[](fg:#FEAC19)[ $version](bg:#FEAC19 fg:#ffffff)[](fg:#FEAC19) "
+version_format = "v${raw}"
+
+[dart]
+symbol = " "
+format = "[](fg:#00acd7)[$symbol$version](bg:#00acd7 fg:#111111)[](fg:#00acd7) "
+version_format = "v${raw}"
+
+[nodejs]
+symbol = "󰎙 "
+format = "[](fg:#689f63)[$symbol$version](bg:#689f63 fg:#ffffff)[](fg:#689f63) "
+version_format = "v${raw}"
+
+[python]
+symbol = "󰌠 "
+format = "[](fg:#FFDE57)[$symbol$version](bg:#FFDE57 fg:#111111)[](fg:#FFDE57) "
+version_format = "v${raw}"
+
+[package]
+symbol = "󰏗 "
+format = "[](fg:#c4a000)[$symbol$version](bg:#c4a000 fg:#000000)[](fg:#c4a000) "
+version_format = "v${raw}"
+disabled = false
+
+[cmd_duration]
+min_time = 2_000
+format = "[](fg:#c4a000)[ $duration](bg:#c4a000 fg:#000000)[](fg:#c4a000) "
+
+[character]
+success_symbol = "[❯](bold #3465a4) "
+error_symbol = "[❯](bold #cc0000) "
