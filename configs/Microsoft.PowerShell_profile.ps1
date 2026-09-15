@@ -97,7 +97,8 @@ function global:nirmana-shell {
         'update' {
             if (Test-Path (Join-Path $root ".git")) {
                 Write-Host "Updating Nirmana-Shell from GitHub..." -ForegroundColor Cyan
-                git -C $root pull
+                git -C $root fetch --quiet origin main
+                git -C $root reset --hard origin/main
                 & (Join-Path $root "setup.ps1")
             } else {
                 Write-Host "Re-running Nirmana-Shell setup..." -ForegroundColor Cyan

@@ -61,10 +61,20 @@ $hasLocalSource = $MyInvocation.MyCommand.Path -and (Test-Path (Join-Path (Split
 
 if ($hasLocalSource) {
     $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-    if (!(Test-Path $installDir)) {
-        Copy-Item $scriptDir $installDir -Recurse -Force | Out-Null
+    $isSelfDir = [string]::Equals(
+        [System.IO.Path]::GetFullPath($scriptDir).TrimEnd('\', '/'),
+        [System.IO.Path]::GetFullPath($installDir).TrimEnd('\', '/'),
+        [System.StringComparison]::OrdinalIgnoreCase
+    )
+
+    if (-not $isSelfDir) {
+        Write-Host "--> Copying files to $installDir..." -ForegroundColor DarkGray
+        if (!(Test-Path $installDir)) {
+            New-Item -ItemType Directory -Path $installDir -Force | Out-Null
+        }
+        Get-ChildItem -Path $scriptDir -Exclude ".git" | Copy-Item -Destination $installDir -Recurse -Force
     } else {
-        Copy-Item "$scriptDir\*" $installDir -Recurse -Force | Out-Null
+        Write-Host "--> Already running from install directory ($installDir)." -ForegroundColor DarkGray
     }
 } else {
     # Running remotely via irm | iex
