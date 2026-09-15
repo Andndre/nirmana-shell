@@ -112,7 +112,8 @@ if (-not $ThemeName) {
     }
 
     if (Get-Command fzf -ErrorAction SilentlyContinue) {
-        $previewCmd = "type `"$previewDir\{2}.txt`""
+        $previewScript = Join-Path $scriptDir "preview.cmd"
+        $previewCmd = "`"$previewScript`" {}"
         $fzfArgs = @(
             "--prompt=  Select Theme ❯ ",
             "--pointer=◆ ",
