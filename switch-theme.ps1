@@ -52,6 +52,7 @@ function Ensure-Previews {
             'catppuccin-mocha' = 'Soothing pastel aesthetic based on Catppuccin Mocha'
             'tokyo-night'      = 'Cyberpunk dark theme inspired by Tokyo Night palette'
             'minimal-emerald'  = 'Distraction-free minimalist prompt with emerald green accents'
+            'jetpack'          = 'Futuristic geometric prompt with unicode accents (Windows-adapted)'
         }
 
         foreach ($c in $customThemes) {
@@ -169,6 +170,7 @@ $themeToWtScheme = @{
     'tokyo-night'      = 'Tokyo Night'
     'nirmana'          = 'Nirmana'
     'minimal-emerald'  = 'Catppuccin Mocha'
+    'jetpack'          = 'Tokyo Night'
 }
 
 $wtCandidatePaths = @(
