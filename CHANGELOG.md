@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.4] - 2026-09-15
 
 ### Changed
+
 - **Realistic Mock Project Context for Theme Previews**: Updated `Ensure-Previews` in `switch-theme.ps1` to render prompt previews within an isolated temporary mock project environment (`package.json`, `main.c`, and tracked git repository with dirty state). This activates language runtime badges, package details, and tooling modifiers across all custom themes and presets.
 - **Differentiated Official Utility Presets**: Resolved identical output across official presets (`nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`) by providing active toolchain contexts where their formatting and filtering logic are visually demonstrable.
 - **Extended Preview Console Width**: Increased Rich console rasterization width from 86 to 96 columns in `scripts/generate-previews.py` to prevent line wrapping on long single-line powerline ribbons with active runtimes.
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.3] - 2026-09-15
 
 ### Fixed
+
 - **UTF-8 BOM Stripped from Setup Script**: Removed UTF-8 Byte Order Mark (`\uFEFF` / `EF BB BF`) from `setup.ps1` that caused `Invoke-Expression` pipeline execution (`irm ... | iex`) to fail with command-not-found errors on comment block headers (`The term '<#' is not recognized...`).
 - **Comment Block Standardization**: Converted script headers to line comments (`#`) for resilience across varying PowerShell hosts and remote execution wrappers.
 - **Fallback Version String**: Updated default version fallback in `setup.ps1` to `1.0.3`.
@@ -24,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.2] - 2026-09-15
 
 ### Added
+
 - **Windows PowerShell 5.1 Compatibility**: Automatically detects execution from legacy PowerShell 5.1, installs PowerShell 7 via WinGet, sets it as the default profile in Windows Terminal, and provides dynamic next-step guidance.
 - **Windows Terminal Default Profile Automation**: Automatically parses `settings.json` and updates `defaultProfile` to the PowerShell 7 profile GUID.
 - **CRLF Line Ending Enforcement**: Added `.gitattributes` to ensure scripts retain Windows CRLF line endings, preventing parser errors in legacy PowerShell 5.1 here-strings.
@@ -31,12 +34,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.1] - 2026-09-15
 
 ### Fixed
+
 - Resolved null path binding error in `setup.ps1` when executed in-memory via `Invoke-Expression` pipeline (`irm ... | iex`).
 - Hardened repository update mechanism in `setup.ps1` using `git fetch` and `git reset --hard` to avoid unstaged working tree conflicts.
 
 ## [1.0.0] - 2026-09-15
 
 ### Added
+
 - **17 Custom and Adapted Themes**: Handcrafted Starship themes including `nirmana`, `catppuccin-mocha`, `takuya`, `tokyo-night`, `bubbles`, `minimal-emerald`, `clean-detailed`, `dracula`, `spaceship`, `atomic`, `half-life`, `paradox`, `jandedobbeleer`, `powerlevel10k_rainbow`, `agnoster`, `jetpack`, and `robbyrussell`.
 - **Right-Aligned Layout**: Implemented Starship `$fill` module across all multi-line themes, moving language runtimes (Node.js, Python, Rust, Go, Dart, Bun) and command execution time to the right side of line 1.
 - **Dynamic Theme Switcher**: Interactive FZF menu (`switch-theme.ps1` / `nirmana theme`) with real-time ANSI preview card, rounded borders, and Windows Terminal color scheme synchronization.
@@ -46,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Automated Windows Setup**: `setup.ps1` installer configuring WinGet dependencies (`pwsh`, `git`, `starship`, `zoxide`, `eza`, `fzf`, `delta`, `fd`), Git delta pager, and PowerShell 7 profile.
 
 ### Fixed
+
 - Prevented `$env:STARSHIP_CONFIG` temporary preview path leaks from corrupting active PowerShell sessions.
 - Corrected Rich SVG font-family fallback to avoid Unicode Private Use Area (PUA) glyph mapping corruption.
 - Adjusted rendering console width to 86 columns to eliminate false line-wrapping on single-line powerline ribbons.
