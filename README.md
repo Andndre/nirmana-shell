@@ -75,20 +75,27 @@ The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 
 ### Available Themes and Presets
 
-Supports custom presets and official Starship presets:
+Supports custom presets, Oh-My-Posh ported themes, and official Starship presets:
 
-* **Custom Presets**:
-  * `nirmana`: Default theme with cyan and purple accents
-  * `catppuccin-mocha`: Catppuccin Mocha palette
-  * `tokyo-night`: Tokyo Night palette
-  * `minimal-emerald`: Emerald green accent theme
-* **Official Starship Presets**:
-  * `bracketed-segments`, `catppuccin-powerline`, `gruvbox-rainbow`, `jetpack`, `nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`, `pastel-powerline`, `plain-text-symbols`, `pure-preset`, `tokyo-night`
+* **`[Custom]` Themes**:
+  * `nirmana`: Signature theme with cyan and purple accents
+  * `catppuccin-mocha`: Soothing pastel aesthetic based on Catppuccin Mocha
+  * `tokyo-night`: Cyberpunk dark theme inspired by Tokyo Night palette
+  * `minimal-emerald`: Distraction-free minimalist prompt with emerald green accents
+  * `jetpack`: Geometric futuristic prompt with unicode accents (Windows-adapted)
+* **`[Oh-My-Posh]` Ported Themes**:
+  * `bubbles`: Rounded capsule segments with deep indigo background and vibrant accents
+  * `jandedobbeleer`: Signature powerline chevron theme by Oh-My-Posh creator
+  * `atomic`: Two-line rounded pill segments with warm orange and yellow highlights
+  * `agnoster`: Classic legendary powerline chevron arrow theme
+* **`[Starship]` Official Presets**:
+  * `bracketed-segments`, `catppuccin-powerline`, `gruvbox-rainbow`, `nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`, `pastel-powerline`, `plain-text-symbols`, `pure-preset`
 
 Usage example:
 ```powershell
-nirmana theme gruvbox-rainbow
-nirmana theme nirmana
+nirmana theme bubbles
+nirmana theme jandedobbeleer
+nirmana theme catppuccin-mocha
 ```
 
 ---
