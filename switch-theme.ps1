@@ -185,6 +185,9 @@ if ($isCustom) {
     if ($content -notmatch 'command_timeout\s*=') {
         $content = "command_timeout = 1000`n" + $content
     }
+    # Normalize incompatible Nerd Font v3-only codepoints to universal Nerd Font glyphs
+    $content = $content -replace "󰏗", ""
+    $content = $content -replace "", ""
     Set-Content -Path $targetConfig -Value $content -Encoding utf8
     
     Write-Host ""
