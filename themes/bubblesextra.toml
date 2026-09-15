@@ -1,0 +1,89 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: bubblesextra
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$fill\
+$directory\
+$git_branch\
+$git_status\
+$python\
+$golang\
+$nodejs\
+$ruby\
+$java\
+$julia\
+$php\
+$battery\
+$line_break\
+$cmd_duration\
+$character\
+"""
+
+[fill]
+symbol = " "
+
+[directory]
+format = "[ $path](fg:#3EC669 bg:#29315A) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = " [ $branch](fg:#43CCEA bg:#29315A)"
+
+[git_status]
+format = "([$all_status$ahead_behind](fg:#43CCEA bg:#29315A))"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[python]
+symbol = "󰌠 "
+format = " [󰌠 $version](fg:#E4F34A bg:#29315A) "
+
+[golang]
+symbol = " "
+format = " [ $version](fg:#7FD5EA bg:#29315A) "
+
+[nodejs]
+symbol = "󰎙 "
+format = " [󰎙 $version](fg:#42E66C bg:#29315A) "
+
+[ruby]
+symbol = " "
+format = " [ $version](fg:#E64747 bg:#29315A) "
+
+[java]
+symbol = " "
+format = " [ $version](fg:#E64747 bg:#29315A) "
+
+[julia]
+symbol = " "
+format = " [ $version](fg:#9B6BDF bg:#29315A) "
+
+[php]
+symbol = " "
+format = " [ $version](fg:#ffffff bg:#4063D8) "
+
+[battery]
+disabled = false
+format = " [$symbol$percentage](fg:#9B6BDF bg:#29315A) "
+
+[cmd_duration]
+min_time = 1
+format = "[ $duration](fg:#AEA4BF bg:#29315A)  "
+
+[character]
+success_symbol = "[❯](bold green) "
+error_symbol = "[❯](bold red) "

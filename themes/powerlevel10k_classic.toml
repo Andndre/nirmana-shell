@@ -1,0 +1,58 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: powerlevel10k_classic
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$sudo\
+$directory\
+$git_branch\
+$git_status\
+$fill\
+$username\
+$time\
+$line_break\
+$character\
+"""
+
+[fill]
+symbol = " "
+
+[sudo]
+disabled = false
+symbol = " "
+format = "[ ](#26C6DA)"
+
+[directory]
+format = "[](fg:#546E7A)[ $path](fg:#26C6DA bg:#546E7A)[](fg:#546E7A) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:#546E7A)[ $branch](fg:#D4E157 bg:#546E7A)"
+
+[git_status]
+format = "([$all_status$ahead_behind](fg:#D4E157 bg:#546E7A)[](fg:#546E7A) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[username]
+show_always = true
+format = "[$user](fg:#D4E157 bg:#546E7A) "
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "[](fg:#546E7A)[ $time](fg:#D4E157 bg:#546E7A)[](fg:#546E7A) "
+
+[character]
+success_symbol = "[❯ ](bold #D4E157) "
+error_symbol = "[❯ ](bold #FF5252) "

@@ -1,0 +1,54 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: unicorn
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$time\
+$cmd_duration\
+$line_break\
+$sudo\
+$character\
+"""
+
+[directory]
+format = "[](fg:#0087D8)[ $path](fg:#003544 bg:#0087D8)[](fg:#0087D8) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:#d2ff5e)[ $branch](fg:#193549 bg:#d2ff5e)"
+
+[git_status]
+format = "([$all_status$ahead_behind](fg:#193549 bg:#d2ff5e)[](fg:#d2ff5e) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "[](fg:#003543)[ $time](fg:#fff bg:#003543)[](fg:#003543) "
+
+[cmd_duration]
+min_time = 1
+format = "[ $duration](fg:#ffffff bg:#83769c) "
+
+[sudo]
+disabled = false
+symbol = "⚡ "
+format = "[⚡ ](#fff)"
+
+[character]
+success_symbol = "[❯](bold green) "
+error_symbol = "[❯](bold red) "

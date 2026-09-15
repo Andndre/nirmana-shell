@@ -1,0 +1,65 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: wholespace
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$time\
+$memory_usage\
+$cmd_duration\
+$git_branch\
+$git_status\
+$fill\
+$nodejs\
+$git_branch\
+$git_status\
+$line_break\
+$directory\
+$character\
+"""
+
+[fill]
+symbol = " "
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "[$time](fg:#011627 bg:#FEF5ED)[](bg:#FEF5ED) "
+
+[memory_usage]
+disabled = false
+threshold = 0
+format = "[MEM: $ram_pct](fg:#ffffff bg:#516BEB)[](bg:#516BEB) "
+
+[cmd_duration]
+min_time = 1
+format = "[ $duration](fg:#d6deeb bg:#575656) "
+
+[nodejs]
+symbol = "󰎙 "
+format = "[󰎙 $version](fg:#000000 bg:#ffffff)[](bg:#ffffff) "
+
+[git_branch]
+format = "[ $branch](fg:#011627 bg:#17D7A0)"
+
+[git_status]
+format = "([$all_status$ahead_behind](fg:#011627 bg:#17D7A0))"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[directory]
+format = "[ $path](#ffafd2) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[character]
+success_symbol = "[❯ ](bold #00ff15) "
+error_symbol = "[❯ ](bold #ff0000) "

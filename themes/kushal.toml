@@ -1,0 +1,80 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: kushal
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$shell\
+$sudo\
+$python\
+$golang\
+$rust\
+$git_branch\
+$git_status\
+$fill\
+$character\
+$cmd_duration\
+$line_break\
+$time\
+$directory\
+$character\
+"""
+
+[fill]
+symbol = " "
+
+[shell]
+symbol = " "
+format = "[](fg:#00C7FC)[ $indicator](fg:#011627 bg:#00C7FC)[](fg:#00C7FC) "
+
+[sudo]
+disabled = false
+symbol = "⚡ "
+format = "[⚡ ](#D6DEEB)"
+
+[python]
+symbol = "󰌠 "
+format = "[](fg:#FFDE57)[󰌠 $indicator](fg:#011627 bg:#FFDE57)[](fg:#FFDE57) "
+
+[golang]
+symbol = " "
+format = "[](fg:#7FD5EA)[ $indicator](fg:#ffffff bg:#7FD5EA)[](fg:#7FD5EA) "
+
+[rust]
+symbol = " "
+format = "[](fg:#99908A)[ $indicator](fg:#193549 bg:#99908A)[](fg:#99908A) "
+
+[git_branch]
+format = "[](fg:#1BD4CD)[ $branch](fg:#011627 bg:#1BD4CD)"
+
+[git_status]
+format = "([$all_status$ahead_behind](fg:#011627 bg:#1BD4CD)[](fg:#1BD4CD) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[character]
+success_symbol = "[❯ ](bold #D6DEEB) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[cmd_duration]
+min_time = 1
+format = "[ $duration](fg:#D6DEEB bg:#575656) "
+
+[time]
+disabled = false
+time_format = " %H:%M:%S |  %d %b, %A"
+format = "[ $time](#F2D3B6) "
+
+[directory]
+format = "[  ](#00C7FC)[ in ](#B6D6F2)[ $path](#B6D6F2) "
+truncation_length = 3
+truncation_symbol = "…/"
+

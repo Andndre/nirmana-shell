@@ -1,0 +1,62 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: di4am0nd
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$username\
+$directory\
+$git_branch\
+$git_status\
+$nodejs\
+$fill\
+$memory_usage\
+$cmd_duration\
+$line_break\
+$character\
+"""
+
+[fill]
+symbol = " "
+
+[username]
+show_always = true
+format = "[ ](#ff70a6)[$user](#FFBD00) "
+
+[directory]
+format = "[ $path](#00C6F7) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[ $branch](#F62F2E)"
+
+[git_status]
+format = "([$all_status$ahead_behind](#F62F2E) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[nodejs]
+symbol = "󰎙 "
+format = "[󰎙 $version](#98C379) "
+
+[memory_usage]
+disabled = false
+threshold = 0
+format = "[MEM: $ram_pct](#85C980)  "
+
+[cmd_duration]
+min_time = 1
+format = "┋[ $duration](#ffffff) "
+
+[character]
+success_symbol = "[❯](bold green) "
+error_symbol = "[❯](bold red) "

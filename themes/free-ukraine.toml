@@ -1,0 +1,68 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: free-ukraine
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$character\
+$fill\
+$battery\
+$cmd_duration\
+$time\
+$line_break\
+$sudo\
+$username\
+"""
+
+[fill]
+symbol = " "
+
+[directory]
+format = "[ $path](fg:#FBD951 bg:#0057b7) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:#3379c5)[ $branch](fg:#0057b7 bg:#3379c5)"
+
+[git_status]
+format = "([$all_status$ahead_behind](fg:#0057b7 bg:#3379c5)[](fg:#3379c5) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[character]
+success_symbol = "[❯ ](bold #0057b7) "
+error_symbol = "[❯ ](bold #a30000) "
+
+[battery]
+disabled = false
+format = "[$symbol$percentage](fg:#FBD951 bg:#0057b7) "
+
+[cmd_duration]
+min_time = 1
+format = "[ $duration](fg:#FBD951 bg:#0057b7) "
+
+[time]
+disabled = false
+time_format = "_2,%H:%M"
+format = "[$time](fg:#FBD951 bg:#0057b7) "
+
+[sudo]
+disabled = false
+symbol = " "
+format = "[ ](#FBD951)"
+
+[username]
+show_always = true
+format = "[](fg:#FBD951)[ $user](fg:#0057b7 bg:#FBD951)[](fg:#FBD951) "

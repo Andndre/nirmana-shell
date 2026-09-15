@@ -87,10 +87,10 @@ The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 
 ### Available Themes and Presets
 
-Supports 18 custom themes and 10 official Starship presets. Preview images below are generated directly from the theme definitions.
+Supports 18 curated custom themes, 108 ported Oh My Posh community themes, and 10 official Starship presets (total: 136 themes). All themes are fully integrated with the interactive FZF switcher (`nirmana theme`).
 
 <details open>
-<summary><b>Custom Themes Gallery (18 Themes)</b></summary>
+<summary><b>Custom Themes Gallery (18 Curated Themes)</b></summary>
 
 | Theme                                                     | Preview                                                             | Command                               |
 | :-------------------------------------------------------- | :------------------------------------------------------------------ | :------------------------------------ |
@@ -166,7 +166,7 @@ How Nirmana-Shell compares against other popular Windows terminal configurations
 | **Prompt Engine**             | Starship (Rust)                                  | Starship (Rust)                   | Oh My Posh (Go)            | Varies (Starship / Custom) |
 | **Primary Scope**             | Full Terminal Environment & Theme Suite          | Windows Tweaks & General Dotfiles | Prompt Engine Only         | Personal Configs           |
 | **Installation**              | 1-Line Remote (`irm ... \| iex`)                 | PowerShell / Batch Script         | Package Manager (`winget`) | Manual Git Clone & Copy    |
-| **Curated Themes**            | 18 Custom (Right-Aligned) + 10 Presets           | 1 Default Theme                   | 100+ Community Themes      | 1 Custom Theme             |
+| **Curated Themes**            | 18 Curated + 108 OMP + 10 Presets                | 1 Default Theme                   | 100+ Community Themes      | 1 Custom Theme             |
 | **Interactive TUI Switcher**  | Built-in (`nirmana theme` via FZF)               | None (Static Config)              | CLI / Manual Config        | None                       |
 | **Terminal Scheme Sync**      | Automatic (Windows Terminal JSON)                | Partial                           | Manual                     | Manual                     |
 | **CLI Toolchain Integration** | Complete (`eza`, `fzf`, `zoxide`, `delta`, `fd`) | Focused (`zoxide`, `fzf`)         | None (Prompt only)         | Varies                     |

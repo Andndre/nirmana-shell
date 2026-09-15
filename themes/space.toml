@@ -1,0 +1,72 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: space
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$username\
+$directory\
+$git_branch\
+$git_status\
+$python\
+$golang\
+$nodejs\
+$ruby\
+$java\
+$julia\
+$line_break\
+$character\
+"""
+
+[username]
+show_always = true
+format = "[ ](#ff70a6)[$user](#26C6DA) "
+
+[directory]
+format = "[ $path](lightGreen) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[$branch](purple)"
+
+[git_status]
+format = "([$all_status$ahead_behind](purple) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[python]
+symbol = "󰌠 "
+format = "[󰌠 $version](#906cff) "
+
+[golang]
+symbol = " "
+format = "[ $version](#7FD5EA) "
+
+[nodejs]
+symbol = "󰎙 "
+format = "[󰎙 $version](#76b367) "
+
+[ruby]
+symbol = " "
+format = "[ $version](#f44336) "
+
+[java]
+symbol = " "
+format = "[ $version](#ea2d2e) "
+
+[julia]
+symbol = " "
+format = "[ $version](#4063D8) "
+
+[character]
+success_symbol = "[❯](bold green) "
+error_symbol = "[❯](bold red) "

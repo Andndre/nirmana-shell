@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-09-16
+
+### Added
+
+- **Full Oh My Posh Community Catalog (108 Themes)**: Integrated 108 community themes from Oh My Posh transpiled into native Starship TOML configurations with 100% syntax validation, expanding the total theme ecosystem to 136 themes (excluding redundant variants like duplicate catppuccin mocha).
+- **Categorized TUI Theme Switcher**: Updated `switch-theme.ps1` with dedicated `[Oh-My-Posh]` tags and magenta accent labeling in FZF, distinguishing community ported themes from core curated themes (`[Custom]`) and official presets (`[Starship]`).
+- **Shorthand Remote Theme Fetcher**: Enhanced `convert-omp.py` and `nirmana import-theme` to accept raw theme identifiers without requiring full GitHub URLs (e.g., `nirmana import-theme quick-term`).
+- **Powerline Segment Tag Normalization**: Resolved edge cases in diamond and powerline segment transitions where background tags were treated as literals, ensuring accurate color inheritance across chevrons.
+
 ## [1.0.9] - 2026-09-16
 
 ### Added

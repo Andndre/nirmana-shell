@@ -1,0 +1,57 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: multiverse-neon
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$character\
+$fill\
+$nodejs\
+$ruby\
+$python\
+$line_break\
+$character\
+"""
+
+[fill]
+symbol = " "
+
+[directory]
+format = "[ $path](fg:#3EC669 bg:#29315A) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = " [ $branch](fg:#43CCEA bg:#29315A)"
+
+[git_status]
+format = "([$all_status$ahead_behind](fg:#43CCEA bg:#29315A))"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[character]
+success_symbol = "[❯ ](bold #C94A16) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[nodejs]
+symbol = "󰎙 "
+format = "[󰎙 $version](#88e570) "
+
+[ruby]
+symbol = " "
+format = "[ $version](#DE3F24) "
+
+[python]
+symbol = "󰌠 "
+format = "[󰌠 $version](#FED142) "

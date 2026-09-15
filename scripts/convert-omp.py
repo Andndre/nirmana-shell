@@ -50,57 +50,78 @@ def convert_go_date_format(go_fmt: str) -> str:
     return res
 
 
-def clean_template_tags(template_str: str) -> str:
+def clean_template_tags(template_str: str, current_bg: Optional[str] = None, palette: Optional[Dict[str, str]] = None) -> str:
     """Clean and translate OMP template tags into Starship format strings."""
     if not template_str:
         return ""
 
+    palette = palette or {}
+
+    def resolve_tag_col(c: str) -> str:
+        if c == "background" and current_bg:
+            return current_bg
+        if c.startswith("p:"):
+            key = c[2:]
+            return palette.get(key, key)
+        return palette.get(c, c)
+
     def repl_fg_bg(m):
-        fg, bg = m.group(1), m.group(2)
+        fg, bg = resolve_tag_col(m.group(1)), resolve_tag_col(m.group(2))
         txt = m.group(3)
         style = []
-        if fg != "transparent":
-            style.append(f"fg:#{fg}" if fg.startswith("#") else f"fg:{fg}")
-        if bg != "transparent":
-            style.append(f"bg:#{bg}" if bg.startswith("#") else f"bg:{bg}")
+        if fg and fg != "transparent":
+            style.append(f"fg:#{fg}" if re.match(r"^[0-9a-fA-F]{6}$", fg) else f"fg:{fg}")
+        if bg and bg != "transparent":
+            style.append(f"bg:#{bg}" if re.match(r"^[0-9a-fA-F]{6}$", bg) else f"bg:{bg}")
         return f"[{txt}]({' '.join(style)})" if style else txt
 
     def repl_color(m):
-        col = m.group(1)
+        col = resolve_tag_col(m.group(1))
         txt = m.group(2)
+        if col == "transparent":
+            return txt
         c = f"#{col}" if re.match(r"^[0-9a-fA-F]{6}$", col) else col
         return f"[{txt}]({c})"
 
     # <#fg,#bg>text</>
     s = re.sub(r"<([^,>]+),([^>]+)>(.*?)</>", repl_fg_bg, template_str)
     # <#hex>text</>
-    s = re.sub(r"<#?([0-9a-fA-F]{6}|[a-zA-Z]+)>(.*?)</>", repl_color, s)
+    s = re.sub(r"<#?([0-9a-fA-F]{6}|[a-zA-Z0-9_\-:]+)>(.*?)</>", repl_color, s)
     # Strip remaining XML-like tags
     s = re.sub(r"<[^>]+>", "", s)
     return s
 
 
-def parse_omp_json(source: str) -> Dict[str, Any]:
-    """Load JSON from local path or URL."""
-    if source.startswith("http://") or source.startswith("https://"):
+def parse_omp_json(source: str) -> Tuple[Dict[str, Any], str]:
+    """Load JSON from local path, URL, or Oh My Posh theme name."""
+    theme_name = ""
+    url = source
+    if not source.startswith("http://") and not source.startswith("https://"):
+        path = Path(source)
+        if not path.exists():
+            # If neither local file nor full URL, try Oh My Posh official repository
+            candidate_name = source.replace(".omp.json", "").replace(".json", "")
+            url = f"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/{candidate_name}.omp.json"
+            theme_name = candidate_name
+        else:
+            data = path.read_text(encoding="utf-8")
+            theme_name = path.stem.replace(".omp", "")
+            return json.loads(data), theme_name
+
+    if url.startswith("http://") or url.startswith("https://"):
         req = urllib.request.Request(
-            source,
+            url,
             headers={"User-Agent": "Nirmana-Shell-Transpiler/1.0"},
         )
         try:
             with urllib.request.urlopen(req, timeout=15) as resp:
                 data = resp.read().decode("utf-8")
-                return json.loads(data)
+                if not theme_name:
+                    theme_name = Path(url.split("?")[0]).stem.replace(".omp", "")
+                return json.loads(data), theme_name
         except Exception as e:
-            print(f"Error fetching URL '{source}': {e}", file=sys.stderr)
+            print(f"Error fetching Oh My Posh theme '{source}': {e}", file=sys.stderr)
             sys.exit(1)
-    else:
-        path = Path(source)
-        if not path.exists():
-            print(f"Error: File not found '{source}'", file=sys.stderr)
-            sys.exit(1)
-        data = path.read_text(encoding="utf-8")
-        return json.loads(data)
 
 
 class OmpTranspiler:
@@ -118,6 +139,12 @@ class OmpTranspiler:
     def resolve_color(self, col: Optional[str]) -> Optional[str]:
         if not col or col == "transparent":
             return None
+        # Handle OMP palette prefix "p:color_name"
+        if col.startswith("p:"):
+            key = col[2:]
+            if key in self.palette:
+                return self.palette[key]
+            return key
         # Check palette lookup
         if col in self.palette:
             return self.palette[col]
@@ -226,8 +253,8 @@ class OmpTranspiler:
         template = seg.get("template", "")
         options = seg.get("options", {})
 
-        leading_fmt = clean_template_tags(leading)
-        trailing_fmt = clean_template_tags(trailing)
+        leading_fmt = clean_template_tags(leading, current_bg=bg, palette=self.palette)
+        trailing_fmt = clean_template_tags(trailing, current_bg=bg, palette=self.palette)
 
         if stype == "path":
             icon = " "
@@ -429,10 +456,16 @@ class OmpTranspiler:
             else:
                 fmt = f"[{icon}$version]({r_fg}) "
 
-            self.modules[mod_name] = {
-                "symbol": icon,
-                "format": fmt,
-            }
+            if mod_name == "shell":
+                self.modules[mod_name] = {
+                    "disabled": False,
+                    "format": fmt.replace("$version", "$indicator"),
+                }
+            else:
+                self.modules[mod_name] = {
+                    "symbol": icon,
+                    "format": fmt,
+                }
             return f"${mod_name}"
 
         return None
@@ -500,16 +533,10 @@ def main():
 
     args = parser.parse_args()
 
-    theme_name = args.name
-    if not theme_name:
-        if args.input.startswith("http"):
-            theme_name = Path(args.input.split("?")[0]).stem.replace(".omp", "")
-        else:
-            theme_name = Path(args.input).stem.replace(".omp", "")
-
+    data, parsed_name = parse_omp_json(args.input)
+    theme_name = args.name or parsed_name
     theme_name = re.sub(r"[^a-zA-Z0-9_\-]", "-", theme_name).strip("-")
 
-    data = parse_omp_json(args.input)
     transpiler = OmpTranspiler(data, theme_name=theme_name, use_fill=not args.no_fill)
     toml_content = transpiler.transpile()
 

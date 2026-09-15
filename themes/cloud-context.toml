@@ -1,0 +1,62 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: cloud-context
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$time\
+$aws\
+$git_branch\
+$git_status\
+$cmd_duration\
+$character\
+$line_break\
+$time\
+$directory\
+$git_branch\
+$git_status\
+$sudo\
+"""
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "[](fg:p:background-color)[ $time](fg:p:timer-text bg:p:background-color)[](fg:p:background-color) "
+
+[aws]
+symbol = " "
+format = "[](fg:p:background-color)[ $version](fg:p:cloud-text-amazon bg:p:background-color)[](fg:p:background-color) "
+
+[git_branch]
+format = "[](fg:p:background-color)[ $branch](fg:p:git-text bg:p:background-color)"
+
+[git_status]
+format = "([$all_status$ahead_behind](fg:p:git-text bg:p:background-color)[](fg:p:background-color) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[cmd_duration]
+min_time = 1
+format = "[](fg:p:background-color)[ $duration](fg:p:timer-text bg:p:background-color)[](fg:p:background-color) "
+
+[character]
+success_symbol = "[❯ ](bold p:error-text) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[directory]
+format = "[](fg:p:background-color)[ $path](fg:p:symbol-color bg:p:background-color)[](fg:p:background-color) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[sudo]
+disabled = false
+symbol = " "
+format = "[ ](p:background-color)"

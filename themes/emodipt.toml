@@ -1,0 +1,50 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: emodipt
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$time\
+$sudo\
+$directory\
+$git_branch\
+$git_status\
+$character\
+$line_break\
+$character\
+"""
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "[ $time](#E5C07B) "
+
+[sudo]
+disabled = false
+symbol = " "
+format = "[ ](#B5B50D)"
+
+[directory]
+format = "[ $path](#61AFEF) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[ $branch](#F3C267)"
+
+[git_status]
+format = "([$all_status$ahead_behind](#F3C267) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[character]
+success_symbol = "[❯ ](bold #C94A16) "
+error_symbol = "[❯ ](bold #ef5350) "

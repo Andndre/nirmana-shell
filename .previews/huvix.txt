@@ -1,0 +1,12 @@
+
+  [1;35m Category:[0m   [1;37m[Oh-My-Posh][0m
+  [1;36mTheme:[0m      [1;37mhuvix[0m
+  [1;36mDetails:[0m    [0;37mCommunity theme ported from Oh My Posh[0m
+  [0;90m──────────────────────────────────────────────────────────────────────────────[0m
+  [1;33mRendered Prompt:[0m
+
+  [38;2;255;112;166m [38;2;255;224;130mAndndre[0m [38;2;86;182;194m …\nirmana-shell[0m [38;2;86;182;194mmain [0m [38;2;255;171;145m 2s[0m 
+  [1;32m❯[0m  [1;32mgit status[0m
+
+  [0;90m──────────────────────────────────────────────────────────────────────────────[0m
+  [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m

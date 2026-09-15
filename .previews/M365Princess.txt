@@ -1,0 +1,12 @@
+
+  [1;35m Category:[0m   [1;37m[Oh-My-Posh][0m
+  [1;36mTheme:[0m      [1;37mM365Princess[0m
+  [1;36mDetails:[0m    [0;37mCommunity theme ported from Oh My Posh[0m
+  [0;90m──────────────────────────────────────────────────────────────────────────────[0m
+  [1;33mRendered Prompt:[0m
+
+  Andndre  …\nirmana-shell main  󰎙 v24.20.0 07:36 
+  [1;32m❯[0m  [1;32mgit status[0m
+
+  [0;90m──────────────────────────────────────────────────────────────────────────────[0m
+  [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m

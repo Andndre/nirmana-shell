@@ -93,8 +93,18 @@ function Ensure-Previews ([switch]$Force) {
             }
 
             foreach ($c in $customThemes) {
-                $desc = if ($customMeta.ContainsKey($c)) { $customMeta[$c] } else { 'Custom Starship theme' }
                 $cfg = Join-Path $themesDir "$c.toml"
+                $cfgRaw = Get-Content $cfg -Raw -ErrorAction SilentlyContinue
+                $isOmp = $cfgRaw -match 'Ported from Oh My Posh'
+                $catLabel = if ($isOmp) { '[Oh-My-Posh]' } else { '[Custom]' }
+                $catColor = if ($isOmp) { '35m' } else { '36m' }
+                $desc = if ($customMeta.ContainsKey($c)) {
+                    $customMeta[$c]
+                } elseif ($isOmp) {
+                    'Community theme ported from Oh My Posh'
+                } else {
+                    'Custom Starship theme'
+                }
                 $env:STARSHIP_CONFIG = $cfg
                 $lines = & starship prompt --path $previewTarget --status 0 --cmd-duration 2500 --terminal-width 78
                 while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[0])) {
@@ -103,7 +113,7 @@ function Ensure-Previews ([switch]$Force) {
                 $indented = ($lines | ForEach-Object { "  $_" }) -join "`n"
                 $content = @"
 
-  $esc[1;36mCategory:$esc[0m   $esc[1;37m[Custom]$esc[0m
+  $esc[1;$catColor Category:$esc[0m   $esc[1;37m$catLabel$esc[0m
   $esc[1;36mTheme:$esc[0m      $esc[1;37m$c$esc[0m
   $esc[1;36mDetails:$esc[0m    $esc[0;37m$desc$esc[0m
   $esc[0;90m──────────────────────────────────────────────────────────────────────────────$esc[0m
@@ -170,7 +180,13 @@ if (-not $ThemeName) {
 
     $menuItems = @()
     foreach ($c in $customThemes) {
-        $menuItems += "[Custom]     $c"
+        $cfg = Join-Path $themesDir "$c.toml"
+        $cfgRaw = Get-Content $cfg -Raw -ErrorAction SilentlyContinue
+        if ($cfgRaw -match 'Ported from Oh My Posh') {
+            $menuItems += "[Oh-My-Posh] $c"
+        } else {
+            $menuItems += "[Custom]     $c"
+        }
     }
     foreach ($s in $starshipPresets) {
         $menuItems += "[Starship]   $s"

@@ -1,0 +1,53 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: nordtron
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$username\
+$git_branch\
+$git_status\
+$aws\
+$sudo\
+$character\
+$line_break\
+$directory\
+"""
+
+[username]
+show_always = true
+format = "[ ](#ff70a6)[$user](#88c0d0) "
+
+[git_branch]
+format = "[ $branch](#b48ead)"
+
+[git_status]
+format = "([$all_status$ahead_behind](#b48ead) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[aws]
+symbol = " "
+format = "[ $version](#b48ead) "
+
+[sudo]
+disabled = false
+symbol = " "
+format = "[ ](#d8dee9)"
+
+[character]
+success_symbol = "[❯ ](bold #d8dee9) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[directory]
+format = "[ $path](#88c0d0) "
+truncation_length = 3
+truncation_symbol = "…/"

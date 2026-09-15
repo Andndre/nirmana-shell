@@ -1,0 +1,125 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: night-owl
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$sudo\
+$directory\
+$git_branch\
+$git_status\
+$cmd_duration\
+$fill\
+$shell\
+$memory_usage\
+$aws\
+$dart\
+$dotnet\
+$golang\
+$java\
+$julia\
+$nodejs\
+$php\
+$python\
+$ruby\
+$rust\
+$time\
+$line_break\
+$character\
+"""
+
+[fill]
+symbol = " "
+
+[sudo]
+disabled = false
+symbol = "⚡ "
+format = "[⚡ ](#ffeb95)"
+
+[directory]
+format = "[](fg:#82AAFF)[ $path](fg:#011627 bg:#82AAFF)[](fg:#82AAFF) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:#addb67)[ $branch](fg:#011627 bg:#addb67)"
+
+[git_status]
+format = "([$all_status$ahead_behind](fg:#011627 bg:#addb67)[](fg:#addb67) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[cmd_duration]
+min_time = 1
+format = "[ $duration](fg:#d6deeb bg:#575656) "
+
+[shell]
+symbol = " "
+format = "[ $indicator](fg:#011627 bg:#d6deeb) "
+
+[memory_usage]
+disabled = false
+threshold = 0
+format = "[MEM: $ram_pct](fg:#ffffff bg:#8f43f3) "
+
+[aws]
+symbol = " "
+format = "[ $indicator](fg:#faa029 bg:#565656) "
+
+[dart]
+symbol = " "
+format = "[ $indicator](fg:#055b9c bg:#e1e8e9) "
+
+[dotnet]
+symbol = "󰪮 "
+format = "[󰪮 $indicator](fg:#0d6da8 bg:#0e0e0e) "
+
+[golang]
+symbol = " "
+format = "[ $indicator](fg:#06aad5 bg:#ffffff) "
+
+[java]
+symbol = " "
+format = "[ $indicator](fg:#ec2729 bg:#ffffff) "
+
+[julia]
+symbol = " "
+format = "[ $indicator](fg:#ffffff bg:#945bb3) "
+
+[nodejs]
+symbol = "󰎙 "
+format = "[󰎙 $indicator](fg:#3C873A bg:#303030) "
+
+[php]
+symbol = " "
+format = "[ $indicator](fg:#000000 bg:#787CB5) "
+
+[python]
+symbol = "󰌠 "
+format = "[󰌠 $indicator](fg:#FFE873 bg:#306998) "
+
+[ruby]
+symbol = " "
+format = "[ $indicator](fg:#9c1006 bg:#ffffff) "
+
+[rust]
+symbol = " "
+format = "[ $indicator](fg:#000000 bg:#ffffff) "
+
+[time]
+disabled = false
+time_format = "%H:%M:%S"
+format = "[$time](fg:#d6deeb bg:#234d70) "
+
+[character]
+success_symbol = "[❯ ](bold #22da6e) "
+error_symbol = "[❯ ](bold #ef5350) "
+

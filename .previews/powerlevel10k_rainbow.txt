@@ -1,5 +1,5 @@
 
-  [1;36mCategory:[0m   [1;37m[Custom][0m
+  [1;36m Category:[0m   [1;37m[Custom][0m
   [1;36mTheme:[0m      [1;37mpowerlevel10k_rainbow[0m
   [1;36mDetails:[0m    [0;37mIconic multi-color powerline rainbow theme (Powerlevel10k style)[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m

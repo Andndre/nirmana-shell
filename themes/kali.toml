@@ -1,0 +1,57 @@
+# =====================================================================
+# Nirmana-Shell - Transpiled Theme: kali
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# =====================================================================
+
+scan_timeout = 30
+command_timeout = 1000
+add_newline = true
+
+format = """
+$username\
+$python\
+$directory\
+$git_branch\
+$git_status\
+$fill\
+$cmd_duration\
+$character\
+$line_break\
+$character\
+"""
+
+[fill]
+symbol = " "
+
+[username]
+show_always = true
+format = "[ ](#ff70a6)[$user](lightBlue) "
+
+[python]
+symbol = "󰌠 "
+format = "[󰌠 $version](yellow) "
+
+[directory]
+format = "[ $path](lightWhite) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[ $branch](white)"
+
+[git_status]
+format = "([$all_status$ahead_behind](white) )"
+modified = " "
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[cmd_duration]
+min_time = 1
+format = "[ $duration](white) "
+
+[character]
+success_symbol = "[❯ ](bold green) "
+error_symbol = "[❯ ](bold #ef5350) "
