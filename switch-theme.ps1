@@ -76,7 +76,7 @@ function Ensure-Previews ([switch]$Force) {
                 $desc = if ($customMeta.ContainsKey($c)) { $customMeta[$c] } else { 'Custom Starship theme' }
                 $cfg = Join-Path $themesDir "$c.toml"
                 $env:STARSHIP_CONFIG = $cfg
-                $lines = & starship prompt --path $scriptDir --status 0 --terminal-width 68
+                $lines = & starship prompt --path $scriptDir --status 0 --cmd-duration 2500 --terminal-width 68
                 while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[0])) {
                     $lines = $lines[1..($lines.Count - 1)]
                 }
@@ -102,7 +102,7 @@ $indented$esc[1;32mgit status$esc[0m
                 try {
                     & starship preset $p > $tempToml
                     $env:STARSHIP_CONFIG = $tempToml
-                    $lines = & starship prompt --path $scriptDir --status 0 --terminal-width 68
+                    $lines = & starship prompt --path $scriptDir --status 0 --cmd-duration 2500 --terminal-width 68
                     while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[0])) {
                         $lines = $lines[1..($lines.Count - 1)]
                     }

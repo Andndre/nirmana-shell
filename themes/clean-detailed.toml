@@ -7,7 +7,7 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-[╭─](bold #6C7086) $directory$git_branch$git_status$fill$bun$dart$nodejs$python$package$cmd_duration
+[╭─](bold #6C7086) $directory$git_branch$git_status$fill$bun$dart$nodejs$python$package$cmd_duration$time
 [╰─](bold #6C7086)$character"""
 
 [fill]
@@ -71,4 +71,10 @@ disabled = false
 [cmd_duration]
 min_time = 2_000
 style = "bold #6C7086"
-format = "[took ]($style)[$duration]($style)"
+format = "[took ]($style)[$duration]($style) "
+
+[time]
+disabled = false
+time_format = "%H:%M"
+style = "bold #89DCEB"
+format = "[at ](#6C7086)[ $time]($style)"
