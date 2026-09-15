@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-09-15
+
+### Changed
+- **Realistic Mock Project Context for Theme Previews**: Updated `Ensure-Previews` in `switch-theme.ps1` to render prompt previews within an isolated temporary mock project environment (`package.json`, `main.c`, and tracked git repository with dirty state). This activates language runtime badges, package details, and tooling modifiers across all custom themes and presets.
+- **Differentiated Official Utility Presets**: Resolved identical output across official presets (`nerd-font-symbols`, `no-empty-icons`, `no-nerd-font`, `no-runtime-versions`) by providing active toolchain contexts where their formatting and filtering logic are visually demonstrable.
+- **Extended Preview Console Width**: Increased Rich console rasterization width from 86 to 96 columns in `scripts/generate-previews.py` to prevent line wrapping on long single-line powerline ribbons with active runtimes.
+- **Regenerated Preview Assets**: Updated all 27 `.previews/*.txt` ANSI cards and `assets/previews/*.png` preview cards.
+- **Fallback Version String**: Updated default version fallback in `setup.ps1` to `1.0.4`.
+
 ## [1.0.3] - 2026-09-15
 
 ### Fixed

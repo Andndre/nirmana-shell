@@ -16,7 +16,7 @@ $setupScriptDir = if ($PSScriptRoot) {
     $null
 }
 $versionFile = if ($setupScriptDir) { Join-Path $setupScriptDir "VERSION" } else { $null }
-$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.3" }
+$nirmanaVer = if ($versionFile -and (Test-Path $versionFile)) { (Get-Content $versionFile -Raw).Trim() } else { "1.0.4" }
 $isLegacyPS = $PSVersionTable.PSVersion.Major -lt 7
 
 Write-Host ""

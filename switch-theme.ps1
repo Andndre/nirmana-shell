@@ -51,6 +51,25 @@ function Ensure-Previews ([switch]$Force) {
         $esc = [char]27
         $origConfig = $env:STARSHIP_CONFIG
 
+        $mockBase = Join-Path $env:TEMP "nirmana-preview-mock"
+        $mockDir = Join-Path $mockBase "nirmana-shell"
+        $previewTarget = $scriptDir
+        try {
+            if (Test-Path $mockBase) { Remove-Item -Recurse -Force $mockBase -ErrorAction SilentlyContinue }
+            New-Item -ItemType Directory -Path $mockDir -Force | Out-Null
+            Set-Content (Join-Path $mockDir "package.json") '{"name": "nirmana-shell", "version": "1.0.0"}' -Encoding utf8
+            Set-Content (Join-Path $mockDir "main.c") "int main() {}" -Encoding utf8
+            if (Get-Command git -ErrorAction SilentlyContinue) {
+                & git -C $mockDir init -b main --quiet 2>$null
+                & git -C $mockDir config user.name "Nirmana" 2>$null
+                & git -C $mockDir config user.email "nirmana@shell.local" 2>$null
+                & git -C $mockDir add -A 2>$null
+                & git -C $mockDir commit -m "init" --quiet 2>$null
+                Add-Content (Join-Path $mockDir "main.c") "`n// change" -Encoding utf8
+            }
+            $previewTarget = $mockDir
+        } catch {}
+
         try {
             $customMeta = @{
                 'nirmana'               = 'Signature theme with geometric accents & cyan/purple highlights'
@@ -76,7 +95,7 @@ function Ensure-Previews ([switch]$Force) {
                 $desc = if ($customMeta.ContainsKey($c)) { $customMeta[$c] } else { 'Custom Starship theme' }
                 $cfg = Join-Path $themesDir "$c.toml"
                 $env:STARSHIP_CONFIG = $cfg
-                $lines = & starship prompt --path $scriptDir --status 0 --cmd-duration 2500 --terminal-width 68
+                $lines = & starship prompt --path $previewTarget --status 0 --cmd-duration 2500 --terminal-width 78
                 while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[0])) {
                     $lines = $lines[1..($lines.Count - 1)]
                 }
@@ -102,7 +121,7 @@ $indented$esc[1;32mgit status$esc[0m
                 try {
                     & starship preset $p > $tempToml
                     $env:STARSHIP_CONFIG = $tempToml
-                    $lines = & starship prompt --path $scriptDir --status 0 --cmd-duration 2500 --terminal-width 68
+                    $lines = & starship prompt --path $previewTarget --status 0 --cmd-duration 2500 --terminal-width 78
                     while ($lines.Count -gt 0 -and [string]::IsNullOrWhiteSpace($lines[0])) {
                         $lines = $lines[1..($lines.Count - 1)]
                     }
@@ -125,6 +144,9 @@ $indented$esc[1;32mgit status$esc[0m
             }
             Remove-Item $tempToml -ErrorAction SilentlyContinue
         } finally {
+            if ($mockBase -and (Test-Path $mockBase)) {
+                Remove-Item -Recurse -Force $mockBase -ErrorAction SilentlyContinue
+            }
             if ($origConfig -and (Test-Path $origConfig)) {
                 $env:STARSHIP_CONFIG = $origConfig
             } else {

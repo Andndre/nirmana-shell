@@ -72,7 +72,7 @@ def generate_preview_png(txt_path: Path, output_dir: Path, font_files: list[str]
     # Render via Rich Console to SVG with sufficient width to prevent
     # artificial wrapping of wide 1-line ribbon presets (e.g. catppuccin-powerline)
     stream = io.StringIO()
-    console = Console(record=True, file=stream, width=86)
+    console = Console(record=True, file=stream, width=96)
     console.print(Text.from_ansi(prompt_text))
     svg_data = console.export_svg(title=theme_name)
 

@@ -102,7 +102,7 @@ Supports 17 custom themes and 10 official Starship presets. Preview images below
 
 </details>
 
-<details>
+<details open>
 <summary><b>Official Starship Presets (10 Presets)</b></summary>
 
 | Preset | Preview | Command |
