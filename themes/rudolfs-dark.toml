@@ -46,7 +46,7 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [python]
 symbol = "󰌠 "
-format = "[](fg:#256C9D)[󰌠 $version](fg:#ffffff bg:#256C9D)[](fg:#256C9D) "
+format = "[󰌠 $version](fg:#ffffff bg:#256C9D)[](fg:#256C9D) "
 
 [character]
 success_symbol = "[❯](bold green) "

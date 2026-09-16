@@ -25,17 +25,17 @@ $sudo\
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[](fg:p:background-color)[ $time](fg:p:timer-text bg:p:background-color)[](fg:p:background-color) "
+format = "[](fg:transparent)[ $time](#dd0033)[](fg:transparent) "
 
 [aws]
 symbol = " "
-format = "[](fg:p:background-color)[ $version](fg:p:cloud-text-amazon bg:p:background-color)[](fg:p:background-color) "
+format = "[ $version](#4285F4)[](fg:transparent) "
 
 [git_branch]
-format = "[](fg:p:background-color)[ $branch](fg:p:git-text bg:p:background-color)"
+format = "[](fg:transparent)[ $branch](#238636)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:p:git-text bg:p:background-color)[](fg:p:background-color) )"
+format = "([$all_status$ahead_behind](#238636)[](fg:transparent) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -45,18 +45,18 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [cmd_duration]
 min_time = 1
-format = "[](fg:p:background-color)[ $duration](fg:p:timer-text bg:p:background-color)[](fg:p:background-color) "
+format = "[ $duration](#dd0033)[](fg:transparent) "
 
 [character]
-success_symbol = "[❯ ](bold p:error-text) "
+success_symbol = "[❯ ](bold #dd0033) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [directory]
-format = "[](fg:p:background-color)[ $path](fg:p:symbol-color bg:p:background-color)[](fg:p:background-color) "
+format = "[ $path](#ffffff)[](fg:transparent) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](p:background-color)"
+format = "[ ](transparent)"

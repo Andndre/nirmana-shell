@@ -22,7 +22,7 @@ symbol = "⚡ "
 format = "[⚡ ](yellow)"
 
 [directory]
-format = "[ $path](fg:black bg:lightBlue) "
+format = "[](fg:lightBlue)[ $path](fg:black bg:lightBlue)[](fg:lightBlue) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -30,7 +30,7 @@ truncation_symbol = "…/"
 format = "[](fg:green)[ $branch](fg:black bg:green)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:black bg:green)[](fg:green) )"
+format = "([$all_status$ahead_behind](fg:black bg:green)[](fg:green) )"
 modified = " "
 staged = " "
 stashed = " "

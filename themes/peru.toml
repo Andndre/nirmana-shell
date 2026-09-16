@@ -48,11 +48,11 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [nodejs]
 symbol = "󰎙 "
-format = "[󰎙 $version](fg:#ffffff bg:#6CA35E) "
+format = "[](fg:#6CA35E)[󰎙 $version](fg:#ffffff bg:#6CA35E)[](fg:#6CA35E) "
 
 [java]
 symbol = " "
-format = " [ $version](fg:#ffffff bg:#4c1f5e) "
+format = " [](fg:#4c1f5e)[ $version](fg:#ffffff bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [character]
 success_symbol = "[❯ ](bold green) "

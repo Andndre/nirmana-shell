@@ -245,6 +245,8 @@ class OmpTranspiler:
 
         # If prompt is single-line, make sure line 2 has character
         if not self.line2_modules:
+            if "$character" in self.line1_left:
+                self.line1_left.remove("$character")
             self.line2_modules.append("$character")
         elif "$character" not in self.line2_modules and "$character" not in self.line1_left:
             self.line2_modules.append("$character")
@@ -257,18 +259,70 @@ class OmpTranspiler:
 
         return self.render_toml()
 
+    def format_diamond(self, raw: str, bg: Optional[str], fg: Optional[str] = None, is_leading: bool = True) -> str:
+        """Format leading/trailing diamond glyph, ensuring it is properly styled with colors."""
+        if not raw:
+            return ""
+
+        if "<" in raw:
+            cleaned = clean_template_tags(raw, current_bg=bg, palette=self.palette)
+            if "[" in cleaned and "]" in cleaned and "(" in cleaned:
+                return cleaned
+
+            stripped = cleaned.strip()
+            color = f"fg:{bg}" if bg else (f"fg:{fg}" if fg else None)
+            if stripped and color:
+                prefix = " " if raw.startswith(" ") else ""
+                suffix = " " if raw.endswith(" ") else ""
+                return f"{prefix}[{stripped}]({color}){suffix}"
+            return cleaned
+
+        stripped = raw.strip()
+        if not stripped:
+            return raw
+
+        color = f"fg:{bg}" if bg else (f"fg:{fg}" if fg else None)
+        if color:
+            prefix = " " if raw.startswith(" ") else ""
+            suffix = " " if raw.endswith(" ") else ""
+            return f"{prefix}[{stripped}]({color}){suffix}"
+
+        return raw
+
     def process_segment(self, seg: Dict[str, Any]) -> Optional[Union[str, List[str]]]:
         stype = seg.get("type", "")
         fg = self.resolve_color(seg.get("foreground", ""))
         bg = self.resolve_color(seg.get("background", ""))
+        if not bg and "background_templates" in seg:
+            for bt in seg["background_templates"]:
+                m = re.search(r"(?:#([0-9a-fA-F]{3,6})|p:([a-zA-Z0-9_\-]+))", bt)
+                if m:
+                    if m.group(1):
+                        bg = self.resolve_color(f"#{m.group(1)}")
+                    elif m.group(2):
+                        bg = self.resolve_color(f"p:{m.group(2)}")
+                    if bg:
+                        break
+
+        if not fg and "foreground_templates" in seg:
+            for ft in seg["foreground_templates"]:
+                m = re.search(r"(?:#([0-9a-fA-F]{3,6})|p:([a-zA-Z0-9_\-]+))", ft)
+                if m:
+                    if m.group(1):
+                        fg = self.resolve_color(f"#{m.group(1)}")
+                    elif m.group(2):
+                        fg = self.resolve_color(f"p:{m.group(2)}")
+                    if fg:
+                        break
+
         leading = seg.get("leading_diamond", "")
         trailing = seg.get("trailing_diamond", "")
         powerline_sym = seg.get("powerline_symbol", "")
         template = seg.get("template", "")
         options = seg.get("options") or seg.get("properties") or {}
 
-        leading_fmt = clean_template_tags(leading, current_bg=bg, palette=self.palette)
-        trailing_fmt = clean_template_tags(trailing, current_bg=bg, palette=self.palette)
+        leading_fmt = self.format_diamond(leading, bg, fg=fg, is_leading=True)
+        trailing_fmt = self.format_diamond(trailing or powerline_sym, bg, fg=fg, is_leading=False)
 
         if stype == "path":
             icon = " "
@@ -318,6 +372,8 @@ class OmpTranspiler:
 
             status_style = style_str if bg else (fg or "purple")
             end_cap = trailing_fmt if trailing_fmt else (f"[](fg:{bg}) " if bg else " ")
+            if end_cap and not end_cap.endswith(" "):
+                end_cap = f"{end_cap} "
             self.modules["git_status"] = {
                 "format": f"([$all_status$ahead_behind]({status_style}){end_cap})",
                 "modified": " ",
@@ -433,8 +489,8 @@ class OmpTranspiler:
             return "$sudo"
 
         elif stype == "status":
-            sym = " " if "\ue286" in template else (" " if "\ue23a" in template else "❯ ")
-            success_color = fg or "green"
+            sym = " " if "\ue286" in template else (" " if "\ue23a" in template else ("⚡ " if "\uf0e7" in template else "❯ "))
+            success_color = bg or fg or "green"
             err_color = "#ef5350"
             for t in seg.get("foreground_templates", []):
                 m = re.search(r"#([0-9a-fA-F]{3,6})", t)

@@ -25,7 +25,7 @@ $character\
 symbol = " "
 
 [directory]
-format = "[](fg:#8a62da)[ $path](fg:#ffffff bg:#8a62da)[](fg:#8a62da) "
+format = "[ $path](fg:#ffffff bg:#8a62da)[](fg:#8a62da) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -33,7 +33,7 @@ truncation_symbol = "…/"
 format = "[](fg:#191f48)[ $branch](fg:#43CCEA bg:#191f48)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#43CCEA bg:#191f48))"
+format = "([$all_status$ahead_behind](fg:#43CCEA bg:#191f48)[](fg:#191f48) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -56,12 +56,12 @@ format = "[ $version](#81ff91) "
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](fg:#4b4b4b bg:#cecece) "
+format = "[](fg:#cecece)[ $duration](fg:#4b4b4b bg:#cecece)[](fg:#cecece) "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#4b4b4b bg:#cecece) "
+format = "[](fg:#cecece)[$time](fg:#4b4b4b bg:#cecece)[](fg:#cecece) "
 
 [character]
 success_symbol = "[❯](bold green) "

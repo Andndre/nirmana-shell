@@ -27,7 +27,7 @@ $time\
 symbol = " "
 
 [directory]
-format = "[](fg:#170B3B)[ $path](fg:#EFDCF9 bg:#170B3B)[](fg:#170B3B) "
+format = "[ $path](fg:#EFDCF9 bg:#170B3B)[](fg:#170B3B) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -45,33 +45,33 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [cmd_duration]
 min_time = 1
-format = "[](fg:#4c1f5e)[ $duration](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "
+format = "[ $duration](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [character]
-success_symbol = "[❯ ](bold #EFDCF9) "
+success_symbol = "[❯ ](bold #69307A) "
 error_symbol = "[❯ ](bold #FF3C3C) "
 
 [python]
 symbol = "󰌠 "
-format = " [󰌠 $version](fg:#E4F34A bg:#4c1f5e) "
+format = " [](fg:#4c1f5e)[󰌠 $version](fg:#E4F34A bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [golang]
 symbol = " "
-format = " [ $version](fg:#7FD5EA bg:#4c1f5e) "
+format = " [](fg:#4c1f5e)[ $version](fg:#7FD5EA bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [nodejs]
 symbol = "󰎙 "
-format = " [󰎙 $version](fg:#42E66C bg:#4c1f5e) "
+format = " [](fg:#4c1f5e)[󰎙 $version](fg:#42E66C bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [ruby]
 symbol = " "
-format = " [ $version](fg:#E64747 bg:#4c1f5e) "
+format = " [](fg:#4c1f5e)[ $version](fg:#E64747 bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [java]
 symbol = " "
-format = " [ $version](fg:#E64747 bg:#4c1f5e) "
+format = " [](fg:#4c1f5e)[ $version](fg:#E64747 bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#EFDCF9 bg:#4c1f5e) "
+format = "[$time](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "

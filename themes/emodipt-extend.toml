@@ -30,6 +30,7 @@ time_format = "%H:%M"
 format = "[ $time](#E5C07B) "
 
 [shell]
+disabled = false
 format = "[ $indicator](#E06C75) "
 
 [git_branch]
@@ -61,4 +62,3 @@ truncation_symbol = "…/"
 disabled = false
 symbol = "⚡ "
 format = "[⚡ ](#E06C75)"
-

@@ -46,7 +46,7 @@ truncation_symbol = "…/"
 
 [python]
 symbol = "󰌠 "
-format = "[](fg:#E0E0E0)[󰌠 $version](fg:#424242 bg:#E0E0E0)[](fg:#E0E0E0) "
+format = "[󰌠 $version](fg:#424242 bg:#E0E0E0)[](fg:#E0E0E0) "
 
 [character]
 success_symbol = "[❯](bold green) "

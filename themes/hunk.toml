@@ -27,23 +27,23 @@ $character\
 symbol = " "
 
 [directory]
-format = "[](fg:#c44569)[ $path](fg:#ffffff bg:#c44569)[](fg:#c44569) "
+format = "[ $path](fg:#ffffff bg:#c44569)[](fg:#c44569) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [nodejs]
 symbol = "󰎙 "
-format = "[](fg:#f78fb3)[󰎙 $indicator](fg:#ffffff bg:#f78fb3)[](fg:#f78fb3) "
+format = "[󰎙 $version](fg:#ffffff bg:#f78fb3)[](fg:#f78fb3) "
 
 [python]
 symbol = "󰌠 "
-format = "[](fg:#f78fb3)[󰌠 $indicator](fg:#ffffff bg:#f78fb3)[](fg:#f78fb3) "
+format = "[󰌠 $version](fg:#ffffff bg:#f78fb3)[](fg:#f78fb3) "
 
 [git_branch]
 format = "[](fg:#caffbf)[ $branch](fg:#333333 bg:#caffbf)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#333333 bg:#caffbf)[](fg:#caffbf) )"
+format = "([$all_status$ahead_behind](fg:#333333 bg:#caffbf)[](fg:#caffbf) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -53,7 +53,7 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [cmd_duration]
 min_time = 1
-format = "[](fg:#83769c)[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769c) "
+format = "[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769c) "
 
 [sudo]
 disabled = false
@@ -65,9 +65,9 @@ show_always = true
 format = "[](fg:#86BBD8)[ $user](fg:#ffffff bg:#86BBD8)[](fg:#86BBD8) "
 
 [shell]
-format = "[ $indicator](fg:#ffffff bg:#33658A) "
+disabled = false
+format = "[ $indicator](fg:#ffffff bg:#33658A)[](fg:#33658A) "
 
 [character]
 success_symbol = "[❯](bold green) "
 error_symbol = "[❯](bold red) "
-

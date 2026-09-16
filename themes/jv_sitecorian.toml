@@ -25,7 +25,7 @@ $shell\
 symbol = " "
 
 [directory]
-format = "[ $path](fg:#ffffff bg:#185F7B) "
+format = "[ $path](fg:#ffffff bg:#185F7B)[](fg:#185F7B) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -33,7 +33,7 @@ truncation_symbol = "…/"
 format = "[](fg:#6f42c1)[ $branch](fg:#ffffff bg:#6f42c1)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#ffffff bg:#6f42c1)[](fg:#6f42c1) )"
+format = "([$all_status$ahead_behind](fg:#ffffff bg:#6f42c1)[](fg:#6f42c1) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -42,17 +42,17 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[❯ ](bold #ffffff) "
+success_symbol = "[❯ ](bold #4caf50) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [time]
 disabled = false
 time_format = "%I:%M:%S %p"
-format = "[$time](fg:#ffffff bg:#2B2B2B) "
+format = "[](fg:#2B2B2B)[$time](fg:#ffffff bg:#2B2B2B)[](fg:#2B2B2B) "
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](fg:#ffffff bg:#2B2B2B) "
+format = "[](fg:#2B2B2B)[ $duration](fg:#ffffff bg:#2B2B2B)[](fg:#2B2B2B) "
 
 [sudo]
 disabled = false
@@ -64,5 +64,5 @@ show_always = true
 format = "[](fg:#DC291E)[ $user](fg:#ffffff bg:#DC291E)[](fg:#DC291E) "
 
 [shell]
+disabled = false
 format = "[](fg:#000000)[ $indicator](fg:#666666 bg:#000000)[](fg:#000000) "
-

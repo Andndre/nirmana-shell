@@ -31,7 +31,7 @@ show_always = true
 format = "[](fg:#ffffff)[ $user](fg:#100e23 bg:#ffffff)[](fg:#ffffff) "
 
 [directory]
-format = "[](fg:#91ddff)[ $path](fg:#100e23 bg:#91ddff)[](fg:#91ddff) "
+format = "[ $path](fg:#100e23 bg:#91ddff)[](fg:#91ddff) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -39,7 +39,7 @@ truncation_symbol = "…/"
 format = "[](fg:#95ffa4)[ $branch](fg:#193549 bg:#95ffa4)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#193549 bg:#95ffa4)[](fg:#95ffa4) )"
+format = "([$all_status$ahead_behind](fg:#193549 bg:#95ffa4)[](fg:#95ffa4) )"
 modified = " "
 staged = " "
 stashed = " "

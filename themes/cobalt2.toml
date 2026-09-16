@@ -16,7 +16,7 @@ $character\
 """
 
 [directory]
-format = "[ $path](fg:#000000 bg:#1478DB) "
+format = "[](fg:#1478DB)[ $path](fg:#000000 bg:#1478DB)[](fg:#1478DB) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -24,7 +24,7 @@ truncation_symbol = "…/"
 format = "[](bg:#3AD900)[ $branch](fg:#000000 bg:#3AD900)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#000000 bg:#3AD900))"
+format = "([$all_status$ahead_behind](fg:#000000 bg:#3AD900)[](fg:#3AD900) )"
 modified = " "
 staged = " "
 stashed = " "

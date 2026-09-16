@@ -15,7 +15,6 @@ $git_branch\
 $git_status\
 $nodejs\
 $sudo\
-$character\
 $line_break\
 $character\
 """
@@ -26,10 +25,10 @@ format = "[](fg:#546E7A)[ $user](fg:#26C6DA bg:#546E7A)[](fg:#546E7A) "
 
 [battery]
 disabled = false
-format = "[](fg:#a2beef)[$symbol$percentage](fg:#193549 bg:#a2beef)[](fg:#a2beef) "
+format = "[$symbol$percentage](fg:#193549 bg:#a2beef)[](fg:#a2beef) "
 
 [directory]
-format = "[](fg:#14c2dd)[ $path](fg:#193549 bg:#14c2dd)[](fg:#14c2dd) "
+format = "[ $path](fg:#193549 bg:#14c2dd)[](fg:#14c2dd) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -37,7 +36,7 @@ truncation_symbol = "…/"
 format = "[](fg:#a2c4e0)[ $branch](fg:#193549 bg:#a2c4e0)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#193549 bg:#a2c4e0)[](fg:#a2c4e0) )"
+format = "([$all_status$ahead_behind](fg:#193549 bg:#a2c4e0)[](fg:#a2c4e0) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -47,7 +46,7 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [nodejs]
 symbol = "󰎙 "
-format = "[](fg:#6CA35E)[󰎙 $version](fg:#ffffff bg:#6CA35E)[](fg:#6CA35E) "
+format = "[󰎙 $version](fg:#ffffff bg:#6CA35E)[](fg:#6CA35E) "
 
 [sudo]
 disabled = false
@@ -55,5 +54,5 @@ symbol = " "
 format = "[ ](#193549)"
 
 [character]
-success_symbol = "[❯ ](bold #ffffff) "
+success_symbol = "[❯ ](bold #007800) "
 error_symbol = "[❯ ](bold #ef5350) "

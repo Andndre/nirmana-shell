@@ -25,10 +25,10 @@ symbol = " "
 
 [username]
 show_always = true
-format = "[$user](fg:#ffffff bg:#2e9599)[ on](white) "
+format = "[](fg:#2e9599)[$user](fg:#ffffff bg:#2e9599)[ on](white)[](fg:#2e9599) "
 
 [directory]
-format = "[](fg:#0080ff)[ $path](fg:#ffffff bg:#0080ff)[](fg:#0080ff) "
+format = "[ $path](fg:#ffffff bg:#0080ff)[](fg:#0080ff) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -36,7 +36,7 @@ truncation_symbol = "…/"
 format = "[](fg:#c19c00)[ $branch](fg:#000000 bg:#c19c00)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#000000 bg:#c19c00)[](fg:#c19c00) )"
+format = "([$all_status$ahead_behind](fg:#000000 bg:#c19c00)[](fg:#c19c00) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -45,13 +45,13 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[❯ ](bold #ffffff) "
+success_symbol = "[❯ ](bold #2e9599) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#ffffff bg:#2e9599) "
+format = "[](fg:#2e9599)[$time](fg:#ffffff bg:#2e9599)[](fg:#2e9599) "
 
 [sudo]
 disabled = false
@@ -59,5 +59,5 @@ symbol = "⚡ "
 format = "[⚡ ](#ff0000)"
 
 [shell]
+disabled = false
 format = "[ $indicator](#ffffff) "
-

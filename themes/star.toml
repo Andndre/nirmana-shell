@@ -13,7 +13,6 @@ $directory\
 $git_branch\
 $git_status\
 $nodejs\
-$character\
 $line_break\
 $character\
 """

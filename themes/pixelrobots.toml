@@ -20,7 +20,7 @@ $character\
 
 [aws]
 symbol = " "
-format = "[](fg:#FFA400)[ $version](fg:#000000 bg:#FFA400)[](fg:#FFA400) "
+format = "[ $version](fg:#000000 bg:#FFA400)[](fg:#FFA400) "
 
 [username]
 show_always = true

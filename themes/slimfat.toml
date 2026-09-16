@@ -67,7 +67,7 @@ format = "[](fg:#2f2f2f)[󰪮 $version](fg:#3891A6 bg:#2f2f2f)[](fg:#2f2f2
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#fafafa bg:#2f2f2f)▓ "
+format = "[$time](fg:#fafafa bg:#2f2f2f)[▓](fg:#2f2f2f) "
 
 [cmd_duration]
 min_time = 1

@@ -18,18 +18,18 @@ $character\
 
 [username]
 show_always = true
-format = "[ ](#ff70a6)[$user](p:blue) "
+format = "[ ](#ff70a6)[$user](#1e66f5) "
 
 [directory]
-format = "[ $path](p:pink) "
+format = "[ $path](#ea76cb) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[ $branch](p:lavender)"
+format = "[ $branch](#7287FD)"
 
 [git_status]
-format = "([$all_status$ahead_behind](p:lavender) )"
+format = "([$all_status$ahead_behind](#7287FD) )"
 modified = " "
 staged = " "
 stashed = " "

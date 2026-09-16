@@ -35,7 +35,7 @@ symbol = "⚡ "
 format = "[⚡ ](#ffffff)"
 
 [directory]
-format = "[](fg:#0077c2)[ $path](fg:#ffffff bg:#0077c2)[](fg:#0077c2) "
+format = "[ $path](fg:#ffffff bg:#0077c2)[](fg:#0077c2) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -43,7 +43,7 @@ truncation_symbol = "…/"
 format = "[](fg:#fffb38)[ $branch](fg:#193549 bg:#fffb38)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#193549 bg:#fffb38)[](fg:#fffb38) )"
+format = "([$all_status$ahead_behind](fg:#193549 bg:#fffb38)[](fg:#fffb38) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -61,9 +61,9 @@ format = "[ $duration](#ffffff) "
 
 [battery]
 disabled = false
-format = "[](fg:#f36943)[$symbol$percentage](fg:#ffffff bg:#f36943)[](fg:#f36943) "
+format = "[$symbol$percentage](fg:#ffffff bg:#f36943)[](fg:#f36943) "
 
 [time]
 disabled = false
 time_format = "%H:%M (%a)"
-format = "[$time](fg:#ffffff bg:#61afef) "
+format = "[$time](fg:#ffffff bg:#61afef)[](fg:#61afef) "

@@ -11,7 +11,6 @@ format = """
 $directory\
 $git_branch\
 $git_status\
-$character\
 $fill\
 $nodejs\
 $ruby\
@@ -24,15 +23,15 @@ $character\
 symbol = " "
 
 [directory]
-format = "[ $path](fg:#3EC669 bg:#29315A) "
+format = "[](fg:#29315A)[ $path](fg:#3EC669 bg:#29315A)[](fg:#29315A) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = " [ $branch](fg:#43CCEA bg:#29315A)"
+format = " [](fg:#29315A)[ $branch](fg:#43CCEA bg:#29315A)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#43CCEA bg:#29315A))"
+format = "([$all_status$ahead_behind](fg:#43CCEA bg:#29315A)[](fg:#29315A) )"
 modified = " "
 staged = " "
 stashed = " "

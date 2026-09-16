@@ -56,7 +56,7 @@ error_symbol = "[❯ ](bold #ff0000) "
 
 [username]
 show_always = true
-format = "[$user](fg:#43CCEA bg:#5a3d29)[ on](white) "
+format = "[](fg:#5a3d29)[$user](fg:#43CCEA bg:#5a3d29)[ on](white) "
 
 [time]
 disabled = false

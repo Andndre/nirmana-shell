@@ -24,17 +24,18 @@ $character\
 symbol = " "
 
 [shell]
-format = "[](fg:p:white)[ $indicator](fg:p:black bg:p:white)[](fg:p:white) "
+disabled = false
+format = "[](fg:#f7f7f7)[ $indicator](fg:#111111 bg:#f7f7f7)[](fg:#f7f7f7) "
 
 [username]
 show_always = true
-format = "[](fg:#ffe093)[ $user](fg:p:black bg:#ffe093)[](fg:#ffe093) "
+format = "[](fg:#ffe093)[ $user](fg:#111111 bg:#ffe093)[](fg:#ffe093) "
 
 [git_branch]
-format = "[](fg:#ffffd6)[  $branch](fg:p:black bg:#ffffd6)"
+format = "[](fg:#ffffd6)[ $branch](fg:#111111 bg:#ffffd6)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:p:black bg:#ffffd6)[](fg:#ffffd6) )"
+format = "([$all_status$ahead_behind](fg:#111111 bg:#ffffd6)[](fg:#ffffd6) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -52,11 +53,10 @@ time_format = "%d/%m/%y %H:%M"
 format = "[ $time](#b3ffde) "
 
 [directory]
-format = "[ $path](p:white) "
+format = "[ $path](#f7f7f7) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [character]
 success_symbol = "[❯ ](bold #81ff91) "
 error_symbol = "[❯ ](bold #ff3030) "
-

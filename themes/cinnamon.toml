@@ -12,14 +12,13 @@ $username\
 $directory\
 $git_branch\
 $git_status\
-$character\
 $line_break\
 $character\
 """
 
 [username]
 show_always = true
-format = "[$user](fg:#ffffff bg:#07585c) "
+format = "[](fg:#07585c)[$user](fg:#ffffff bg:#07585c) "
 
 [directory]
 format = "[](fg:#3e9022)[ $path](fg:#ffffff bg:#3e9022)[](fg:#3e9022) "
@@ -27,7 +26,7 @@ truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[](fg:#de076f)[$branch](fg:#ffffff bg:#de076f)"
+format = "[](fg:#de076f)[ $branch](fg:#ffffff bg:#de076f)"
 
 [git_status]
 format = "([$all_status$ahead_behind](fg:#ffffff bg:#de076f)[](fg:#de076f) )"
@@ -39,5 +38,5 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[❯ ](bold #ffffff) "
+success_symbol = "[❯ ](bold #491515) "
 error_symbol = "[❯ ](bold #ef5350) "

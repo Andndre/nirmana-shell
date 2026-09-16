@@ -46,7 +46,7 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [username]
 show_always = true
-format = "[$user](fg:#D4E157 bg:#546E7A) "
+format = "[](fg:#546E7A)[$user](fg:#D4E157 bg:#546E7A) "
 
 [time]
 disabled = false

@@ -35,7 +35,7 @@ symbol = " "
 format = "[ ](#26C6DA)"
 
 [directory]
-format = "╰─[ $path](fg:#292929 bg:#fb7e14) "
+format = "[╰─](fg:#fb7e14)[ $path](fg:#292929 bg:#fb7e14)[](fg:#fb7e14) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -56,14 +56,14 @@ disabled = false
 format = "[](fg:#292929)[$symbol$percentage](fg:#26C6DA bg:#292929)[](fg:#292929) "
 
 [character]
-success_symbol = "[❯ ](bold #fb7e14) "
+success_symbol = "[❯ ](bold #292929) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [username]
 show_always = true
-format = "[$user](fg:#fb7e14 bg:#292929)[ on](white) "
+format = "[](fg:#292929)[$user](fg:#fb7e14 bg:#292929)[ on](white) "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S, _2"
-format = "[$time](fg:#fb7e14 bg:#292929) "
+format = "[$time](fg:#fb7e14 bg:#292929)[](fg:#292929) "

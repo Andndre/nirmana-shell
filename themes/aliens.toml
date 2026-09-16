@@ -19,10 +19,10 @@ $character\
 
 [username]
 show_always = true
-format = "[$user](fg:#ffffff bg:#61AFEF) "
+format = "[](fg:#61AFEF)[$user](fg:#ffffff bg:#61AFEF)[](fg:#61AFEF) "
 
 [directory]
-format = "[](fg:#C678DD)[ $path](fg:#ffffff bg:#C678DD)[](fg:#C678DD) "
+format = "[ $path](fg:#ffffff bg:#C678DD)[](fg:#C678DD) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -30,7 +30,7 @@ truncation_symbol = "…/"
 format = "[](fg:#95ffa4)[ $branch](fg:#193549 bg:#95ffa4)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#193549 bg:#95ffa4)[](fg:#95ffa4) )"
+format = "([$all_status$ahead_behind](fg:#193549 bg:#95ffa4)[](fg:#95ffa4) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -40,7 +40,7 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [python]
 symbol = "󰌠 "
-format = "[](bg:#FF6471)[󰌠 $version](fg:#ffffff bg:#FF6471) "
+format = "[](bg:#FF6471)[󰌠 $version](fg:#ffffff bg:#FF6471)[](fg:#FF6471) "
 
 [character]
 success_symbol = "[❯](bold green) "

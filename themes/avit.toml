@@ -12,7 +12,6 @@ $directory\
 $git_branch\
 $git_status\
 $sudo\
-$character\
 $line_break\
 $character\
 """

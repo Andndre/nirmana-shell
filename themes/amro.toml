@@ -30,7 +30,7 @@ truncation_symbol = "…/"
 format = "[ $branch](#14A5AE)"
 
 [git_status]
-format = "([$all_status$ahead_behind](#14A5AE) )"
+format = "([$all_status$ahead_behind](#14A5AE)[](fg:#14A5AE) )"
 modified = " "
 staged = " "
 stashed = " "

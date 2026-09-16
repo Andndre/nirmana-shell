@@ -27,7 +27,7 @@ truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[$branch](#6C6C6C)"
+format = "[ $branch](#6C6C6C)"
 
 [git_status]
 format = "([$all_status$ahead_behind](#6C6C6C) )"

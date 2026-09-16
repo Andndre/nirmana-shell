@@ -30,7 +30,7 @@ symbol = "⚡ "
 format = "[⚡ ](#FFEB3B)"
 
 [directory]
-format = "[](bg:#01579B)[ $path](fg:#ffffff bg:#01579B) "
+format = "[](bg:#01579B)[ $path](fg:#ffffff bg:#01579B)[](fg:#01579B) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -38,7 +38,7 @@ truncation_symbol = "…/"
 format = "[](fg:#00C853)[ $branch](fg:#000000 bg:#00C853)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#000000 bg:#00C853)[](fg:#00C853) )"
+format = "([$all_status$ahead_behind](fg:#000000 bg:#00C853)[](fg:#00C853) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -48,7 +48,7 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [cmd_duration]
 min_time = 1
-format = "[](bg:#49404f)[ $duration](fg:#ffffff bg:#49404f) "
+format = "[](bg:#49404f)[ $duration](fg:#ffffff bg:#49404f)[](fg:#49404f) "
 
 [character]
 success_symbol = "[❯ ](bold #ffffff) "
@@ -56,9 +56,9 @@ error_symbol = "[❯ ](bold #ff0000) "
 
 [username]
 show_always = true
-format = "[$user](fg:#43CCEA bg:#29315A) "
+format = "[](fg:#29315A)[$user](fg:#43CCEA bg:#29315A)[](fg:#29315A) "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#3EC669 bg:#29315A) "
+format = "[](fg:#29315A)[$time](fg:#3EC669 bg:#29315A) "

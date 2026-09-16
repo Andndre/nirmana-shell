@@ -24,6 +24,7 @@ $character\
 symbol = " "
 
 [shell]
+disabled = false
 format = "[ $indicator](#007acc) "
 
 [sudo]
@@ -41,7 +42,7 @@ show_always = true
 format = "[ ](#ff70a6)[$user](#757575) "
 
 [directory]
-format = "[](fg:#91ddff)[ $path](fg:#100e23 bg:#91ddff)[](fg:#91ddff) "
+format = "[ $path](fg:#100e23 bg:#91ddff)[](fg:#91ddff) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -49,7 +50,7 @@ truncation_symbol = "…/"
 format = "[](fg:#95ffa4)[ $branch](fg:#100e23 bg:#95ffa4)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#100e23 bg:#95ffa4)[](fg:#95ffa4) )"
+format = "([$all_status$ahead_behind](fg:#100e23 bg:#95ffa4)[](fg:#95ffa4) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -58,6 +59,5 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[❯ ](bold #ffffff) "
+success_symbol = "[❯ ](bold #ff8080) "
 error_symbol = "[❯ ](bold #ef5350) "
-

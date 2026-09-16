@@ -61,7 +61,7 @@ format = "[󰌠 $version](#4584b6) "
 
 [battery]
 disabled = false
-format = "[$symbol$percentage](green) "
+format = "[$symbol$percentage](#4caf50) "
 
 [time]
 disabled = false

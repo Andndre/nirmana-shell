@@ -19,10 +19,10 @@ $git_status\
 
 [username]
 show_always = true
-format = "[$user](fg:#ffffff bg:#4707a8) "
+format = "[](fg:#4707a8)[$user](fg:#ffffff bg:#4707a8)[](fg:#4707a8) "
 
 [character]
-success_symbol = "[ ](bold #ffffff) "
+success_symbol = "[ ](bold #4707a8) "
 error_symbol = "[ ](bold #ef5350) "
 
 [sudo]

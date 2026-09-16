@@ -29,7 +29,7 @@ symbol = " "
 format = "[ ](#000000)"
 
 [directory]
-format = "[](fg:#0000ff)[ $path](fg:#ffffff bg:#0000ff)[](fg:#0000ff) "
+format = "[ $path](fg:#ffffff bg:#0000ff)[](fg:#0000ff) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -47,16 +47,16 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [python]
 symbol = "󰌠 "
-format = "[󰌠 $version](fg:#000000 bg:#D4E157) "
+format = "[](fg:#D4E157)[󰌠 $version](fg:#000000 bg:#D4E157) "
 
 [golang]
 symbol = " "
-format = "[ $version](fg:#ffffff bg:#7FD5EA) "
+format = "[](fg:#7FD5EA)[ $version](fg:#ffffff bg:#7FD5EA) "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#000000 bg:#ffffff) "
+format = "[](fg:#ffffff)[$time](fg:#000000 bg:#ffffff)[](fg:#ffffff) "
 
 [character]
 success_symbol = "[❯ ](bold #D4E157) "

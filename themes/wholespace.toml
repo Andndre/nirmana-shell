@@ -28,7 +28,7 @@ symbol = " "
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#011627 bg:#FEF5ED)[](bg:#FEF5ED) "
+format = "[](fg:#FEF5ED)[$time](fg:#011627 bg:#FEF5ED)[](bg:#FEF5ED) "
 
 [memory_usage]
 disabled = false
@@ -37,17 +37,17 @@ format = "[MEM: $ram_pct](fg:#ffffff bg:#516BEB)[](bg:#516BEB) "
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](fg:#d6deeb bg:#575656) "
+format = "[](fg:#575656)[ $duration](fg:#d6deeb bg:#575656)[](fg:#575656) "
 
 [nodejs]
 symbol = "󰎙 "
-format = "[󰎙 $version](fg:#000000 bg:#ffffff)[](bg:#ffffff) "
+format = "[](fg:#ffffff)[󰎙 $version](fg:#000000 bg:#ffffff)[](bg:#ffffff) "
 
 [git_branch]
-format = "[ $branch](fg:#011627 bg:#17D7A0)"
+format = "[](fg:#17D7A0)[ $branch](fg:#011627 bg:#17D7A0)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#011627 bg:#17D7A0))"
+format = "([$all_status$ahead_behind](fg:#011627 bg:#17D7A0)[](fg:#17D7A0) )"
 modified = " "
 staged = " "
 stashed = " "

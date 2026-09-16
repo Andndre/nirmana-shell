@@ -18,15 +18,15 @@ $character\
 
 [username]
 show_always = true
-format = "[ ](#ff70a6)[$user](p:yellow) "
+format = "[ ](#ff70a6)[$user](#e5c07b) "
 
 [directory]
-format = "[ $path](p:blue) "
+format = "[ $path](#61afef) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[$branch](purple)"
+format = "[ $branch](purple)"
 
 [git_status]
 format = "([$all_status$ahead_behind](purple) )"
@@ -38,5 +38,5 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[❯ ](bold p:foreground) "
+success_symbol = "[❯ ](bold #dcdfe4) "
 error_symbol = "[❯ ](bold #ef5350) "

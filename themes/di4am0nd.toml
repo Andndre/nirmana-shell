@@ -55,7 +55,7 @@ format = "[MEM: $ram_pct](#85C980)  "
 
 [cmd_duration]
 min_time = 1
-format = "┋[ $duration](#ffffff) "
+format = "[┋](fg:#ffffff)[ $duration](#ffffff) "
 
 [character]
 success_symbol = "[❯](bold green) "

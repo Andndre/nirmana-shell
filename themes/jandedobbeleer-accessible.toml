@@ -20,7 +20,6 @@ $ruby\
 $aws\
 $sudo\
 $cmd_duration\
-$character\
 $fill\
 $shell\
 $battery\
@@ -37,7 +36,7 @@ show_always = true
 format = "[](fg:#c386f1)[ $user](fg:#ffffff bg:#c386f1)[](fg:#c386f1) "
 
 [directory]
-format = "[](fg:#ff479c)[ $path](fg:#ffffff bg:#ff479c)[](fg:#ff479c) "
+format = "[ $path](fg:#ffffff bg:#ff479c)[|](fg:#ff479c) "
 truncation_length = 3
 truncation_symbol = "…/"
 
@@ -45,7 +44,7 @@ truncation_symbol = "…/"
 format = "[](fg:#fffb38)[ $branch](fg:#193549 bg:#fffb38)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#193549 bg:#fffb38)[](fg:#fffb38) )"
+format = "([$all_status$ahead_behind](fg:#193549 bg:#fffb38)[|](fg:#fffb38) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -55,27 +54,27 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [nodejs]
 symbol = "󰎙 "
-format = "[](fg:#6CA35E)[󰎙 $indicator](fg:#ffffff bg:#6CA35E)[](fg:#6CA35E) "
+format = "[󰎙 $version](fg:#ffffff bg:#6CA35E)[|](fg:#6CA35E) "
 
 [golang]
 symbol = " "
-format = "[](fg:#8ED1F7)[ $indicator](fg:#111111 bg:#8ED1F7)[](fg:#8ED1F7) "
+format = "[ $version](fg:#111111 bg:#8ED1F7)[|](fg:#8ED1F7) "
 
 [julia]
 symbol = " "
-format = "[](fg:#4063D8)[ $indicator](fg:#111111 bg:#4063D8)[](fg:#4063D8) "
+format = "[ $version](fg:#111111 bg:#4063D8)[|](fg:#4063D8) "
 
 [python]
 symbol = "󰌠 "
-format = "[](fg:#FFDE57)[󰌠 $indicator](fg:#111111 bg:#FFDE57)[](fg:#FFDE57) "
+format = "[󰌠 $version](fg:#111111 bg:#FFDE57)[|](fg:#FFDE57) "
 
 [ruby]
 symbol = " "
-format = "[](fg:#AE1401)[ $indicator](fg:#ffffff bg:#AE1401)[](fg:#AE1401) "
+format = "[ $version](fg:#ffffff bg:#AE1401)[|](fg:#AE1401) "
 
 [aws]
 symbol = " "
-format = "[ $indicator](#ffffff) "
+format = "[ $version](fg:#ffffff bg:#FFA400)[|](fg:#FFA400) "
 
 [sudo]
 disabled = false
@@ -87,18 +86,18 @@ min_time = 1
 format = "[](fg:#83769c)[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769c) "
 
 [character]
-success_symbol = "[❯ ](bold #ffffff) "
+success_symbol = "[❯ ](bold #00897b) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [shell]
+disabled = false
 format = "[](fg:#0077c2)[ $indicator](fg:#ffffff bg:#0077c2)[](fg:#0077c2) "
 
 [battery]
 disabled = false
-format = "[](fg:#f36943)[$symbol$percentage](fg:#ffffff bg:#f36943)[](fg:#f36943) "
+format = "[$symbol$percentage](fg:#ffffff bg:#f36943)[|](fg:#f36943) "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "|[$time](fg:#111111 bg:#2e9599) "
-
+format = "[|](fg:#2e9599)[$time](fg:#111111 bg:#2e9599) "

@@ -28,15 +28,15 @@ $character\
 symbol = " "
 
 [directory]
-format = "[ $path]() "
+format = "[](fg:#FFD770)[ $path](fg:#212121 bg:#FFD770)[](fg:#FFD770) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = " [ $branch](fg:p:c-badge-text bg:p:c-git-normal)"
+format = " [](fg:#66FFA6)[ $branch](fg:#212121 bg:#66FFA6)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:p:c-badge-text bg:p:c-git-normal))"
+format = "([$all_status$ahead_behind](fg:#212121 bg:#66FFA6)[](fg:#66FFA6) )"
 modified = " "
 staged = " "
 stashed = " "
@@ -46,16 +46,16 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](p:c-badge-text)  "
+format = "[](fg:#C6FF00)[ $duration](fg:#212121 bg:#C6FF00)[](fg:#C6FF00)  "
 
 [time]
 disabled = false
 time_format = "%H:%M (%m/%d)"
-format = "[$time](p:c-badge-text)  "
+format = "[](fg:#FFFF8D)[$time](fg:#212121 bg:#FFFF8D)[](fg:#FFFF8D)  "
 
 [battery]
 disabled = false
-format = "[$symbol$percentage](p:c-badge-text) "
+format = "[](fg:#FF867F)[$symbol$percentage](fg:#212121 bg:#FF867F)[](fg:#FF867F) "
 
 [username]
 show_always = true
@@ -63,19 +63,19 @@ format = "[ ](#ff70a6)[$user](yellow) "
 
 [dart]
 symbol = " "
-format = "[ $version](p:c-badge-text)  "
+format = "[](fg:#FF867F)[ $version](fg:#212121 bg:#FF867F)[](fg:#FF867F)  "
 
 [nodejs]
 symbol = "󰎙 "
-format = "[󰎙 $version](p:c-badge-text)  "
+format = "[](fg:#FF867F)[󰎙 $version](fg:#212121 bg:#FF867F)[](fg:#FF867F)  "
 
 [rust]
 symbol = " "
-format = "[ $version](p:c-badge-text)  "
+format = "[](fg:#FF867F)[ $version](fg:#212121 bg:#FF867F)[](fg:#FF867F)  "
 
 [python]
 symbol = "󰌠 "
-format = "[󰌠 $version](p:c-badge-text)  "
+format = "[](fg:#FF867F)[󰌠 $version](fg:#212121 bg:#FF867F)[](fg:#FF867F)  "
 
 [character]
 success_symbol = "[❯](bold green) "
