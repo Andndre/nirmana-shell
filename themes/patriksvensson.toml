@@ -8,20 +8,24 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $dotnet\
-$line_break\
 $time\
+$line_break\
+$sudo\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](red)"
+format = "[ ](red) "
 
 [directory]
 format = "[ $path](blue) "
@@ -50,5 +54,5 @@ time_format = "%H:%M:%S"
 format = "[ $time](yellow) "
 
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+success_symbol = "[❯ ](bold green) "
+error_symbol = "[❯ ](bold #ef5350) "

@@ -12,13 +12,13 @@ $username\
 $directory\
 $git_branch\
 $git_status\
-$character\
 $fill\
-$battery\
 $python\
+$battery\
 $time\
 $line_break\
 $sudo\
+$character\
 """
 
 [fill]
@@ -26,7 +26,7 @@ symbol = " "
 
 [username]
 show_always = true
-format = "[](fg:#003543)[ $user](fg:#d2ff5e bg:#003543)[](fg:#003543) "
+format = "[$user](fg:#d2ff5e bg:#003543)[](fg:#003543) "
 
 [directory]
 format = "[ $path](fg:#003544 bg:#0087D8)[](fg:#0087D8) "
@@ -46,7 +46,7 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[❯ ](bold #33DD2D) "
+success_symbol = "[❯ ](bold #242424) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [battery]
@@ -60,9 +60,9 @@ format = "[󰌠 $version](fg:#003544 bg:#0087D8)[](fg:#0087D8) "
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#ffffff bg:#003543)[](fg:#003543) "
+format = "[ $time](fg:#ffffff bg:#003543)[](fg:#003543) "
 
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#FFD700)"
+format = "[⚡ ](#FFD700) "

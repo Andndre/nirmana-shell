@@ -10,15 +10,19 @@ add_newline = true
 format = """
 $username\
 $directory\
-$golang\
-$python\
 $git_branch\
 $git_status\
+$fill\
+$golang\
+$python\
+$battery\
 $cmd_duration\
 $line_break\
-$battery\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true

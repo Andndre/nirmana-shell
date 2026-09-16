@@ -8,12 +8,11 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$line_break\
-$cmd_duration\
-$character\
-$sudo\
 $username\
 $directory\
+$git_branch\
+$git_status\
+$fill\
 $dart\
 $dotnet\
 $golang\
@@ -24,23 +23,28 @@ $php\
 $python\
 $ruby\
 $rust\
-$git_branch\
-$git_status\
 $shell\
+$cmd_duration\
+$line_break\
+$sudo\
+$character\
 """
+
+[fill]
+symbol = " "
 
 [cmd_duration]
 min_time = 1
 format = "[](fg:#007ACC)[ $duration](fg:#222222 bg:#007ACC)[](fg:#007ACC) "
 
 [character]
-success_symbol = "[❯ ](bold #880000) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[❯ ](bold green) "
+error_symbol = "[❯ ](bold #ff8888) "
 
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#2b2b2b)"
+format = "[ ](#2b2b2b) "
 
 [username]
 show_always = true

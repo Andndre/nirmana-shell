@@ -8,19 +8,18 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$shell\
-$sudo\
-$python\
-$golang\
-$rust\
+$directory\
 $git_branch\
 $git_status\
 $fill\
-$character\
+$shell\
+$python\
+$golang\
+$rust\
 $cmd_duration\
-$line_break\
 $time\
-$directory\
+$line_break\
+$sudo\
 $character\
 """
 
@@ -34,7 +33,7 @@ format = "[ $indicator](fg:#011627 bg:#00C7FC)[](fg:#00C7FC) "
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#D6DEEB)"
+format = "[⚡ ](#D6DEEB) "
 
 [python]
 symbol = "󰌠 "
@@ -66,7 +65,7 @@ error_symbol = "[❯ ](bold #ef5350) "
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](fg:#D6DEEB bg:#575656)[](fg:#575656) "
+format = "[](fg:#575656)[ $duration](fg:#D6DEEB bg:#575656)[](fg:#575656) "
 
 [time]
 disabled = false

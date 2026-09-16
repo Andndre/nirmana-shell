@@ -8,12 +8,12 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $username\
 $directory\
 $git_branch\
 $git_status\
 $line_break\
+$sudo\
 $character\
 """
 
@@ -24,7 +24,7 @@ error_symbol = "[❯ ](bold #ef5350) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#100e23)"
+format = "[ ](#100e23) "
 
 [username]
 show_always = true

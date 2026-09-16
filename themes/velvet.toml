@@ -11,16 +11,16 @@ format = """
 $directory\
 $git_branch\
 $git_status\
-$cmd_duration\
-$character\
 $fill\
 $python\
 $golang\
 $nodejs\
 $ruby\
 $java\
-$line_break\
+$cmd_duration\
 $time\
+$line_break\
+$character\
 """
 
 [fill]
@@ -45,11 +45,11 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "
+format = "[](fg:#4c1f5e)[ $duration](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [character]
-success_symbol = "[❯ ](bold #69307A) "
-error_symbol = "[❯ ](bold #FF3C3C) "
+success_symbol = "[❯ ](bold green) "
+error_symbol = "[❯ ](bold #EFDCF9) "
 
 [python]
 symbol = "󰌠 "
@@ -74,4 +74,4 @@ format = " [](fg:#4c1f5e)[ $version](fg:#E64747 bg:#4c1f5e)[](fg:#4c1f5
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "
+format = "[ $time](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "

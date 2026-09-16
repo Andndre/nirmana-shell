@@ -8,19 +8,23 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $nodejs\
 $line_break\
+$sudo\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#E06C75)"
+format = "[⚡ ](#E06C75) "
 
 [directory]
 format = "[ $path](#55B9C4) "

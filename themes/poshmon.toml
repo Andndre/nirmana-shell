@@ -60,7 +60,7 @@ format = "[](fg:#ffffff)[ $version](fg:#06aad5 bg:#ffffff)[](fg:#ffffff
 [time]
 disabled = false
 time_format = "_2, %H:%M:%S"
-format = "[](fg:#2e9599)[$time](fg:#ffffff bg:#2e9599)[](fg:#2e9599) "
+format = "[](fg:#2e9599)[ $time](fg:#ffffff bg:#2e9599)[](fg:#2e9599) "
 
 [character]
 success_symbol = "[❯](bold green) "

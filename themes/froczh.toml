@@ -12,10 +12,9 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $dotnet\
 $nodejs\
-$character\
-$fill\
 $cmd_duration\
 $time\
 $line_break\
@@ -27,7 +26,7 @@ symbol = " "
 
 [username]
 show_always = true
-format = "[](fg:#40189c)[ $user](fg:#ffffff bg:#40189c)[](fg:#40189c) "
+format = "[$user](fg:#ffffff bg:#40189c)[](fg:#40189c) "
 
 [directory]
 format = "[](bg:#01579B)[ $path](fg:#ffffff bg:#01579B)[](fg:#01579B) "
@@ -60,7 +59,7 @@ error_symbol = "[❯ ](bold #ff0000) "
 
 [cmd_duration]
 min_time = 1
-format = "[](fg:#29315A)[ $duration](fg:#ffffff bg:#29315A) "
+format = "[](fg:#29315A)[ $duration](fg:#ffffff bg:#29315A)[](fg:#29315A) "
 
 [time]
 disabled = false

@@ -13,10 +13,10 @@ $directory\
 $git_branch\
 $git_status\
 $fill\
+$python\
 $time\
 $line_break\
 $sudo\
-$python\
 $character\
 """
 
@@ -52,7 +52,7 @@ format = "[ $time](#ffffff) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#CECE04)"
+format = "[ ](#CECE04) "
 
 [python]
 symbol = "󰌠 "

@@ -12,14 +12,18 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $time\
 $line_break\
 $character\
 """
 
+[fill]
+symbol = " "
+
 [username]
 show_always = true
-format = "[ ](#ff70a6)[$user](#757575)[ on](white) "
+format = "[ ](#ff70a6)[$user](#757575) "
 
 [directory]
 format = "[ $path](fg:#100e23 bg:#91ddff)[](fg:#91ddff) "
@@ -39,8 +43,8 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[❯ ](bold #ff8080) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[\\$ ](bold #ffffff) "
+error_symbol = "[\\$ ](bold #ef5350) "
 
 [time]
 disabled = false

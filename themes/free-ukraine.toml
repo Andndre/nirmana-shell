@@ -8,17 +8,17 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$username\
 $directory\
 $git_branch\
 $git_status\
-$character\
 $fill\
 $battery\
 $cmd_duration\
 $time\
 $line_break\
 $sudo\
-$username\
+$character\
 """
 
 [fill]
@@ -42,8 +42,8 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[❯ ](bold #ffd700) "
-error_symbol = "[❯ ](bold #a30000) "
+success_symbol = "[❯ ](bold #FBD951) "
+error_symbol = "[❯ ](bold #ef5350) "
 
 [battery]
 disabled = false
@@ -51,18 +51,18 @@ format = "[](fg:#0057b7)[$symbol$percentage](fg:#FBD951 bg:#0057b7) "
 
 [cmd_duration]
 min_time = 1
-format = "[](fg:#0057b7)[ $duration](fg:#FBD951 bg:#0057b7) "
+format = "[](fg:#0057b7)[ $duration](fg:#FBD951 bg:#0057b7)[](fg:#0057b7) "
 
 [time]
 disabled = false
 time_format = "_2,%H:%M"
-format = "[](fg:#0057b7)[$time](fg:#FBD951 bg:#0057b7)[](fg:#0057b7) "
+format = "[](fg:#0057b7)[ $time](fg:#FBD951 bg:#0057b7)[](fg:#0057b7) "
 
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#FBD951)"
+format = "[ ](#FBD951) "
 
 [username]
 show_always = true
-format = "[](fg:#FBD951)[ $user](fg:#0057b7 bg:#FBD951)[](fg:#FBD951) "
+format = "[$user](fg:#0057b7 bg:#FBD951)[](fg:#FBD951) "

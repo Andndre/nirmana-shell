@@ -12,9 +12,6 @@ $directory\
 $git_branch\
 $git_status\
 $fill\
-$directory\
-$git_branch\
-$git_status\
 $time\
 $line_break\
 $character\
@@ -22,6 +19,10 @@ $character\
 
 [fill]
 symbol = " "
+
+[character]
+success_symbol = "[❯ ](bold #FF8000) "
+error_symbol = "[❯ ](bold #ef5350) "
 
 [directory]
 format = "[ $path](#56B6C2) "
@@ -44,7 +45,3 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 disabled = false
 time_format = "%H:%M"
 format = "[ $time](#1a415d) "
-
-[character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "

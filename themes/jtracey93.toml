@@ -12,12 +12,15 @@ $username\
 $directory\
 $git_branch\
 $git_status\
-$time\
+$fill\
 $cmd_duration\
-$character\
+$time\
 $line_break\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true

@@ -12,10 +12,14 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $python\
 $line_break\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true

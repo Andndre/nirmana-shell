@@ -9,14 +9,18 @@ add_newline = true
 
 format = """
 $username\
+$directory\
 $git_branch\
 $git_status\
+$fill\
 $aws\
+$line_break\
 $sudo\
 $character\
-$line_break\
-$directory\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true
@@ -41,7 +45,7 @@ format = "[ $version](#b48ead) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#d8dee9)"
+format = "[ ](#d8dee9) "
 
 [character]
 success_symbol = "[❯ ](bold #d8dee9) "

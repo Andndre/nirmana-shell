@@ -11,13 +11,17 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $nodejs\
 $cmd_duration\
 $time\
-$character\
 $line_break\
 $sudo\
+$character\
 """
+
+[fill]
+symbol = " "
 
 [directory]
 format = "[ $path](fg:#ffffff bg:#DA627D)[](fg:#DA627D) "
@@ -42,18 +46,18 @@ format = "[󰎙 $version](fg:#ffffff bg:#76b367)[](fg:#76b367) "
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769c) "
+format = "[](fg:#83769c)[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769c) "
 
 [time]
 disabled = false
 time_format = "%I:%M %p"
-format = "[$time](fg:#ffffff bg:#33658A)[](fg:#33658A) "
+format = "[ $time](fg:#ffffff bg:#33658A)[](fg:#33658A) "
 
 [character]
-success_symbol = "[❯ ](bold #2e9599) "
+success_symbol = "[❯ ](bold #CD4277) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#cd5e42)"
+format = "[⚡ ](#cd5e42) "

@@ -8,17 +8,15 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$time\
-$memory_usage\
-$cmd_duration\
+$directory\
 $git_branch\
 $git_status\
 $fill\
 $nodejs\
-$git_branch\
-$git_status\
+$memory_usage\
+$cmd_duration\
+$time\
 $line_break\
-$directory\
 $character\
 """
 
@@ -28,7 +26,7 @@ symbol = " "
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[](fg:#FEF5ED)[$time](fg:#011627 bg:#FEF5ED)[](bg:#FEF5ED) "
+format = "[](fg:#FEF5ED)[ $time](fg:#011627 bg:#FEF5ED)[](bg:#FEF5ED) "
 
 [memory_usage]
 disabled = false

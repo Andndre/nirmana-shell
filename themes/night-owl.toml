@@ -8,14 +8,11 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $directory\
 $git_branch\
 $git_status\
-$cmd_duration\
 $fill\
 $shell\
-$memory_usage\
 $aws\
 $dart\
 $dotnet\
@@ -27,8 +24,11 @@ $php\
 $python\
 $ruby\
 $rust\
+$memory_usage\
+$cmd_duration\
 $time\
 $line_break\
+$sudo\
 $character\
 """
 
@@ -38,7 +38,7 @@ symbol = " "
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#ffeb95)"
+format = "[⚡ ](#ffeb95) "
 
 [directory]
 format = "[ $path](fg:#011627 bg:#82AAFF)[](fg:#82AAFF) "
@@ -117,7 +117,7 @@ format = "[](fg:#ffffff)[ $version](fg:#000000 bg:#ffffff)[](fg:#ffffff
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[](fg:#234d70)[$time](fg:#d6deeb bg:#234d70)[](fg:#234d70) "
+format = "[](fg:#234d70)[ $time](fg:#d6deeb bg:#234d70)[](fg:#234d70) "
 
 [character]
 success_symbol = "[❯ ](bold #22da6e) "

@@ -12,9 +12,8 @@ $username\
 $directory\
 $git_branch\
 $git_status\
-$python\
 $fill\
-$character\
+$python\
 $cmd_duration\
 $line_break\
 $character\
@@ -49,9 +48,9 @@ symbol = "󰌠 "
 format = "[󰌠 $version](fg:#100e23 bg:#906cff)[](fg:#906cff) "
 
 [character]
-success_symbol = "[❯ ](bold #ff4040) "
+success_symbol = "[❯ ](bold #ffffff) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [cmd_duration]
 min_time = 1
-format = "[](fg:#2f2f2f)[ $duration](fg:#fafafa bg:#2f2f2f) "
+format = "[](fg:#2f2f2f)[ $duration](fg:#fafafa bg:#2f2f2f)[](fg:#2f2f2f) "

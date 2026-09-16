@@ -8,7 +8,6 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $directory\
 $git_branch\
 $git_status\
@@ -17,6 +16,7 @@ $python\
 $golang\
 $time\
 $line_break\
+$sudo\
 $character\
 """
 
@@ -26,7 +26,7 @@ symbol = " "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#000000)"
+format = "[ ](#000000) "
 
 [directory]
 format = "[ $path](fg:#ffffff bg:#0000ff)[](fg:#0000ff) "
@@ -56,7 +56,7 @@ format = "[](fg:#7FD5EA)[ $version](fg:#ffffff bg:#7FD5EA) "
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[](fg:#ffffff)[$time](fg:#000000 bg:#ffffff)[](fg:#ffffff) "
+format = "[](fg:#ffffff)[ $time](fg:#000000 bg:#ffffff)[](fg:#ffffff) "
 
 [character]
 success_symbol = "[❯ ](bold #D4E157) "

@@ -9,19 +9,23 @@ add_newline = true
 
 format = """
 $username\
-$battery\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $nodejs\
-$sudo\
+$battery\
 $line_break\
+$sudo\
 $character\
 """
 
+[fill]
+symbol = " "
+
 [username]
 show_always = true
-format = "[](fg:#546E7A)[ $user](fg:#26C6DA bg:#546E7A)[](fg:#546E7A) "
+format = "[$user](fg:#26C6DA bg:#546E7A)[](fg:#546E7A) "
 
 [battery]
 disabled = false
@@ -51,8 +55,8 @@ format = "[󰎙 $version](fg:#ffffff bg:#6CA35E)[](fg:#6CA35E) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#193549)"
+format = "[ ](#193549) "
 
 [character]
-success_symbol = "[❯ ](bold #007800) "
+success_symbol = "[❯ ](bold #ffffff) "
 error_symbol = "[❯ ](bold #ef5350) "

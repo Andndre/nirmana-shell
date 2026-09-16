@@ -8,13 +8,13 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$fill\
-$cmd_duration\
-$nodejs\
-$line_break\
 $directory\
 $git_branch\
 $git_status\
+$fill\
+$nodejs\
+$cmd_duration\
+$line_break\
 $character\
 """
 

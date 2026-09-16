@@ -9,7 +9,6 @@ add_newline = true
 
 format = """
 $username\
-$sudo\
 $directory\
 $git_branch\
 $git_status\
@@ -17,9 +16,10 @@ $fill\
 $nodejs\
 $python\
 $dotnet\
+$cmd_duration\
 $time\
 $line_break\
-$cmd_duration\
+$sudo\
 $character\
 """
 
@@ -33,7 +33,7 @@ format = "[](fg:#2f2f2f)[ $user](fg:#fafafa bg:#2f2f2f)[](fg:#2f2f2f) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#ffff66)"
+format = "[ ](#ffff66) "
 
 [directory]
 format = "[](fg:#2f2f2f)[ $path](fg:#fafafa bg:#2f2f2f)[](fg:#2f2f2f) "
@@ -67,12 +67,12 @@ format = "[](fg:#2f2f2f)[󰪮 $version](fg:#3891A6 bg:#2f2f2f)[](fg:#2f2f2
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#fafafa bg:#2f2f2f)[▓](fg:#2f2f2f) "
+format = "[ $time](fg:#fafafa bg:#2f2f2f)[▓](fg:#2f2f2f) "
+
+[character]
+success_symbol = "[❯ ](bold #7a7a7a) "
+error_symbol = "[❯ ](bold #9FD356) "
 
 [cmd_duration]
 min_time = 1
 format = "[ $duration](#FFCE5C) "
-
-[character]
-success_symbol = "[❯ ](bold #9FD356) "
-error_symbol = "[❯ ](bold #E84855) "

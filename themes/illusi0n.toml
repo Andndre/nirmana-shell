@@ -26,6 +26,10 @@ disabled = false
 threshold = 0
 format = "[󰍛 $ram_pct](#ff8800) "
 
+[character]
+success_symbol = "[❯ ](bold #ff8800) "
+error_symbol = "[❯ ](bold #ef5350) "
+
 [username]
 show_always = true
 format = "[ ](#ff70a6)[$user](#ff8800) "
@@ -46,7 +50,3 @@ stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "

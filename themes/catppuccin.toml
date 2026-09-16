@@ -18,7 +18,7 @@ $character\
 
 [username]
 show_always = true
-format = "[](fg:#8AADF4)[ $user](fg:#494D64 bg:#8AADF4)[](fg:#8AADF4) "
+format = "[$user](fg:#494D64 bg:#8AADF4)[](fg:#8AADF4) "
 
 [directory]
 format = "[ $path](fg:#494D64 bg:#F5BDE6)[](fg:#F5BDE6) "

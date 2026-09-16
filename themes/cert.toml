@@ -12,10 +12,14 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $time\
 $line_break\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true
@@ -41,7 +45,7 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 [time]
 disabled = false
 time_format = "%H:%M"
-format = "[](fg:lightMagenta)[$time](fg:#ffffff bg:lightMagenta)[](fg:lightMagenta) "
+format = "[](fg:lightMagenta)[ $time](fg:#ffffff bg:lightMagenta)[](fg:lightMagenta) "
 
 [character]
 success_symbol = "[❯](bold green) "

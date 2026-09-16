@@ -8,15 +8,15 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$shell\
 $username\
+$directory\
 $git_branch\
 $git_status\
 $fill\
+$shell\
 $cmd_duration\
 $time\
 $line_break\
-$directory\
 $character\
 """
 

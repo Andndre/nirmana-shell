@@ -10,14 +10,18 @@ add_newline = true
 format = """
 $username\
 $directory\
-$time\
 $git_branch\
 $git_status\
+$fill\
 $nodejs\
-$sudo\
+$time\
 $line_break\
+$sudo\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true
@@ -31,7 +35,7 @@ truncation_symbol = "…/"
 [time]
 disabled = false
 time_format = "%Y-%m-%d %H:%M:%S"
-format = "[$time](fg:#193549 bg:#4caf50)[](fg:#4caf50) "
+format = "[ $time](fg:#193549 bg:#4caf50)[](fg:#4caf50) "
 
 [git_branch]
 format = "[](fg:#fffb38)[ $branch](fg:#193549 bg:#fffb38)"
@@ -52,8 +56,8 @@ format = "[󰎙 $version](fg:#ffffff bg:#6CA35E)[](fg:#6CA35E) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#193549)"
+format = "[ ](#193549) "
 
 [character]
-success_symbol = "[❯ ](bold #2e9599) "
+success_symbol = "[❯ ](bold #ffffff) "
 error_symbol = "[❯ ](bold #ef5350) "

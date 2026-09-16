@@ -28,7 +28,7 @@ format = "[ $time](#007ACC) "
 
 [username]
 show_always = true
-format = "[](fg:#ffffff)[ $user](fg:#100e23 bg:#ffffff)[](fg:#ffffff) "
+format = "[$user](fg:#100e23 bg:#ffffff)[](fg:#ffffff) "
 
 [directory]
 format = "[ $path](fg:#100e23 bg:#91ddff)[](fg:#91ddff) "

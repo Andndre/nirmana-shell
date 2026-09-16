@@ -12,12 +12,16 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $nodejs\
 $shell\
-$sudo\
 $line_break\
+$sudo\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true
@@ -51,8 +55,8 @@ format = "[ $indicator](fg:#ffffff bg:#203248)[](fg:#203248) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#ffffff)"
+format = "[ ](#ffffff) "
 
 [character]
-success_symbol = "[ ](bold #2e9599) "
+success_symbol = "[ ](bold #ffffff) "
 error_symbol = "[ ](bold #ef5350) "

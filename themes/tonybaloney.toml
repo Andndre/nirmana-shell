@@ -11,11 +11,15 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $python\
-$sudo\
 $line_break\
+$sudo\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [directory]
 format = "[](fg:#18354c)[ $path](fg:#ffc107 bg:#18354c)[](fg:#18354c) "
@@ -41,7 +45,7 @@ format = "[󰌠 $version](fg:#18354c bg:#ffc107)[](fg:#ffc107) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#18354c)"
+format = "[ ](#18354c) "
 
 [character]
 success_symbol = "[❯](bold green) "

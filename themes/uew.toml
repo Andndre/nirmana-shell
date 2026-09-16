@@ -9,16 +9,16 @@ add_newline = true
 
 format = """
 $username\
+$directory\
 $git_branch\
 $git_status\
-$shell\
 $fill\
+$shell\
+$nodejs\
 $cmd_duration\
 $time\
-$sudo\
-$nodejs\
 $line_break\
-$directory\
+$sudo\
 $character\
 """
 
@@ -57,7 +57,7 @@ format = "[ $time](#BBC4B9) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](yellow)"
+format = "[ ](yellow) "
 
 [nodejs]
 symbol = "󰎙 "

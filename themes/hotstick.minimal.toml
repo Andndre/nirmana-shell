@@ -8,18 +8,18 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $directory\
 $git_branch\
 $git_status\
 $line_break\
+$sudo\
 $character\
 """
 
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](yellow)"
+format = "[⚡ ](yellow) "
 
 [directory]
 format = "[](fg:lightBlue)[ $path](fg:black bg:lightBlue)[](fg:lightBlue) "

@@ -10,7 +10,8 @@ add_newline = true
 format = """
 $username\
 $directory\
-$sudo\
+$git_branch\
+$git_status\
 $fill\
 $nodejs\
 $python\
@@ -25,8 +26,7 @@ $aws\
 $battery\
 $time\
 $line_break\
-$git_branch\
-$git_status\
+$sudo\
 $character\
 """
 
@@ -45,7 +45,7 @@ truncation_symbol = "…/"
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#FF9248)"
+format = "[⚡ ](#FF9248) "
 
 [nodejs]
 symbol = "󰎙 "

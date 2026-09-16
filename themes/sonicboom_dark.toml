@@ -8,15 +8,15 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $directory\
 $git_branch\
 $git_status\
-$cmd_duration\
 $fill\
 $username\
+$cmd_duration\
 $time\
 $line_break\
+$sudo\
 $character\
 """
 
@@ -26,7 +26,7 @@ symbol = " "
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#dd1e1e)"
+format = "[⚡ ](#dd1e1e) "
 
 [directory]
 format = "[](fg:#272727)[ $path](fg:#43CCEA bg:#272727)[](fg:#272727) "

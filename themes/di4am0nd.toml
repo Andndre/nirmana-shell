@@ -12,8 +12,8 @@ $username\
 $directory\
 $git_branch\
 $git_status\
-$nodejs\
 $fill\
+$nodejs\
 $memory_usage\
 $cmd_duration\
 $line_break\
@@ -51,11 +51,11 @@ format = "[󰎙 $version](#98C379) "
 [memory_usage]
 disabled = false
 threshold = 0
-format = "[MEM: $ram_pct](#85C980)  "
+format = "[󰍛 $ram_pct](#85C980) "
 
 [cmd_duration]
 min_time = 1
-format = "[┋](fg:#ffffff)[ $duration](#ffffff) "
+format = "[ $duration](#ffffff) "
 
 [character]
 success_symbol = "[❯](bold green) "

@@ -13,8 +13,8 @@ $directory\
 $git_branch\
 $git_status\
 $fill\
-$time\
 $cmd_duration\
+$time\
 $line_break\
 $character\
 """
@@ -33,7 +33,7 @@ format = "[](fg:#83769c)[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769
 
 [username]
 show_always = true
-format = "[](fg:#61AFEF)[ $user](fg:#ffffff bg:#61AFEF)[](fg:#61AFEF) "
+format = "[$user](fg:#ffffff bg:#61AFEF)[](fg:#61AFEF) "
 
 [directory]
 format = "[ $path](fg:#ffffff bg:#C678DD)[](fg:#C678DD) "

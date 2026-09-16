@@ -8,16 +8,15 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$python\
 $directory\
 $git_branch\
 $git_status\
-$nodejs\
 $fill\
-$character\
+$python\
+$nodejs\
 $cmd_duration\
-$line_break\
 $time\
+$line_break\
 $character\
 """
 
@@ -50,7 +49,7 @@ symbol = "󰎙 "
 format = "[󰎙 $version](#98C379) "
 
 [character]
-success_symbol = "[❯ ](bold #fb0207) "
+success_symbol = "[❯ ](bold #3ce6bf) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [cmd_duration]

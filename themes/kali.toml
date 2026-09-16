@@ -9,13 +9,12 @@ add_newline = true
 
 format = """
 $username\
-$python\
 $directory\
 $git_branch\
 $git_status\
 $fill\
+$python\
 $cmd_duration\
-$character\
 $line_break\
 $character\
 """
@@ -53,5 +52,5 @@ min_time = 1
 format = "[ $duration](white) "
 
 [character]
-success_symbol = "[❯ ](bold green) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[\\$ ](bold lightBlue) "
+error_symbol = "[\\$ ](bold #ef5350) "

@@ -11,10 +11,14 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $nodejs\
 $line_break\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [directory]
 format = "[ $path](#15C2CB) "
@@ -38,5 +42,5 @@ symbol = "󰎙 "
 format = "[󰎙 $version](#44FFD2) "
 
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+success_symbol = "[❯ ](bold #FFE45E) "
+error_symbol = "[❯ ](bold #ef5350) "

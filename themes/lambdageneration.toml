@@ -8,18 +8,17 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$cmd_duration\
-$sudo\
 $directory\
 $git_branch\
 $git_status\
-$battery\
-$character\
 $fill\
+$battery\
 $username\
+$cmd_duration\
 $time\
 $line_break\
-$directory\
+$sudo\
+$character\
 """
 
 [fill]
@@ -32,7 +31,7 @@ format = "[](fg:#292929)[ $duration](fg:#fb7e14 bg:#292929)[](fg:#29292
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#26C6DA)"
+format = "[ ](#26C6DA) "
 
 [directory]
 format = "[╰─](fg:#fb7e14)[ $path](fg:#292929 bg:#fb7e14)[](fg:#fb7e14) "
@@ -56,8 +55,8 @@ disabled = false
 format = "[](fg:#292929)[$symbol$percentage](fg:#26C6DA bg:#292929)[](fg:#292929) "
 
 [character]
-success_symbol = "[❯ ](bold #292929) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[❯ ](bold green) "
+error_symbol = "[❯ ](bold #fb7e14) "
 
 [username]
 show_always = true

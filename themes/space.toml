@@ -12,6 +12,7 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $python\
 $golang\
 $nodejs\
@@ -21,6 +22,9 @@ $julia\
 $line_break\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true
@@ -68,5 +72,5 @@ symbol = " "
 format = "[ $version](#4063D8) "
 
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+success_symbol = "[❯ ](bold #FFD54F) "
+error_symbol = "[❯ ](bold #ef5350) "

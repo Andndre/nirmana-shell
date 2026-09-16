@@ -8,20 +8,24 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $python\
 $line_break\
+$sudo\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#FFEE58)"
+format = "[ ](#FFEE58) "
 
 [username]
 show_always = true
@@ -49,5 +53,5 @@ symbol = "󰌠 "
 format = "[󰌠 $version](fg:#100e23 bg:#906cff)[](fg:#906cff) "
 
 [character]
-success_symbol = "[❯ ](bold #ff8080) "
+success_symbol = "[❯ ](bold #ffffff) "
 error_symbol = "[❯ ](bold #ef5350) "

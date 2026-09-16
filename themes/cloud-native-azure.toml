@@ -45,8 +45,8 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[ ](bold #2e9599) "
-error_symbol = "[ ](bold #ef5350) "
+success_symbol = "[ ](bold green) "
+error_symbol = "[ ](bold #ffffff) "
 
 [shell]
 disabled = false

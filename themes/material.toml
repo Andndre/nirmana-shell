@@ -11,10 +11,18 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $time\
 $line_break\
 $character\
 """
+
+[fill]
+symbol = " "
+
+[character]
+success_symbol = "[❯ ](bold #DCB977) "
+error_symbol = "[❯ ](bold #ef5350) "
 
 [directory]
 format = "[ $path](#56B6C2) "
@@ -32,10 +40,6 @@ stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[character]
-success_symbol = "[❯ ](bold #DCB977) "
-error_symbol = "[❯ ](bold #ef5350) "
 
 [time]
 disabled = false

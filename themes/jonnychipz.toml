@@ -9,12 +9,12 @@ add_newline = true
 
 format = """
 $username\
-$character\
-$line_break\
-$sudo\
 $directory\
 $git_branch\
 $git_status\
+$line_break\
+$sudo\
+$character\
 """
 
 [username]
@@ -22,13 +22,13 @@ show_always = true
 format = "[](fg:#4707a8)[$user](fg:#ffffff bg:#4707a8)[](fg:#4707a8) "
 
 [character]
-success_symbol = "[ ](bold #4707a8) "
-error_symbol = "[ ](bold #ef5350) "
+success_symbol = "[❯ ](bold #1a1af5) "
+error_symbol = "[❯ ](bold #ef5350) "
 
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#ffffff)"
+format = "[ ](#ffffff) "
 
 [directory]
 format = "[](fg:#ffffff)[ $path](fg:#000000 bg:#ffffff)[](fg:#ffffff) "

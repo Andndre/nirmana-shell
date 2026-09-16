@@ -9,17 +9,16 @@ add_newline = true
 
 format = """
 $username\
-$python\
+$directory\
 $git_branch\
 $git_status\
 $fill\
+$python\
 $nodejs\
 $java\
-$character\
 $cmd_duration\
 $time\
 $line_break\
-$directory\
 $character\
 """
 
@@ -55,7 +54,7 @@ symbol = " "
 format = " [](fg:#4c1f5e)[ $version](fg:#ffffff bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [character]
-success_symbol = "[❯ ](bold green) "
+success_symbol = "[❯ ](bold #43D426) "
 error_symbol = "[❯ ](bold #ef5350) "
 
 [cmd_duration]

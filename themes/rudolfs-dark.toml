@@ -8,20 +8,24 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $python\
 $line_break\
+$sudo\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#ffffff)"
+format = "[ ](#ffffff) "
 
 [username]
 show_always = true

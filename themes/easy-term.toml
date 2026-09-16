@@ -12,9 +12,9 @@ $directory\
 $git_branch\
 $git_status\
 $fill\
-$memory_usage\
 $nodejs\
 $php\
+$memory_usage\
 $cmd_duration\
 $time\
 $line_break\
@@ -61,7 +61,7 @@ format = "[](fg:#cecece)[ $duration](fg:#4b4b4b bg:#cecece)[](fg:#cecec
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[](fg:#cecece)[$time](fg:#4b4b4b bg:#cecece)[](fg:#cecece) "
+format = "[](fg:#cecece)[ $time](fg:#4b4b4b bg:#cecece)[](fg:#cecece) "
 
 [character]
 success_symbol = "[❯](bold green) "

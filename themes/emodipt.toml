@@ -8,14 +8,18 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$time\
-$sudo\
 $directory\
 $git_branch\
 $git_status\
+$fill\
+$time\
 $line_break\
+$sudo\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [time]
 disabled = false
@@ -25,7 +29,7 @@ format = "[ $time](#E5C07B) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#B5B50D)"
+format = "[ ](#B5B50D) "
 
 [directory]
 format = "[ $path](#61AFEF) "
@@ -45,5 +49,5 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[❯ ](bold #C94A16) "
+success_symbol = "[❯ ](bold #E06C75) "
 error_symbol = "[❯ ](bold #ef5350) "

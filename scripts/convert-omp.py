@@ -57,7 +57,7 @@ def clean_template_tags(template_str: str, current_bg: Optional[str] = None, pal
     palette = palette or {}
 
     def normalize_color(col: str) -> str:
-        if not col or col == "transparent":
+        if not col or col.strip().lower() == "transparent":
             return ""
         if col.startswith("p:"):
             key = col[2:]
@@ -65,11 +65,16 @@ def clean_template_tags(template_str: str, current_bg: Optional[str] = None, pal
         else:
             col = palette.get(col, col)
 
+        if not col or str(col).strip().lower() == "transparent":
+            return ""
+
         h = col[1:] if col.startswith("#") else col
         if len(h) == 3 and all(c in "0123456789abcdefABCDEF" for c in h):
             return f"#{h[0]*2}{h[1]*2}{h[2]*2}"
         elif len(h) == 6 and all(c in "0123456789abcdefABCDEF" for c in h):
             return f"#{h}"
+        elif len(h) == 8 and all(c in "0123456789abcdefABCDEF" for c in h):
+            return f"#{h[:6]}"
         return col
 
     def resolve_tag_col(c: str) -> str:
@@ -148,7 +153,10 @@ class OmpTranspiler:
         self.all_segments: List[Dict[str, Any]] = []
 
     def resolve_color(self, col: Optional[str]) -> Optional[str]:
-        if not col or col == "transparent":
+        if not col:
+            return None
+        col = str(col).strip()
+        if col.lower() == "transparent":
             return None
         # Handle OMP palette prefix "p:color_name"
         if col.startswith("p:"):
@@ -157,11 +165,16 @@ class OmpTranspiler:
         elif col in self.palette:
             col = self.palette[col]
 
+        if not col or str(col).strip().lower() == "transparent":
+            return None
+
         h = col[1:] if col.startswith("#") else col
         if len(h) == 3 and all(c in "0123456789abcdefABCDEF" for c in h):
             return f"#{h[0]*2}{h[1]*2}{h[2]*2}"
         elif len(h) == 6 and all(c in "0123456789abcdefABCDEF" for c in h):
             return f"#{h}"
+        elif len(h) == 8 and all(c in "0123456789abcdefABCDEF" for c in h):
+            return f"#{h[:6]}"
         return col
 
     def build_style(self, fg: Optional[str], bg: Optional[str]) -> str:
@@ -196,12 +209,16 @@ class OmpTranspiler:
     def transpile(self) -> str:
         self.extract_segments()
 
-        has_line2 = any(item["line"] >= 2 for item in self.all_segments)
+        LEFT_CANDIDATES = {"$username", "$directory", "$git_branch", "$git_status"}
+        PROMPT_CANDIDATES = {"$sudo", "$character"}
+
+        detected_left: List[str] = []
+        detected_right: List[str] = []
+        detected_prompt: List[str] = []
 
         for item in self.all_segments:
             seg = item["seg"]
             is_right = item["is_right"]
-            line = item["line"]
 
             res = self.process_segment(seg)
             if not res:
@@ -209,19 +226,25 @@ class OmpTranspiler:
 
             mods = res if isinstance(res, list) else [res]
             for m in mods:
-                if line >= 2:
-                    if m not in self.line2_modules:
-                        self.line2_modules.append(m)
-                elif is_right:
-                    if m not in self.line1_right:
-                        self.line1_right.append(m)
+                if m in PROMPT_CANDIDATES:
+                    if m not in detected_prompt:
+                        detected_prompt.append(m)
+                elif m in LEFT_CANDIDATES:
+                    # If explicitly placed in a right-aligned block (e.g. username on right)
+                    if is_right and m == "$username":
+                        if m not in detected_right:
+                            detected_right.append(m)
+                    else:
+                        if m not in detected_left:
+                            detected_left.append(m)
                 else:
-                    if m not in self.line1_left:
-                        self.line1_left.append(m)
+                    # Runtimes, cloud, duration, time, memory, battery -> always right-aligned
+                    if m not in detected_right:
+                        detected_right.append(m)
 
-        # Ensure directory is present somewhere
-        if "$directory" not in self.line1_left and "$directory" not in self.line2_modules:
-            self.line1_left.insert(0, "$directory")
+        # Ensure directory is present on left
+        if "$directory" not in detected_left:
+            detected_left.insert(0, "$directory")
             if "directory" not in self.modules:
                 self.modules["directory"] = {
                     "format": "[$path](bold cyan) ",
@@ -229,10 +252,10 @@ class OmpTranspiler:
                     "truncation_symbol": "…/",
                 }
 
-        # Ensure git is present
-        if "$git_branch" not in self.line1_left and "$git_branch" not in self.line2_modules:
-            self.line1_left.append("$git_branch")
-            self.line1_left.append("$git_status")
+        # Ensure git is present on left
+        if "$git_branch" not in detected_left:
+            detected_left.append("$git_branch")
+            detected_left.append("$git_status")
             if "git_branch" not in self.modules:
                 self.modules["git_branch"] = {
                     "symbol": " ",
@@ -243,13 +266,31 @@ class OmpTranspiler:
                     "format": "([$all_status$ahead_behind](red) )",
                 }
 
-        # If prompt is single-line, make sure line 2 has character
-        if not self.line2_modules:
-            if "$character" in self.line1_left:
-                self.line1_left.remove("$character")
-            self.line2_modules.append("$character")
-        elif "$character" not in self.line2_modules and "$character" not in self.line1_left:
-            self.line2_modules.append("$character")
+        # Sort left modules in canonical order: $username, $directory, $git_branch, $git_status
+        left_order = ["$username", "$directory", "$git_branch", "$git_status"]
+        self.line1_left = [m for m in left_order if m in detected_left]
+        for m in detected_left:
+            if m not in self.line1_left:
+                self.line1_left.append(m)
+
+        # Sort right modules in canonical order:
+        # runtimes & cloud -> metrics -> cmd_duration -> time
+        def right_sort_key(mod: str) -> int:
+            if mod == "$cmd_duration":
+                return 80
+            elif mod == "$time":
+                return 90
+            elif mod in ("$memory_usage", "$battery", "$username"):
+                return 50
+            return 10
+
+        self.line1_right = sorted(detected_right, key=right_sort_key)
+
+        # Line 2 modules: $sudo (if present) followed by $character
+        self.line2_modules = []
+        if "$sudo" in detected_prompt:
+            self.line2_modules.append("$sudo")
+        self.line2_modules.append("$character")
 
         if "character" not in self.modules:
             self.modules["character"] = {
@@ -264,6 +305,11 @@ class OmpTranspiler:
         if not raw:
             return ""
 
+        # If background is missing/transparent, powerline separators must not be drawn
+        if not bg:
+            if "<" not in raw:
+                return ""
+
         if "<" in raw:
             cleaned = clean_template_tags(raw, current_bg=bg, palette=self.palette)
             if "[" in cleaned and "]" in cleaned and "(" in cleaned:
@@ -275,7 +321,7 @@ class OmpTranspiler:
                 prefix = " " if raw.startswith(" ") else ""
                 suffix = " " if raw.endswith(" ") else ""
                 return f"{prefix}[{stripped}]({color}){suffix}"
-            return cleaned
+            return ""
 
         stripped = raw.strip()
         if not stripped:
@@ -287,7 +333,7 @@ class OmpTranspiler:
             suffix = " " if raw.endswith(" ") else ""
             return f"{prefix}[{stripped}]({color}){suffix}"
 
-        return raw
+        return ""
 
     def process_segment(self, seg: Dict[str, Any]) -> Optional[Union[str, List[str]]]:
         stype = seg.get("type", "")
@@ -489,33 +535,68 @@ class OmpTranspiler:
             return "$battery"
 
         elif stype == "root":
-            style_str = self.build_style(fg, bg)
+            style_color = fg or bg or "yellow"
             symbol = " " if "\uf0e7" in template else "⚡ "
             self.modules["sudo"] = {
                 "disabled": False,
                 "symbol": symbol,
-                "format": f"[{symbol}]({fg or 'yellow'})",
+                "format": f"[{symbol}]({style_color}) ",
             }
             return "$sudo"
 
         elif stype == "status":
             sym = " " if "\ue286" in template else (" " if "\ue23a" in template else ("⚡ " if "\uf0e7" in template else "❯ "))
-            success_color = bg or fg or "green"
-            err_color = "#ef5350"
-            for t in seg.get("foreground_templates", []):
-                m = re.search(r"#([0-9a-fA-F]{3,6})", t)
-                if m:
-                    raw_h = m.group(1)
-                    if len(raw_h) == 3:
-                        err_color = f"#{raw_h[0]*2}{raw_h[1]*2}{raw_h[2]*2}"
-                    else:
-                        err_color = f"#{raw_h}"
+            col = fg or bg
 
-            self.modules["character"] = {
-                "success_symbol": f"[{sym}](bold {success_color}) ",
-                "error_symbol": f"[{sym}](bold {err_color}) ",
-            }
+            is_error_seg = "ne .Code 0" in template or ".Code != 0" in template or "gt .Code 0" in template
+            if is_error_seg:
+                err_color = col or "#ef5350"
+                if "character" in self.modules:
+                    self.modules["character"]["error_symbol"] = f"[{sym}](bold {err_color}) "
+                else:
+                    self.modules["character"] = {
+                        "success_symbol": f"[{sym}](bold green) ",
+                        "error_symbol": f"[{sym}](bold {err_color}) ",
+                    }
+            else:
+                success_color = col or "green"
+                err_color = "#ef5350"
+                for t in seg.get("foreground_templates", []):
+                    m = re.search(r"#([0-9a-fA-F]{3,6})", t)
+                    if m:
+                        raw_h = m.group(1)
+                        if len(raw_h) == 3:
+                            err_color = f"#{raw_h[0]*2}{raw_h[1]*2}{raw_h[2]*2}"
+                        else:
+                            err_color = f"#{raw_h}"
+
+                self.modules["character"] = {
+                    "success_symbol": f"[{sym}](bold {success_color}) ",
+                    "error_symbol": f"[{sym}](bold {err_color}) ",
+                }
             return "$character"
+
+        elif stype == "text":
+            if any(s in template for s in [">", "❯", "", "", "λ", "$", "%", "#", "»", "→", "\ue285", "\ue286"]):
+                sym = "❯ "
+                if "\ue285" in template:
+                    sym = " "
+                elif "\ue286" in template:
+                    sym = " "
+                elif "λ" in template:
+                    sym = "λ "
+                elif "$" in template:
+                    sym = "\\\\$ "
+                elif ">" in template:
+                    sym = "❯ "
+
+                success_color = fg or bg or "green"
+                self.modules["character"] = {
+                    "success_symbol": f"[{sym}](bold {success_color}) ",
+                    "error_symbol": f"[{sym}](bold #ef5350) ",
+                }
+                return "$character"
+            return None
 
         # Runtimes mapping
         runtime_map = {

@@ -33,5 +33,5 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [character]
-success_symbol = "[⚡ ](bold #0095e9) "
+success_symbol = "[⚡ ](bold #ffffff) "
 error_symbol = "[⚡ ](bold #ef5350) "

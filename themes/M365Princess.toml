@@ -12,11 +12,15 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $nodejs\
 $time\
 $line_break\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true
@@ -46,7 +50,7 @@ format = "[󰎙 $version](fg:#FFFFFF bg:#86BBD8)[](fg:#86BBD8) "
 [time]
 disabled = false
 time_format = "%H:%M"
-format = "[$time](fg:#FFFFFF bg:#33658A)[](fg:#33658A) "
+format = "[ $time](fg:#FFFFFF bg:#33658A)[](fg:#33658A) "
 
 [character]
 success_symbol = "[❯](bold green) "

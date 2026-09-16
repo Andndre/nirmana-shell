@@ -8,19 +8,19 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$username\
 $directory\
 $git_branch\
 $git_status\
 $fill\
-$cmd_duration\
-$time\
-$battery\
-$line_break\
-$username\
 $dart\
 $nodejs\
 $rust\
 $python\
+$battery\
+$cmd_duration\
+$time\
+$line_break\
 $character\
 """
 
@@ -46,12 +46,12 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [cmd_duration]
 min_time = 1
-format = "[](fg:#C6FF00)[ $duration](fg:#212121 bg:#C6FF00)[](fg:#C6FF00)  "
+format = "[](fg:#C6FF00)[ $duration](fg:#212121 bg:#C6FF00)[](fg:#C6FF00) "
 
 [time]
 disabled = false
 time_format = "%H:%M (%m/%d)"
-format = "[](fg:#FFFF8D)[$time](fg:#212121 bg:#FFFF8D)[](fg:#FFFF8D)  "
+format = "[](fg:#FFFF8D)[ $time](fg:#212121 bg:#FFFF8D)[](fg:#FFFF8D) "
 
 [battery]
 disabled = false
@@ -60,6 +60,10 @@ format = "[](fg:#FF867F)[$symbol$percentage](fg:#212121 bg:#FF867F)[](fg:#
 [username]
 show_always = true
 format = "[ ](#ff70a6)[$user](yellow) "
+
+[character]
+success_symbol = "[❯ ](bold #FAFAFA) "
+error_symbol = "[❯ ](bold #ef5350) "
 
 [dart]
 symbol = " "
@@ -76,7 +80,3 @@ format = "[](fg:#FF867F)[ $version](fg:#212121 bg:#FF867F)[](fg:#FF867F
 [python]
 symbol = "󰌠 "
 format = "[](fg:#FF867F)[󰌠 $version](fg:#212121 bg:#FF867F)[](fg:#FF867F)  "
-
-[character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "

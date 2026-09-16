@@ -8,19 +8,19 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $username\
 $directory\
 $git_branch\
 $git_status\
 $line_break\
+$sudo\
 $character\
 """
 
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#CECE04)"
+format = "[⚡ ](#CECE04) "
 
 [username]
 show_always = true

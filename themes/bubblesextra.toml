@@ -12,9 +12,6 @@ $directory\
 $git_branch\
 $git_status\
 $fill\
-$directory\
-$git_branch\
-$git_status\
 $python\
 $golang\
 $nodejs\
@@ -23,8 +20,8 @@ $java\
 $julia\
 $php\
 $battery\
-$line_break\
 $cmd_duration\
+$line_break\
 $character\
 """
 
@@ -82,8 +79,8 @@ format = " [](fg:#29315A)[$symbol$percentage](fg:#9B6BDF bg:#29315A)[](fg:
 
 [cmd_duration]
 min_time = 1
-format = "[](fg:#29315A)[ $duration](fg:#AEA4BF bg:#29315A)[](fg:#29315A)  "
+format = "[](fg:#29315A)[ $duration](fg:#AEA4BF bg:#29315A)[](fg:#29315A) "
 
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+success_symbol = "[❯ ](bold #E64747) "
+error_symbol = "[❯ ](bold #ef5350) "

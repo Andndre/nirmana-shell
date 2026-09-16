@@ -8,18 +8,16 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$memory_usage\
-$cmd_duration\
+$directory\
 $git_branch\
 $git_status\
 $fill\
-$git_branch\
-$git_status\
-$line_break\
 $shell\
+$memory_usage\
+$cmd_duration\
 $time\
+$line_break\
 $sudo\
-$directory\
 $character\
 """
 
@@ -54,12 +52,12 @@ format = "[](fg:#91f2ff)[ $indicator](fg:#000000 bg:#91f2ff)[](bg:#91f2
 [time]
 disabled = false
 time_format = "%I:%M:%S %p | %A"
-format = "[](fg:#ff8c94)[$time](fg:#000000 bg:#ff8c94)[](fg:#ff8c94) "
+format = "[](fg:#ff8c94)[ $time](fg:#000000 bg:#ff8c94)[](fg:#ff8c94) "
 
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](yellow)"
+format = "[ ](yellow) "
 
 [directory]
 format = "[](bg:#F8677b)[ $path](fg:#000000 bg:#f8677b)[](fg:#f8677b) "

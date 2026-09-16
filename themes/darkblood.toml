@@ -9,12 +9,12 @@ add_newline = true
 
 format = """
 $username\
+$directory\
 $git_branch\
 $git_status\
+$line_break\
 $sudo\
 $character\
-$line_break\
-$directory\
 """
 
 [username]
@@ -36,7 +36,7 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#ffffff)"
+format = "[ ](#ffffff) "
 
 [character]
 success_symbol = "[❯ ](bold #ffffff) "

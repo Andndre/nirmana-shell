@@ -8,19 +8,19 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $python\
 $golang\
 $aws\
-$fill\
-$cmd_duration\
 $memory_usage\
 $battery\
+$cmd_duration\
 $time\
 $line_break\
+$sudo\
 $character\
 """
 
@@ -30,7 +30,7 @@ symbol = " "
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#dd1e1e)"
+format = "[⚡ ](#dd1e1e) "
 
 [directory]
 format = "[](fg:#272727)[ $path](fg:#3EC669 bg:#272727)[](fg:#272727) "

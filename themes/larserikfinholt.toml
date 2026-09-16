@@ -12,10 +12,14 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $cmd_duration\
 $line_break\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [username]
 show_always = true
@@ -43,5 +47,5 @@ min_time = 1
 format = "[](fg:#83769c)[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769c) "
 
 [character]
-success_symbol = "[ ](bold #00897b) "
+success_symbol = "[ ](bold #ffffff) "
 error_symbol = "[ ](bold #ef5350) "

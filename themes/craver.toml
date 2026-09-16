@@ -8,26 +8,30 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$sudo\
-$time\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $dotnet\
 $cmd_duration\
+$time\
 $line_break\
+$sudo\
 $character\
 """
+
+[fill]
+symbol = " "
 
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](#242424)"
+format = "[ ](#242424) "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[$time](fg:#FFBB00 bg:#242424)[](fg:#242424) "
+format = "[ $time](fg:#FFBB00 bg:#242424)[](fg:#242424) "
 
 [directory]
 format = "[ $path](fg:#33DD2D bg:#242424)[](fg:#242424) "
@@ -52,8 +56,8 @@ format = "[󰪮 $version](fg:#ffffff bg:#0184bc)[](fg:#0184bc) "
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](fg:#ffffff bg:#8800dd)[](fg:#8800dd) "
+format = "[](fg:#8800dd)[ $duration](fg:#ffffff bg:#8800dd)[](fg:#8800dd) "
 
 [character]
-success_symbol = "[❯ ](bold #33DD2D) "
+success_symbol = "[❯ ](bold #242424) "
 error_symbol = "[❯ ](bold #ef5350) "

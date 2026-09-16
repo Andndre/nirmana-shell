@@ -9,15 +9,15 @@ add_newline = true
 
 format = """
 $username\
-$time\
+$directory\
 $git_branch\
 $git_status\
 $fill\
-$cmd_duration\
-$sudo\
 $memory_usage\
+$cmd_duration\
+$time\
 $line_break\
-$directory\
+$sudo\
 $character\
 """
 
@@ -52,7 +52,7 @@ format = "[ $duration](#a9ffb4) "
 [sudo]
 disabled = false
 symbol = " "
-format = "[ ](yellow)"
+format = "[ ](yellow) "
 
 [memory_usage]
 disabled = false

@@ -12,19 +12,19 @@ $username\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $nodejs\
 $golang\
 $julia\
 $python\
 $ruby\
 $aws\
-$sudo\
-$cmd_duration\
-$fill\
 $shell\
 $battery\
+$cmd_duration\
 $time\
 $line_break\
+$sudo\
 $character\
 """
 
@@ -33,7 +33,7 @@ symbol = " "
 
 [username]
 show_always = true
-format = "[](fg:#c386f1)[ $user](fg:#ffffff bg:#c386f1)[](fg:#c386f1) "
+format = "[$user](fg:#ffffff bg:#c386f1)[|](fg:#c386f1) "
 
 [directory]
 format = "[ $path](fg:#ffffff bg:#ff479c)[|](fg:#ff479c) "
@@ -79,15 +79,15 @@ format = "[ $version](fg:#ffffff bg:#FFA400)[|](fg:#FFA400) "
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](#111111)"
+format = "[⚡ ](#111111) "
 
 [cmd_duration]
 min_time = 1
 format = "[](fg:#83769c)[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769c) "
 
 [character]
-success_symbol = "[❯ ](bold #00897b) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[❯ ](bold green) "
+error_symbol = "[❯ ](bold #ffffff) "
 
 [shell]
 disabled = false
@@ -100,4 +100,4 @@ format = "[$symbol$percentage](fg:#ffffff bg:#f36943)[|](fg:#f36943) "
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[|](fg:#2e9599)[$time](fg:#111111 bg:#2e9599) "
+format = "[|](fg:#2e9599)[ $time](fg:#111111 bg:#2e9599)"
