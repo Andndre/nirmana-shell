@@ -1,5 +1,6 @@
 # =====================================================================
-# Nirmana-Shell - Clean Detailed Custom Theme
+# Nirmana-Shell - Transpiled Theme: clean-detailed
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -7,74 +8,88 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-[╭─](bold #6C7086) $directory$git_branch$git_status$fill$bun$dart$nodejs$python$package$cmd_duration$time
-[╰─](bold #6C7086)$character"""
+$os\
+$shell\
+$memory_usage\
+$cmd_duration\
+$fill\
+$git_branch\
+$git_status\
+$line_break\
+[╭─](fg:#FEF5ED) \
+$time\
+$sudo\
+$directory\
+$line_break\
+$character\
+"""
 
 [fill]
 symbol = " "
 
 [character]
-success_symbol = "[❯](bold #00F0FF) "
-error_symbol = "[❯](bold #FF4757) "
+format = "[╰─](fg:#FEF5ED) $symbol"
+success_symbol = ""
+error_symbol = "[x ](bold #ef5350)"
 
-[directory]
-style = "bold #89DCEB"
-format = "[ $path]($style) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_branch]
-style = "bold #CBA6F7"
-symbol = " "
-format = "[on ](#6C7086)[$symbol$branch]($style) "
-
-[git_status]
-style = "bold #F9E2AF"
-format = "[$all_status$ahead_behind]($style) "
-ahead = "⇡${count}"
-behind = "⇣${count}"
-modified = "! "
-untracked = "? "
-stashed = " "
-
-[bun]
-style = "bold #FAB387"
-symbol = " "
-format = "[via ](#6C7086)[$symbol$version]($style) "
-version_format = "v${raw}"
-
-[dart]
-style = "bold #74C7EC"
-symbol = " "
-format = "[via ](#6C7086)[$symbol$version]($style) "
-version_format = "v${raw}"
-
-[nodejs]
-style = "bold #A6E3A1"
-symbol = "󰎙 "
-format = "[via ](#6C7086)[$symbol$version]($style) "
-version_format = "v${raw}"
-
-[python]
-style = "bold #F9E2AF"
-symbol = "󰌠 "
-format = "[via ](#6C7086)[$symbol$version]($style) "
-version_format = "v${raw}"
-
-[package]
-style = "bold #F5C2E7"
-symbol = " "
-format = "[is ](#6C7086)[$symbol$version]($style) "
-version_format = "v${raw}"
+[os]
 disabled = false
+style = "fg:#011627 bg:#FEF5ED"
+format = "[](fg:#FEF5ED)[ $symbol ]($style)[](fg:#292929 bg:#FEF5ED)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
+[shell]
+disabled = false
+powershell_indicator = "pwsh"
+bash_indicator = "bash"
+zsh_indicator = "zsh"
+style = "fg:#011627 bg:#FEF5ED"
+format = "[  $indicator ]($style)[](fg:#292929 bg:#FEF5ED) "
+
+[memory_usage]
+disabled = false
+threshold = -1
+style = "fg:#ffffff bg:#516BEB"
+symbol = "󰍛"
+format = "[](fg:#516BEB)[ $symbol MEM: $ram_pct | $ram $symbol ]($style)[](fg:#292929 bg:#516BEB) "
 
 [cmd_duration]
-min_time = 2_000
-style = "bold #6C7086"
-format = "[took ]($style)[$duration]($style) "
+format = "[](fg:#575656)[ $duration ](fg:#d6deeb bg:#575656)[](fg:#575656) "
+min_time = 0
+show_milliseconds = true
+
+[git_branch]
+style = "fg:#011627 bg:#17D7A0"
+symbol = " "
+format = "[](fg:#17D7A0)[  $branch]($style)"
+
+[git_status]
+style = "fg:#011627 bg:#17D7A0"
+format = "([ $ahead_behind$all_status]($style))[](fg:#17D7A0) "
+ahead = "↑${count} "
+behind = "↓${count} "
+modified = " ~${count} "
+staged = " +${count} "
+stashed = " ${count} "
+untracked = " ${count} "
 
 [time]
+format = "[♡ $time |](fg:#FEF5ED) "
 disabled = false
 time_format = "%H:%M"
-style = "bold #89DCEB"
-format = "[at ](#6C7086)[ $time]($style)"
+
+[sudo]
+style = "bold #ffeb95"
+format = "[# ](fg:#ffeb95) "
+allow_windows = true
+disabled = false
+
+[directory]
+format = "[$path ](fg:#FEF5ED) "
+truncation_length = 3
+truncation_symbol = "…/"

@@ -86,7 +86,6 @@ RUNTIME_MAPPINGS = {
     "deno": ("deno", "$deno", " ", "#7FD5EA"),
     "dart": ("dart", "$dart", " ", "#7FD5EA"),
     "julia": ("julia", "$julia", " ", "#945BB3"),
-    "shell": ("shell", "$shell", " ", "#D6DEEB"),
     "package": ("package", "$package", "󰏗 ", "#AEA4BF"),
     "c": ("c", "$c", " ", "#00599C"),
     "cpp": ("cpp", "$cpp", " ", "#00599C"),
@@ -349,9 +348,9 @@ class OmpTranspiler:
             stype = s.get("type")
             tmpl = s.get("template", "")
             fg, bg = self.get_seg_colors(s)
-            if stype == "text" and any(c in tmpl for c in ("\u2570", "╰")):
-                col = fg or bg or "#21c7a8"
-                connector_span = f"[{tmpl}](bold {col})"
+            if stype in ("text", "status") and any(c in tmpl for c in ("\u2570", "╰")):
+                col = fg or bg or "#FEF5ED"
+                connector_span = f"[{tmpl.strip()}](fg:{col})"
                 last_left.remove(s)
                 break
 
@@ -413,28 +412,37 @@ class OmpTranspiler:
                 last_left.remove(s)
                 break
 
-        self.modules["character"] = line_character or {
-            "success_symbol": "[❯ ](bold #22da6e) ",
-            "error_symbol": "[❯ ](bold #ef5350) ",
-        }
+        if not line_character:
+            if connector_span:
+                line_character = {
+                    "format": f"{connector_span} $symbol",
+                    "success_symbol": "",
+                    "error_symbol": "[x ](bold #ef5350)",
+                }
+            else:
+                line_character = {
+                    "success_symbol": "[❯ ](bold #22da6e) ",
+                    "error_symbol": "[❯ ](bold #ef5350) ",
+                }
+        self.modules["character"] = line_character
 
         # Step 4: Process Line 1
         line1_left = prompt_lines[0]["left"]
         line1_right = prompt_lines[0]["right"]
 
-        # Relocate metrics and runtimes from left to right on Line 1
-        relocated = []
-        remaining_l1 = []
-        for s in line1_left:
-            stype = s.get("type", "")
-            if stype in ("executiontime", "sysinfo", "memory", "battery", "time") or stype in RUNTIME_MAPPINGS:
-                if not (is_single_line and theme_style == "powerline"):
+        # Relocate metrics and runtimes from left to right on Line 1 ONLY if right side is initially empty
+        if not line1_right and not (is_single_line and theme_style == "powerline"):
+            relocated = []
+            remaining_l1 = []
+            for s in line1_left:
+                stype = s.get("type", "")
+                if stype in ("executiontime", "sysinfo", "memory", "battery", "time") or stype in RUNTIME_MAPPINGS:
                     relocated.append(s)
                     continue
-            remaining_l1.append(s)
-        prompt_lines[0]["left"] = remaining_l1
-        if relocated:
-            line1_right[:0] = relocated
+                remaining_l1.append(s)
+            prompt_lines[0]["left"] = remaining_l1
+            if relocated:
+                line1_right[:0] = relocated
 
         # Check if runtimes should be injected
         has_orig_runtimes = any(s.get("type") in RUNTIME_MAPPINGS for s in all_segs)
@@ -571,6 +579,8 @@ class OmpTranspiler:
                 line1_right_mods.append(m["var_name"])
                 if m["mod_name"] == "username" and m.get("has_host") and "$hostname" not in line1_right_mods:
                     line1_right_mods.append("$hostname")
+                if m["mod_name"] == "git_branch" and "$git_status" not in line1_right_mods:
+                    line1_right_mods.append("$git_status")
 
         # Step 5: Process Subsequent Lines (Line 2+)
         subsequent_line_mods: List[List[str]] = []
@@ -579,7 +589,8 @@ class OmpTranspiler:
             for s in pl["left"]:
                 mod = self.parse_segment(s)
                 if mod:
-                    self.build_left_module(mod, theme_style)
+                    if mod.get("mod_name") != "connector":
+                        self.build_left_module(mod, theme_style)
                     if mod["var_name"] not in curr_sub_mods:
                         curr_sub_mods.append(mod["var_name"])
                         if mod["mod_name"] == "git_branch" and "$git_status" not in curr_sub_mods:
@@ -685,7 +696,7 @@ class OmpTranspiler:
                 icon = " " if "\ue5ff" in tmpl else " "
             return {
                 "mod_name": "directory", "var_name": "$directory",
-                "fg": fg or "#82AAFF", "bg": bg,
+                "fg": fg or ("#FEF5ED" if self.has_top_connector else "#82AAFF"), "bg": bg,
                 "leading": lead, "trailing": trail,
                 "icon": icon, "raw_tmpl": "$path",
                 "options": options,
@@ -747,12 +758,35 @@ class OmpTranspiler:
                 "options": options,
                 "template": tmpl,
             }
+        elif stype == "shell":
+            return {
+                "mod_name": "shell", "var_name": "$shell",
+                "fg": fg or "#011627", "bg": bg or "#FEF5ED",
+                "leading": lead, "trailing": trail,
+                "icon": " ", "raw_tmpl": "$indicator",
+                "options": options,
+                "template": tmpl,
+            }
+        elif stype == "text":
+            if any(c in tmpl for c in ("\u256d", "╭")):
+                col = fg or "#FEF5ED"
+                return {
+                    "mod_name": "connector", "var_name": f"[{tmpl.strip()}](fg:{col}) ",
+                    "fg": col, "bg": None,
+                    "leading": lead, "trailing": trail,
+                    "icon": "", "raw_tmpl": tmpl,
+                    "options": options,
+                    "template": tmpl,
+                }
+            return None
         elif stype == "time":
             has_icon = any(x in tmpl for x in ("\uf017", "\ue383", ".Icon"))
             icon = " " if has_icon else ""
+            if "\u2665" in tmpl or "♥" in tmpl:
+                icon = "♡ "
             return {
                 "mod_name": "time", "var_name": "$time",
-                "fg": fg or "#82AAFF", "bg": bg,
+                "fg": fg or ("#FEF5ED" if self.has_top_connector else "#82AAFF"), "bg": bg,
                 "leading": lead, "trailing": trail,
                 "icon": icon, "raw_tmpl": "$time",
                 "options": options,
@@ -802,8 +836,9 @@ class OmpTranspiler:
             extra_span = parse_omp_markup(curr.get("extra_text"), fg)
 
             if mod_name == "directory":
+                fg_col = fg or "#FEF5ED"
                 self.modules["directory"] = {
-                    "format": f"{lead_span}[ {icon}$path ](bold {fg}){trail_span} ",
+                    "format": f"{lead_span}[{icon}$path ](fg:{fg_col}){trail_span} ",
                     "truncation_length": 3,
                     "truncation_symbol": "…/",
                 }
@@ -837,8 +872,11 @@ class OmpTranspiler:
                     }
             elif mod_name == "time":
                 raw_t = curr.get("options", {}).get("time_format", "15:04:05")
+                suffix = " |" if "|" in curr.get("template", "") else ""
+                icon_str = f"{icon}" if icon else ""
+                fg_col = fg or "#FEF5ED"
                 self.modules["time"] = {
-                    "format": f"[ {icon}$time ](bold {fg}) ",
+                    "format": f"[{icon_str}$time{suffix}](fg:{fg_col}) ",
                     "disabled": False,
                     "time_format": convert_go_date_format(raw_t),
                 }
@@ -861,9 +899,11 @@ class OmpTranspiler:
                     "Linux": "",
                 }
             elif mod_name == "sudo":
+                fg_col = fg or "#FEF5ED"
                 self.modules["sudo"] = {
-                    "style": f"bold {fg}",
-                    "format": f"[# ](fg:{fg}) " if "#" in curr.get("template", "") else f"[ {icon}]($style) ",
+                    "style": f"bold {fg_col}",
+                    "format": f"[# ](fg:{fg_col}) " if ("#" in curr.get("template", "") or "\uf292" in curr.get("template", "")) else f"[ {icon}]($style) ",
+                    "allow_windows": True,
                     "disabled": False,
                 }
             elif mod_name == "status":
@@ -958,16 +998,56 @@ class OmpTranspiler:
 
             if mod_name == "os":
                 lead_str = f"[{curr['leading']}](fg:{bg})" if curr.get("leading") else ""
+                trail_str = ""
+                if curr.get("trailing"):
+                    if "<transparent" in curr["trailing"]:
+                        trail_str = f"[](fg:#292929 bg:{bg})"
+                    else:
+                        trail_str = f"[{curr['trailing']}](fg:{bg}) "
                 self.modules["os"] = {
                     "disabled": False,
                     "style": f"fg:{fg} bg:{bg}",
-                    "format": f"{lead_str}[ $symbol ]($style)",
+                    "format": f"{lead_str}[ $symbol ]($style){trail_str}",
                 }
                 self.modules["os.symbols"] = {
-                    "Windows": "",
+                    "Windows": "󰕮",
                     "Ubuntu": "",
                     "Macos": "",
                     "Linux": "",
+                }
+            elif mod_name == "shell":
+                idx = l1_mods.index(curr) if curr in l1_mods else -1
+                prev_mod = l1_mods[idx - 1] if idx > 0 else None
+                same_bg_as_prev = bool(prev_mod and prev_mod.get("bg") == bg)
+                lead_str = "" if same_bg_as_prev else (f"[{curr['leading']}](fg:{bg})" if curr.get("leading") else "")
+                trail_str = ""
+                if curr.get("trailing"):
+                    if "<transparent" in curr["trailing"]:
+                        trail_str = f"[](fg:#292929 bg:{bg}) "
+                    else:
+                        trail_str = f"[{curr['trailing']}](fg:{bg}) "
+                self.modules["shell"] = {
+                    "disabled": False,
+                    "powershell_indicator": "pwsh",
+                    "bash_indicator": "bash",
+                    "zsh_indicator": "zsh",
+                    "style": f"fg:{fg} bg:{bg}",
+                    "format": f"{lead_str}[  $indicator ]($style){trail_str}",
+                }
+            elif mod_name == "memory_usage":
+                lead_str = f"[{curr['leading']}](fg:{bg})" if curr.get("leading") else ""
+                trail_str = ""
+                if curr.get("trailing"):
+                    if "<transparent" in curr["trailing"]:
+                        trail_str = f"[](fg:#292929 bg:{bg}) "
+                    else:
+                        trail_str = f"[{curr['trailing']}](fg:{bg}) "
+                self.modules["memory_usage"] = {
+                    "disabled": False,
+                    "threshold": -1,
+                    "style": f"fg:{fg} bg:{bg}",
+                    "symbol": "󰍛",
+                    "format": f"{lead_str}[ $symbol MEM: $ram_pct | $ram $symbol ]($style){trail_str}",
                 }
             elif mod_name == "sudo":
                 if bg:
@@ -1068,9 +1148,13 @@ class OmpTranspiler:
                 }
             elif mod_name == "cmd_duration":
                 thresh = curr.get("options", {}).get("threshold", 0)
+                lead_str = f"[{curr['leading']}](fg:{bg})" if curr.get("leading") else lead_chevron
+                trail_str = f"[{curr['trailing']}](fg:{bg}) " if curr.get("trailing") else ""
+                icon_str = f"{icon}" if icon else ""
                 self.modules["cmd_duration"] = {
-                    "format": f"{lead_chevron}[ {icon}$duration ](fg:{fg} bg:{bg})",
-                    "min_time": thresh or 2000,
+                    "format": f"{lead_str}[ {icon_str}$duration ](fg:{fg} bg:{bg}){trail_str}",
+                    "min_time": thresh,
+                    "show_milliseconds": True,
                 }
             else:
                 raw_t = curr.get("raw_tmpl", "")
@@ -1170,7 +1254,29 @@ class OmpTranspiler:
                     "format": "[/ $hostname ]($style) ",
                     "ssh_only": False,
                 }
+            if mod_name == "git_branch":
+                trail_glyph = curr.get("trailing", "") or "\ue0b0"
+                trail_str = f"[{trail_glyph}](fg:{effective_bg}) "
+                lead_glyph = curr.get("leading", "") or "\ue0b2"
+                lead_str = f"[{lead_glyph}](fg:{effective_bg})"
+                b_sym = icon or "󰊢 "
+                self.modules["git_branch"] = {
+                    "style": f"fg:{fg} bg:{effective_bg}",
+                    "symbol": b_sym,
+                    "format": f"{lead_str}[ {b_sym}$branch]($style)",
+                }
+                self.modules["git_status"] = {
+                    "style": f"fg:{fg} bg:{effective_bg}",
+                    "format": f"([ $ahead_behind$all_status]($style)){trail_str}",
+                    "ahead": "↑${count} ",
+                    "behind": "↓${count} ",
+                    "modified": " ~${count} ",
+                    "staged": " +${count} ",
+                    "stashed": " ${count} ",
+                    "untracked": " ${count} ",
+                }
                 return
+
             # In powerline style, intermediate modules must not have trailing diamonds to prevent breaking the ribbon.
             trail_glyph = curr.get("trailing", "") if mod_name == "time" else ""
             trail_str = f"[{trail_glyph}](fg:{effective_bg})" if trail_glyph else ""
