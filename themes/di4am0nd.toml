@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: di4am0nd
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -23,32 +23,41 @@ $character\
 [fill]
 symbol = " "
 
-[username]
-format = "[$user](fg:#FFBD00) "
-show_always = true
-
-[directory]
-format = "[ $path](fg:#00C6F7) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](#F62F2E) "
-
-[nodejs]
-format = "[󰎙 $version](fg:#98C379) "
-
-[memory_usage]
-format = "[ 󰍛 $ram_pct ](fg:#85C980)"
-
-[cmd_duration]
-format = "[  $duration ](fg:#ffffff)"
-
 [character]
 success_symbol = "[⮞ ](bold #FFBD00) "
 error_symbol = "[⮞ ](bold #ef5350) "
+
+[username]
+format = "[$user's ](bold #FFBD00)"
+show_always = true
+
+[directory]
+format = "[$path/ ](fg:#00C6F7) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[on ](fg:#ffffff)[ $branch](bold #F62F2E)"
+
+[git_status]
+format = "([$all_status$ahead_behind](bold #F62F2E)) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[nodejs]
+format = "[via ](fg:#ffffff)[ $version ](bold #98C379) "
+
+[memory_usage]
+format = "[RAM:$ram ]($style)[┋ ](fg:#9E9E9E)"
+disabled = false
+threshold = -1
+symbol = ""
+style = "bold #85C980"
+
+[cmd_duration]
+format = "[ $duration ](bold #ffffff)"
+min_time = 2000

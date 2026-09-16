@@ -31,18 +31,19 @@ disabled = false
 [sudo]
 style = "bold #ff0000"
 format = "[# ](fg:#ff0000) "
+allow_windows = true
 disabled = false
 
 [username]
-format = "[$user](bold #ffffff)"
-show_always = false
+format = "[$user ](bold #ffffff)"
+show_always = true
 
 [hostname]
 format = "[@$hostname ](bold #ffffff) "
 ssh_only = true
 
 [directory]
-format = "[](fg:#292929 bg:#007ACC)[ $path ](fg:#ffffff bg:#007ACC)"
+format = "[](fg:#007ACC inverted)[ $path ](fg:#ffffff bg:#007ACC)"
 truncation_length = 3
 truncation_symbol = "…/"
 

@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: if_tea
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,46 +8,88 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$directory\
-$git_branch\
-$git_status\
+$os\
 $memory_usage\
 $cmd_duration\
 $fill\
 $git_branch\
+$git_status\
 $line_break\
+[╭─](fg:#91f2ff) \
+$shell\
+$time\
 $sudo\
+$directory\
+$line_break\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
+[character]
+format = "[╰─](fg:#00BCF9) $symbol"
+success_symbol = ""
+error_symbol = "[x ](bold #ef5350)"
 
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
+[os]
+disabled = false
+style = "bold #1865f5"
+format = "[ $symbol ]($style) "
 
-[git_branch]
-format = "[](fg:#ee79d1)[  $branch ](fg:#000000 bg:#ee79d1)"
+[os.symbols]
+Windows = ""
+Ubuntu = ""
+Macos = ""
+Linux = ""
 
 [memory_usage]
-format = "[ 󰍛 $ram_pct ](fg:#000000 bg:#00c7fc)"
+disabled = false
+threshold = -1
+style = "fg:#000000 bg:#00c7fc"
+symbol = "󰍛"
+format = "[](fg:#00c7fc inverted)[ 󰍛  RAM:$ram ]($style)[](fg:#00c7fc inverted) "
 
 [cmd_duration]
-format = "[](fg:#00c7fc bg:#2343e2)[  $duration ](fg:#ffffff bg:#2343e2)[](fg:#2343e2) "
-min_time = 1
+format = "[](fg:#2343e2)[ $duration ](fg:#ffffff bg:#2343e2)[](fg:#2343e2) "
+min_time = 0
+show_milliseconds = true
+
+[git_branch]
+style = "fg:#000000 bg:#ee79d1"
+symbol = " "
+format = "[](fg:#ee79d1)[  $branch]($style)"
+
+[git_status]
+style = "fg:#000000 bg:#ee79d1"
+format = "([ $ahead_behind$all_status]($style))[](fg:#ee79d1) "
+ahead = "↑${count} "
+behind = "↓${count} "
+modified = " ~${count} "
+staged = " +${count} "
+stashed = " ${count} "
+untracked = " ${count} "
+
+[shell]
+disabled = false
+powershell_indicator = "pwsh"
+bash_indicator = "bash"
+zsh_indicator = "zsh"
+style = "fg:#000000 bg:#91f2ff"
+format = "[](fg:#91f2ff)[  $indicator ]($style)[](fg:#91f2ff inverted) "
+
+[time]
+format = "[](fg:#ff8c94)[  $time ](fg:#000000 bg:#ff8c94)[](fg:#ff8c94) "
+disabled = false
+time_format = "%I:%M:%S %p | %A"
 
 [sudo]
+style = "bold #ffeb95"
+format = "[  ]($style) "
+allow_windows = true
 disabled = false
-symbol = " "
-format = "[ ](yellow) "
 
-[character]
-success_symbol = "[╭─ ](bold #91f2ff) "
-error_symbol = "[╭─ ](bold #ef5350) "
+[directory]
+format = "[](fg:#f8677b inverted)[  $path ](fg:#000000 bg:#f8677b)[](fg:#f8677b) "
+truncation_length = 3
+truncation_symbol = "…/"

@@ -9,11 +9,12 @@ add_newline = true
 
 format = """
 $username\
+$time\
 $git_branch\
 $git_status\
 $fill\
-$time\
 $cmd_duration\
+$sudo\
 $memory_usage\
 $line_break\
 $directory\
@@ -28,11 +29,16 @@ success_symbol = "[ ](bold #A9FFB4) "
 error_symbol = "[ ](bold #ef5350) "
 
 [username]
-format = "[  ](bold #ff70a6)[$user ](bold #ffbebc)[on](bold #ffffff) "
+format = "[  ](bold #ff70a6)[$user ](bold #ffbebc) [on](bold #ffffff)"
 show_always = true
 
+[time]
+format = "[$time |](fg:#bc93ff) "
+disabled = false
+time_format = "%A at %I:%M %p"
+
 [git_branch]
-format = "[ $branch](bold #ee79d1)"
+format = "[on ](fg:#ffffff)[ $branch](bold #ee79d1)"
 
 [git_status]
 format = "([$all_status$ahead_behind](bold #ee79d1)) "
@@ -43,19 +49,21 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[time]
-format = "[  $time ](bold #bc93ff)"
-disabled = false
-time_format = "%A at %I:%M %p"
-
 [cmd_duration]
 format = "[  $duration ](bold #a9ffb4)"
 min_time = 2000
 
+[sudo]
+format = "[   ](bold #ffeb95)"
+
 [memory_usage]
-format = "[ 󰍛 $ram_pct ](bold #94ffa2)"
+format = "[MEM:](fg:#ffffff)[$ram_pct ($ram) ]($style)"
+disabled = false
+threshold = -1
+symbol = ""
+style = "bold #94ffa2"
 
 [directory]
-format = "[  ](bold #00c7fc)[{](bold #ffafd2)[  $path ](bold #ffafd2)[}](bold #ffafd2) "
+format = "[  ](bold #00c7fc)[{](bold #ffafd2)[ $path ](fg:#ffafd2)[}](bold #ffafd2) "
 truncation_length = 3
 truncation_symbol = "…/"

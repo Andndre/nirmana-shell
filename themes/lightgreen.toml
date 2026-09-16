@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: lightgreen
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,29 +8,48 @@ command_timeout = 1000
 add_newline = false
 
 format = """
+$sudo\
+$os\
 $directory\
 $git_branch\
 $git_status\
 $python\
 $golang\
+$aws\
+$terraform\
 $character\
-$fill\
-$cmd_duration\
-$memory_usage\
-$battery\
-$time\
 """
 
-[fill]
-symbol = " "
+[character]
+success_symbol = "[❯ ](bold #22da6e) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[sudo]
+style = "fg:#dd1e1e bg:#000000"
+format = "[](fg:#000000)[  ]($style)[](fg:#000000) "
+disabled = false
+
+[os]
+disabled = false
+style = "fg:#ffffff bg:#21c7a8"
+format = "[](fg:#21c7a8)[ $symbol ]($style)[](fg:#21c7a8) "
+
+[os.symbols]
+Windows = ""
+Ubuntu = ""
+Macos = ""
+Linux = ""
 
 [directory]
-format = "[](fg:#272727)[  $path ](fg:#3EC669 bg:#272727)"
+format = "[](fg:#272727)[  $path ](fg:#3EC669 bg:#272727)[](fg:#272727) "
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[](fg:#272727)[  $branch ](fg:#00ff0d bg:#272727)"
+
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#00ff0d bg:#272727))"
+format = "([$all_status$ahead_behind ](fg:#00ff0d bg:#272727))[](fg:#272727) "
 modified = " ✎"
 staged = " "
 stashed = " "
@@ -38,30 +57,37 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[  $branch](fg:#00ff0d bg:#272727)"
-
 [python]
-format = "[](fg:#272727 bg:#306998)[ 󰌠 $version ](fg:#FFE873 bg:#306998)"
+format = "[](fg:#306998)[ 󰌠 $version ](fg:#FFE873 bg:#306998)[](fg:#306998) "
 
 [golang]
-format = "[](fg:#306998 bg:#ffffff)[  $version ](fg:#06aad5 bg:#ffffff)[](fg:#ffffff) "
+format = "[](fg:#ffffff)[  $version ](fg:#06aad5 bg:#ffffff)[](fg:#ffffff) "
+
+[aws]
+format = "[](fg:#565656)[  $version ](fg:#faa029 bg:#565656)[](fg:#565656) "
+
+[terraform]
+format = "[](fg:#ebcc34)[ 󱁢 $version ](fg:#000000 bg:#ebcc34)[](fg:#ebcc34) "
 
 [cmd_duration]
-format = "[  $duration ](fg:white)"
+format = "[](fg:#303030)[ $duration ](fg:#ECC48D bg:#303030)[](fg:#303030) "
+min_time = 2000
 
 [memory_usage]
-format = "[ 󰍛 $ram_pct ](fg:#3c3c3c bg:#ffffff)"
+format = "[](fg:#ffffff)[ $ram_pct ](fg:#3c3c3c bg:#ffffff)[](fg:#ffffff) "
+disabled = false
+threshold = -1
+symbol = ""
 
 [battery]
-format = "[](fg:#f36943 bg:#ffffff)[ 󰁹 $percentage ](fg:#262626 bg:#f36943)"
+format = "[](fg:#f36943)[ 󰁹 $percentage ](fg:#262626 bg:#f36943)[](fg:#f36943) "
 disabled = false
+
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"
 
 [time]
-format = "[](fg:#000000 bg:#f36943)[  $time ](fg:#A5D6A7 bg:#000000)"
+format = "[](fg:#000000)[ $time ](fg:#A5D6A7 bg:#000000)[](fg:#000000) "
 disabled = false
 time_format = "%H:%M:%S"
-
-[character]
-success_symbol = ""
-error_symbol = ""

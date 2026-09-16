@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: tokyo
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,56 +8,90 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$directory\
-$git_branch\
-$git_status\
+[┏](bold #7eb8da)\
 $time\
 $username\
+$hostname\
 $memory_usage\
 $battery\
 $cmd_duration\
 $line_break\
+[┣](bold #7eb8da)\
+$directory\
+$git_branch\
+$git_status\
+$azure\
+$aws\
+$line_break\
 $sudo\
+$status\
 $character\
 """
 
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](purple) "
+[character]
+success_symbol = "[> ](bold #22da6e) "
+error_symbol = "[> ](bold #ef5350) "
+format = "[└─](bold #7eb8da)$symbol"
 
 [time]
-format = "[ $time](fg:#7eb8da) "
+format = "[\\[](bold #7eb8da)[  ](bold #ffffff)[$time](bold #7eb8da)[\\]](bold #7eb8da)"
 disabled = false
 time_format = "%m/%d/%Y @ %I:%M:%S %p %Z"
 
 [username]
-format = "[$user](fg:#7eb8da) "
+format = "[\\[](bold #7eb8da)[  ](bold #ffffff)[$user ](bold #7eb8da)"
 show_always = true
 
+[hostname]
+format = "[:: ](bold #ffffff)[ ](bold #ffffff)[$hostname](bold #7eb8da)[\\]](bold #7eb8da)"
+ssh_only = false
+
 [memory_usage]
-format = "[󰍛 $ram_pct](fg:#be9ddf) "
+format = "[\\[](bold #be9ddf)[ 󰍛 ](bold #ffffff)[RAM: $ram](bold #be9ddf)[\\]](bold #be9ddf)"
+disabled = false
+threshold = -1
+symbol = ""
+style = "bold #be9ddf"
 
 [battery]
-format = "[󰁹 $percentage](fg:#f36943) "
+format = "[\\[](bold #f36943)[󰁹 $percentage](bold #f36943)[\\]](bold #f36943)"
+disabled = false
+style = "bold #f36943"
+
+[[battery.display]]
+threshold = 100
+style = "bold #f36943"
 
 [cmd_duration]
-format = "[ $duration](fg:#be9ddf) "
-min_time = 1
+format = "[\\[](bold #be9ddf)[  ](bold #ffffff)[$duration](bold #be9ddf)[\\]](bold #be9ddf)"
+min_time = 0
+show_milliseconds = true
+
+[directory]
+format = "[\\[](bold #7eb8da)[  ](bold #ffffff)[$path](bold #98bfad)[\\]](bold #7eb8da)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[\\[](bold #ffa5d8)[  ](bold #ffffff)[$branch](bold #ffa5d8)"
+
+[git_status]
+format = "([$all_status$ahead_behind](bold #ffa5d8))[\\]](bold #ffa5d8)"
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[azure]
+format = "[ $version ](bold #7eb8da) "
+
+[aws]
+format = "[ $version ](bold #7eb8da) "
 
 [sudo]
+style = "bold #ffeb95"
+format = "[# ](fg:#ffeb95) "
+allow_windows = true
 disabled = false
-symbol = "⚡ "
-format = "[⚡ ](yellow) "
-
-[character]
-success_symbol = "[> ](bold green) "
-error_symbol = "[> ](bold #ef5350) "

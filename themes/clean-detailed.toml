@@ -35,7 +35,7 @@ error_symbol = "[x ](bold #ef5350)"
 [os]
 disabled = false
 style = "fg:#011627 bg:#FEF5ED"
-format = "[](fg:#FEF5ED)[ $symbol ]($style)[](fg:#292929 bg:#FEF5ED)"
+format = "[](fg:#FEF5ED)[ $symbol ]($style)[](fg:#FEF5ED inverted) "
 
 [os.symbols]
 Windows = "󰕮"
@@ -49,14 +49,14 @@ powershell_indicator = "pwsh"
 bash_indicator = "bash"
 zsh_indicator = "zsh"
 style = "fg:#011627 bg:#FEF5ED"
-format = "[  $indicator ]($style)[](fg:#292929 bg:#FEF5ED) "
+format = "[](fg:#FEF5ED)[  $indicator ]($style)[](fg:#FEF5ED inverted) "
 
 [memory_usage]
 disabled = false
 threshold = -1
 style = "fg:#ffffff bg:#516BEB"
 symbol = "󰍛"
-format = "[](fg:#516BEB)[ $symbol MEM: $ram_pct | $ram $symbol ]($style)[](fg:#292929 bg:#516BEB) "
+format = "[](fg:#516BEB)[ 󰍛  MEM: $ram_pct | $ram ]($style)[](fg:#516BEB inverted) "
 
 [cmd_duration]
 format = "[](fg:#575656)[ $duration ](fg:#d6deeb bg:#575656)[](fg:#575656) "

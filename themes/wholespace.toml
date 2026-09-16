@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: wholespace
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,50 +8,73 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$directory\
-$git_branch\
-$git_status\
+$os\
 $time\
 $memory_usage\
 $cmd_duration\
 $fill\
 $nodejs\
 $git_branch\
+$git_status\
 $line_break\
+$directory\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
+[character]
+success_symbol = "[ ](bold #00ff15) "
+error_symbol = "[ ](bold #ff0000) "
 
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
+[os]
+disabled = false
+style = "fg:#011627 bg:#FEF5ED"
+format = "[](fg:#FEF5ED)[ $symbol ]($style)[](fg:#FEF5ED inverted) "
 
-[git_branch]
-format = "[](fg:#17D7A0 bg:#ffffff)[  $branch ](fg:#011627 bg:#17D7A0)"
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
 
 [time]
-format = "[](fg:#FEF5ED)[  $time ](fg:#011627 bg:#FEF5ED)"
+format = "[](fg:#FEF5ED)[ ♡ $time ](fg:#011627 bg:#FEF5ED)[](fg:#FEF5ED inverted) "
 disabled = false
 time_format = "%H:%M:%S"
 
 [memory_usage]
-format = "[ 󰍛 $ram_pct ](fg:#ffffff bg:#516BEB)"
+disabled = false
+threshold = -1
+style = "fg:#ffffff bg:#516BEB"
+symbol = "󰍛"
+format = "[](fg:#516BEB)[ 󰍛  RAM:$ram ]($style)[](fg:#516BEB inverted) "
 
 [cmd_duration]
-format = "[](fg:#516BEB bg:#575656)[  $duration ](fg:#d6deeb bg:#575656)[](fg:#575656) "
-min_time = 1
+format = "[](fg:#575656)[ $duration ](fg:#d6deeb bg:#575656)[](fg:#575656) "
+min_time = 0
+show_milliseconds = true
 
 [nodejs]
-format = "[](fg:#ffffff)[ 󰎙 $version ](fg:#000000 bg:#ffffff)"
+format = "[](fg:#ffffff bg:prev_bg)[  $version ](fg:#000000 bg:#ffffff)"
 
-[character]
-success_symbol = "[ ](bold #00ff15) "
-error_symbol = "[ ](bold #ff0000) "
+[git_branch]
+style = "fg:#011627 bg:#17D7A0"
+symbol = " "
+format = "[](fg:#17D7A0)[  $branch]($style)"
+
+[git_status]
+style = "fg:#011627 bg:#17D7A0"
+format = "([ $ahead_behind$all_status]($style))[](fg:#17D7A0) "
+ahead = "↑${count} "
+behind = "↓${count} "
+modified = " ~${count} "
+staged = " +${count} "
+stashed = " ${count} "
+untracked = " ${count} "
+
+[directory]
+format = "[ $path ](fg:#ffafd2) "
+truncation_length = 3
+truncation_symbol = "…/"
