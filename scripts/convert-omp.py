@@ -38,6 +38,30 @@ GO_DATE_TO_STRFTIME = [
 ]
 
 
+OMP_COLOR_MAP = {
+    "lightyellow": "#FFF59D",
+    "lightblue": "#80D8FF",
+    "lightgreen": "#A5D6A7",
+    "lightcyan": "#80DEEA",
+    "lightmagenta": "#F48FB1",
+    "lightred": "#FF8A80",
+    "lightwhite": "#FFFFFF",
+    "lightblack": "#757575",
+    "darkgray": "#616161",
+    "darkgrey": "#616161",
+    "gray": "#9E9E9E",
+    "grey": "#9E9E9E",
+    "darkred": "#C62828",
+    "darkgreen": "#2E7D32",
+    "darkblue": "#1565C0",
+    "darkcyan": "#00838F",
+    "darkmagenta": "#6A1B9A",
+    "darkyellow": "#F9A825",
+    "white": "#FFFFFF",
+    "black": "#000000",
+}
+
+
 def convert_go_date_format(go_fmt: str) -> str:
     """Convert Go time reference format to strftime format."""
     res = go_fmt
@@ -67,6 +91,10 @@ def clean_template_tags(template_str: str, current_bg: Optional[str] = None, pal
 
         if not col or str(col).strip().lower() == "transparent":
             return ""
+
+        c_lower = str(col).strip().lower()
+        if c_lower in OMP_COLOR_MAP:
+            return OMP_COLOR_MAP[c_lower]
 
         h = col[1:] if col.startswith("#") else col
         if len(h) == 3 and all(c in "0123456789abcdefABCDEF" for c in h):
@@ -168,6 +196,10 @@ class OmpTranspiler:
         if not col or str(col).strip().lower() == "transparent":
             return None
 
+        c_lower = str(col).strip().lower()
+        if c_lower in OMP_COLOR_MAP:
+            return OMP_COLOR_MAP[c_lower]
+
         h = col[1:] if col.startswith("#") else col
         if len(h) == 3 and all(c in "0123456789abcdefABCDEF" for c in h):
             return f"#{h[0]*2}{h[1]*2}{h[2]*2}"
@@ -266,25 +298,64 @@ class OmpTranspiler:
                     "format": "([$all_status$ahead_behind](red) )",
                 }
 
-        # Sort left modules in canonical order: $username, $directory, $git_branch, $git_status
-        left_order = ["$username", "$directory", "$git_branch", "$git_status"]
-        self.line1_left = [m for m in left_order if m in detected_left]
-        for m in detected_left:
-            if m not in self.line1_left:
-                self.line1_left.append(m)
+        # Check if the theme is a continuous powerline/diamond ribbon
+        blocks = self.data.get("blocks", [])
+        has_right_block = any(b.get("alignment") == "right" or b.get("type") == "rprompt" for b in blocks)
+        b0_segs = blocks[0].get("segments", []) if blocks else []
 
-        # Sort right modules in canonical order:
-        # runtimes & cloud -> metrics -> cmd_duration -> time
-        def right_sort_key(mod: str) -> int:
-            if mod == "$cmd_duration":
-                return 80
-            elif mod == "$time":
-                return 90
-            elif mod in ("$memory_usage", "$battery", "$username"):
-                return 50
-            return 10
+        def get_seg_bg(s):
+            b_col = s.get("background", "")
+            if b_col.startswith("p:"):
+                b_col = self.palette.get(b_col[2:], "")
+            elif b_col in self.palette:
+                b_col = self.palette[b_col]
+            return None if not b_col or str(b_col).strip().lower() == "transparent" else b_col
 
-        self.line1_right = sorted(detected_right, key=right_sort_key)
+        is_continuous_ribbon = (
+            not has_right_block and
+            len(b0_segs) >= 2 and
+            all(bool(get_seg_bg(s)) for s in b0_segs if s.get("type") not in ("text", "status")) and
+            any(bool(s.get("trailing_diamond") or s.get("powerline_symbol") or s.get("leading_diamond")) for s in b0_segs)
+        )
+
+        if is_continuous_ribbon:
+            ribbon_order = ["$username", "$directory", "$git_branch", "$git_status", "$cmd_duration", "$time"]
+            all_detected = detected_left + detected_right
+            self.line1_left = [m for m in ribbon_order if m in all_detected]
+            self.line1_right = []
+
+            # Find trailing chevron from the end of block 0
+            last_b0_seg = b0_segs[-1] if b0_segs else {}
+            last_trailing = last_b0_seg.get("trailing_diamond") or last_b0_seg.get("powerline_symbol")
+            last_bg = get_seg_bg(last_b0_seg)
+            if not last_bg and len(b0_segs) >= 2:
+                last_bg = get_seg_bg(b0_segs[-2])
+
+            trailing_cap = self.format_diamond(last_trailing, last_bg) if last_trailing and last_bg else ""
+            if trailing_cap:
+                last_mod_name = self.line1_left[-1].replace("$", "")
+                if last_mod_name in self.modules:
+                    self.modules[last_mod_name]["format"] = self.modules[last_mod_name]["format"].rstrip() + trailing_cap + " "
+        else:
+            # Sort left modules in canonical order: $username, $directory, $git_branch, $git_status
+            left_order = ["$username", "$directory", "$git_branch", "$git_status"]
+            self.line1_left = [m for m in left_order if m in detected_left]
+            for m in detected_left:
+                if m not in self.line1_left:
+                    self.line1_left.append(m)
+
+            # Sort right modules in canonical order:
+            # runtimes & cloud -> metrics -> cmd_duration -> time
+            def right_sort_key(mod: str) -> int:
+                if mod == "$cmd_duration":
+                    return 80
+                elif mod == "$time":
+                    return 90
+                elif mod in ("$memory_usage", "$battery", "$username"):
+                    return 50
+                return 10
+
+            self.line1_right = sorted(detected_right, key=right_sort_key)
 
         # Line 2 modules: $sudo (if present) followed by $character
         self.line2_modules = []
@@ -379,12 +450,12 @@ class OmpTranspiler:
 
             style_str = self.build_style(fg, bg)
             content = f"{icon}$path"
-            if leading_fmt or trailing_fmt:
-                fmt = f"{leading_fmt}[{content}]({style_str}){trailing_fmt} "
-            elif bg:
-                fmt = f"[](fg:{bg})[{content}]({style_str})[](fg:{bg}) "
+            leading_part = leading_fmt or ""
+            trailing_part = trailing_fmt or ""
+            if bg:
+                fmt = f"{leading_part}[ {content} ]({style_str}){trailing_part}"
             else:
-                fmt = f"[{content}]({fg or 'cyan'}) "
+                fmt = f"{leading_part}[{content}]({style_str or (fg or 'cyan')}){trailing_part} "
 
             self.modules["directory"] = {
                 "format": fmt,
@@ -405,23 +476,18 @@ class OmpTranspiler:
             branch_icon = f"{branch_icon} "
             style_str = self.build_style(fg, bg)
 
-            if leading_fmt:
-                branch_fmt = f"{leading_fmt}[{branch_icon}$branch]({style_str})"
-            elif bg:
-                branch_fmt = f"[](fg:{bg})[{branch_icon}$branch]({style_str})"
-            else:
-                branch_fmt = f"[{branch_icon}$branch]({fg or 'purple'})"
+            leading_part = leading_fmt or ""
+            branch_fmt = f"{leading_part}[ {branch_icon}$branch]({style_str})" if bg else f"[{branch_icon}$branch]({fg or 'purple'})"
 
             self.modules["git_branch"] = {
                 "format": branch_fmt,
             }
 
             status_style = style_str if bg else (fg or "purple")
-            end_cap = trailing_fmt if trailing_fmt else (f"[](fg:{bg}) " if bg else " ")
-            if end_cap and not end_cap.endswith(" "):
-                end_cap = f"{end_cap} "
+            end_cap = trailing_fmt or (" " if not bg else "")
+            status_content = "[$all_status$ahead_behind ]" if bg else "[$all_status$ahead_behind]"
             self.modules["git_status"] = {
-                "format": f"([$all_status$ahead_behind]({status_style}){end_cap})",
+                "format": f"({status_content}({status_style}){end_cap})",
                 "modified": " ",
                 "staged": " ",
                 "stashed": " ",
@@ -442,10 +508,10 @@ class OmpTranspiler:
                 trailing_style = self.build_style("white", bg)
                 trailing_text = f"[ on]({trailing_style})"
 
-            if leading_fmt or trailing_fmt:
-                fmt = f"{leading_fmt}[$user]({style_str}){trailing_text}{trailing_fmt} "
-            elif bg:
-                fmt = f"[](fg:{bg})[{user_icon}$user]({style_str})[](fg:{bg}) "
+            leading_part = leading_fmt or ""
+            trailing_part = trailing_fmt or ""
+            if bg:
+                fmt = f"{leading_part}[$user ]({style_str}){trailing_text}{trailing_part}"
             else:
                 fmt = f"[{user_icon}](#ff70a6)[$user]({fg or 'yellow'}){trailing_text} "
 
@@ -460,14 +526,10 @@ class OmpTranspiler:
             strftime_fmt = convert_go_date_format(raw_time_fmt)
             style_str = self.build_style(fg, bg)
 
-            if leading_fmt or trailing_fmt:
-                leading_part = leading_fmt if leading_fmt else ""
-                trailing_part = trailing_fmt if trailing_fmt else ""
-                if trailing_part and not trailing_part.endswith(" "):
-                    trailing_part = f"{trailing_part} "
-                fmt = f"{leading_part}[ $time]({style_str}){trailing_part}"
-            elif bg:
-                fmt = f"[](fg:{bg})[ $time]({style_str})[](fg:{bg}) "
+            leading_part = leading_fmt or ""
+            trailing_part = trailing_fmt or ""
+            if bg:
+                fmt = f"{leading_part}[  $time ]({style_str}){trailing_part}"
             else:
                 fmt = f"[ $time]({fg or 'yellow'}) "
 
@@ -486,14 +548,10 @@ class OmpTranspiler:
             elif "\ueba2" in template:
                 icon = " "
 
-            if leading_fmt or trailing_fmt:
-                leading_part = leading_fmt if leading_fmt else (f"[](fg:{bg})" if bg else "")
-                trailing_part = trailing_fmt if trailing_fmt else (f"[](fg:{bg})" if bg else "")
-                if trailing_part and not trailing_part.endswith(" "):
-                    trailing_part = f"{trailing_part} "
-                fmt = f"{leading_part}[{icon}$duration]({style_str}){trailing_part}"
-            elif bg:
-                fmt = f"[](fg:{bg})[{icon}$duration]({style_str})[](fg:{bg}) "
+            leading_part = leading_fmt or ""
+            trailing_part = trailing_fmt or ""
+            if bg:
+                fmt = f"{leading_part}[ {icon}$duration ]({style_str}){trailing_part}"
             else:
                 fmt = f"[{icon}$duration]({fg or 'yellow'}) "
 
