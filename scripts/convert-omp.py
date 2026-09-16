@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
 """
-Nirmana-Shell - Oh My Posh to Starship Theme Transpiler (Overhauled)
+Nirmana-Shell - Oh My Posh to Starship Theme Transpiler (Version 3.1)
 Converts Oh My Posh theme JSON configurations (*.omp.json) into clean,
-high-performance Starship themes (*.toml) with accurate powerline color chaining,
-faithful single-line/multi-line layout detection, and authentic prompt glyphs.
+high-performance Starship themes (*.toml) with zero-seam powerline ribbons,
+resilient dual-capsule left prompts, multi-line block fidelity, and full
+support for modern Starship features (such as prev_bg from PR #6017).
 """
 
 import argparse
+import glob
 import json
+import os
 import re
 import sys
 import urllib.error
 import urllib.request
+from collections import Counter
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 GO_DATE_TO_STRFTIME = [
     ("Monday", "%A"),
@@ -67,6 +71,55 @@ OMP_COLOR_MAP = {
     "cyan": "#18FFFF",
 }
 
+RUNTIME_MAPPINGS = {
+    "node": ("nodejs", "$nodejs", "󰎙 ", "#80D166"),
+    "nodejs": ("nodejs", "$nodejs", "󰎙 ", "#80D166"),
+    "go": ("golang", "$golang", " ", "#06AAD5"),
+    "golang": ("golang", "$golang", " ", "#06AAD5"),
+    "python": ("python", "$python", "󰌠 ", "#FFE873"),
+    "rust": ("rust", "$rust", " ", "#F78C6C"),
+    "ruby": ("ruby", "$ruby", " ", "#FF5874"),
+    "java": ("java", "$java", " ", "#EC2729"),
+    "dotnet": ("dotnet", "$dotnet", "󰪮 ", "#0D6DA8"),
+    "php": ("php", "$php", " ", "#787CB5"),
+    "bun": ("bun", "$bun", "󰎙 ", "#FF9F43"),
+    "deno": ("deno", "$deno", " ", "#7FD5EA"),
+    "dart": ("dart", "$dart", " ", "#7FD5EA"),
+    "julia": ("julia", "$julia", " ", "#945BB3"),
+    "shell": ("shell", "$shell", " ", "#D6DEEB"),
+    "package": ("package", "$package", "󰏗 ", "#AEA4BF"),
+    "c": ("c", "$c", " ", "#00599C"),
+    "cpp": ("cpp", "$cpp", " ", "#00599C"),
+    "kotlin": ("kotlin", "$kotlin", " ", "#F18E33"),
+    "scala": ("scala", "$scala", " ", "#DC322F"),
+    "haskell": ("haskell", "$haskell", " ", "#5E5086"),
+    "elixir": ("elixir", "$elixir", " ", "#4E2A8E"),
+    "elm": ("elm", "$elm", " ", "#60B5CC"),
+    "erlang": ("erlang", "$erlang", " ", "#A90533"),
+    "lua": ("lua", "$lua", " ", "#000080"),
+    "zig": ("zig", "$zig", " ", "#F7A41D"),
+    "nim": ("nim", "$nim", "󰆥 ", "#FFE953"),
+    "crystal": ("crystal", "$crystal", " ", "#000000"),
+    "docker": ("docker_context", "$docker_context", " ", "#2496ED"),
+    "docker_context": ("docker_context", "$docker_context", " ", "#2496ED"),
+    "kubernetes": ("kubernetes", "$kubernetes", "󱃾 ", "#326CE5"),
+    "terraform": ("terraform", "$terraform", "󱁢 ", "#844FBA"),
+    "aws": ("aws", "$aws", " ", "#FF9900"),
+    "az": ("azure", "$azure", " ", "#008AD7"),
+    "azure": ("azure", "$azure", " ", "#008AD7"),
+    "gcloud": ("gcloud", "$gcloud", "󱇶 ", "#4285F4"),
+    "conda": ("conda", "$conda", " ", "#44A833"),
+}
+
+STANDARD_DEVELOPER_RUNTIMES = [
+    ("nodejs", "$nodejs", "󰎙 ", "#80D166"),
+    ("python", "$python", "󰌠 ", "#FFE873"),
+    ("golang", "$golang", " ", "#06AAD5"),
+    ("rust", "$rust", " ", "#F78C6C"),
+    ("php", "$php", " ", "#787CB5"),
+    ("package", "$package", "󰏗 ", "#AEA4BF"),
+]
+
 
 def convert_go_date_format(go_fmt: str) -> str:
     """Convert Go time reference format to strftime format."""
@@ -76,68 +129,38 @@ def convert_go_date_format(go_fmt: str) -> str:
     return res
 
 
-def clean_template_tags(template_str: str, current_bg: Optional[str] = None, palette: Optional[Dict[str, str]] = None) -> str:
-    """Clean and translate OMP template tags into Starship format strings."""
-    if not template_str:
+def parse_omp_markup(text: Optional[str], default_fg: Optional[str] = None) -> str:
+    """Convert Oh My Posh diamond/template markup (<#hex>text</>) to Starship styled spans."""
+    if not text:
+        return ""
+    cleaned = re.sub(r"\{\{.*?\}\}", "", text)
+    if not cleaned.strip():
         return ""
 
-    palette = palette or {}
-
-    def normalize_color(col: str) -> str:
-        if not col or col.strip().lower() == "transparent":
-            return ""
-        if col.startswith("p:"):
-            key = col[2:]
-            col = palette.get(key, key)
-        else:
-            col = palette.get(col, col)
-
-        if not col or str(col).strip().lower() == "transparent":
-            return ""
-
-        c_lower = str(col).strip().lower()
-        if c_lower in OMP_COLOR_MAP:
-            return OMP_COLOR_MAP[c_lower]
-
-        h = col[1:] if col.startswith("#") else col
-        if len(h) == 3 and all(c in "0123456789abcdefABCDEF" for c in h):
-            return f"#{h[0]*2}{h[1]*2}{h[2]*2}"
-        elif len(h) == 6 and all(c in "0123456789abcdefABCDEF" for c in h):
-            return f"#{h}"
-        elif len(h) == 8 and all(c in "0123456789abcdefABCDEF" for c in h):
-            return f"#{h[:6]}"
-        return col
-
-    def resolve_tag_col(c: str) -> str:
-        if c == "background" and current_bg:
-            return current_bg
-        return normalize_color(c)
-
-    def repl_fg_bg(m):
-        fg, bg = resolve_tag_col(m.group(1)), resolve_tag_col(m.group(2))
-        txt = m.group(3)
-        style = []
-        if fg and fg != "transparent":
-            style.append(f"fg:{fg}")
-        if bg and bg != "transparent":
-            style.append(f"bg:{bg}")
-        return f"[{txt}]({' '.join(style)})" if style else txt
-
-    def repl_color(m):
-        col = resolve_tag_col(m.group(1))
-        txt = m.group(2)
-        if not col or col == "transparent":
-            return txt
-        return f"[{txt}]({col})"
-
-    s = re.sub(r"<([^,>]+),([^>]+)>(.*?)</>", repl_fg_bg, template_str)
-    s = re.sub(r"<#?([0-9a-fA-F]{3,6}|[a-zA-Z0-9_\-:]+)>(.*?)</>", repl_color, s)
-    s = re.sub(r"<[^>]+>", "", s)
-    return s
+    spans = []
+    pos = 0
+    pattern = re.compile(r"<([#a-zA-Z0-9_\-]+)>(.*?)</>")
+    for m in pattern.finditer(cleaned):
+        if m.start() > pos:
+            plain = cleaned[pos:m.start()]
+            if plain:
+                fg_spec = f"bold {default_fg}" if default_fg else "bold"
+                spans.append(f"[{plain}]({fg_spec})")
+        col = m.group(1)
+        content = m.group(2)
+        if content:
+            spans.append(f"[{content}](bold {col})")
+        pos = m.end()
+    if pos < len(cleaned):
+        plain = cleaned[pos:]
+        if plain:
+            fg_spec = f"bold {default_fg}" if default_fg else "bold"
+            spans.append(f"[{plain}]({fg_spec})")
+    return "".join(spans)
 
 
 def parse_omp_json(source: str) -> Tuple[Dict[str, Any], str]:
-    """Load JSON from local path, URL, or Oh My Posh theme name."""
+    """Load JSON from local file, remote URL, or Oh My Posh official theme name."""
     theme_name = ""
     url = source
     if not source.startswith("http://") and not source.startswith("https://"):
@@ -154,7 +177,7 @@ def parse_omp_json(source: str) -> Tuple[Dict[str, Any], str]:
     if url.startswith("http://") or url.startswith("https://"):
         req = urllib.request.Request(
             url,
-            headers={"User-Agent": "Nirmana-Shell-Transpiler/2.0"},
+            headers={"User-Agent": "Nirmana-Shell-Transpiler/3.1"},
         )
         try:
             with urllib.request.urlopen(req, timeout=15) as resp:
@@ -168,14 +191,31 @@ def parse_omp_json(source: str) -> Tuple[Dict[str, Any], str]:
 
 
 class OmpTranspiler:
-    def __init__(self, data: Dict[str, Any], theme_name: str, use_fill: bool = True):
+    def __init__(
+        self,
+        data: Dict[str, Any],
+        theme_name: str,
+        use_fill: bool = True,
+        left_style_override: Optional[str] = None,
+        use_pills: bool = False,
+        ribbon_bg_override: Optional[str] = None,
+        add_runtimes: bool = True,
+        force_runtimes: bool = False,
+    ):
         self.data = data
         self.theme_name = theme_name
         self.use_fill = use_fill
+        self.left_style_override = left_style_override
+        self.use_pills = use_pills
+        self.ribbon_bg_override = ribbon_bg_override
+        self.add_runtimes = add_runtimes
+        self.force_runtimes = force_runtimes
         self.palette = data.get("palette", {})
         self.modules: Dict[str, Dict[str, Any]] = {}
+        self.has_top_connector = False
 
     def resolve_color(self, col: Optional[str]) -> Optional[str]:
+        """Resolve hex, named, or palette-referenced colors to clean hex strings."""
         if not col:
             return None
         col = str(col).strip()
@@ -204,6 +244,7 @@ class OmpTranspiler:
         return col
 
     def get_seg_colors(self, seg: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
+        """Extract foreground and background colors with template fallback support."""
         fg = self.resolve_color(seg.get("foreground"))
         bg = self.resolve_color(seg.get("background"))
 
@@ -230,189 +271,345 @@ class OmpTranspiler:
         if not blocks:
             return ""
 
-        # Step 1: Classify blocks into Left (Line 1), Right (Line 1), and Newline (Line 2+)
-        left_blocks = []
-        right_blocks = []
-        newline_blocks = []
+        all_segs = [s for b in blocks for s in b.get("segments", [])]
+
+        # Step 1: Detect Overall Theme Visual Style
+        has_any_bg = any(self.get_seg_colors(s)[1] is not None for s in all_segs)
+        powerline_count = sum(
+            1 for s in all_segs
+            if any(g in (s.get("leading_diamond", "") + s.get("trailing_diamond", "") + s.get("powerline_symbol", "")) for g in ("\ue0b0", "\ue0b2", "\ue0b1", "\ue0b3"))
+        )
+        capsule_count = sum(
+            1 for s in all_segs
+            if any(g in (s.get("leading_diamond", "") + s.get("trailing_diamond", "")) for g in ("\ue0b6", "\ue0b4"))
+        )
+        has_pill_diamonds = sum(
+            1 for s in all_segs
+            if "\ue0b6" in s.get("leading_diamond", "") and "\ue0b4" in s.get("trailing_diamond", "")
+        ) >= 2
+
+        self.has_top_connector = any(
+            any(c in (s.get("leading_diamond", "") + s.get("template", "")) for c in ("\u256d", "╭"))
+            for s in all_segs
+        )
+
+        if not has_any_bg:
+            theme_style = "flat"
+        elif has_pill_diamonds:
+            theme_style = "capsule"
+        elif powerline_count >= capsule_count and powerline_count > 0:
+            theme_style = "powerline"
+        elif capsule_count > 0:
+            theme_style = "capsule"
+        else:
+            theme_style = "capsule" if has_any_bg else "flat"
+
+        if self.left_style_override:
+            theme_style = self.left_style_override
+
+        # Step 2: Group blocks into physical lines
+        prompt_lines: List[Dict[str, List[Dict[str, Any]]]] = []
+        curr_line: Dict[str, List[Dict[str, Any]]] = {"left": [], "right": []}
 
         for idx, b in enumerate(blocks):
-            b_type = b.get("type", "prompt")
-            alignment = b.get("alignment", "left")
-            newline = b.get("newline", False)
+            if idx > 0 and b.get("newline"):
+                prompt_lines.append(curr_line)
+                curr_line = {"left": [], "right": []}
 
-            if idx > 0 and newline:
-                newline_blocks.append(b)
-            elif alignment == "right" or b_type == "rprompt":
-                right_blocks.append(b)
-            else:
-                left_blocks.append(b)
+            align = b.get("alignment", "left")
+            if b.get("type") == "rprompt":
+                align = "right"
 
-        is_single_line = len(newline_blocks) == 0
+            curr_line[align].extend(b.get("segments", []))
 
-        # Step 2: Extract segments
-        left_segs = []
-        for b in left_blocks:
-            left_segs.extend(b.get("segments", []))
+        prompt_lines.append(curr_line)
 
-        right_segs = []
-        for b in right_blocks:
-            right_segs.extend(b.get("segments", []))
+        # OMP Rule: If a line has NO left-aligned segments, right-aligned blocks render as left-aligned!
+        for pl in prompt_lines:
+            if not pl["left"] and pl["right"]:
+                pl["left"] = pl["right"]
+                pl["right"] = []
 
-        # Step 3: Extract Line 2 character & sudo if multi-line
-        line2_character = None
-        line2_sudo = None
-        for b in newline_blocks:
-            for s in b.get("segments", []):
-                stype = s.get("type")
-                tmpl = s.get("template", "")
-                fg, bg = self.get_seg_colors(s)
+        # Guard: If line 1 left is empty but line 1 right contains navigation/identity modules, relocate to left
+        nav_types = ("path", "git", "os", "root")
+        if not prompt_lines[0]["left"]:
+            nav_segs = [s for s in prompt_lines[0]["right"] if s.get("type") in nav_types]
+            if nav_segs:
+                prompt_lines[0]["left"].extend(nav_segs)
+                prompt_lines[0]["right"] = [s for s in prompt_lines[0]["right"] if s.get("type") not in nav_types]
 
-                if stype == "root":
-                    sym = " " if "\uf0e7" in tmpl else "⚡ "
-                    col = fg or bg or "yellow"
-                    line2_sudo = {
-                        "disabled": False,
-                        "symbol": sym,
-                        "format": f"[{sym}]({col}) ",
+        is_single_line = len(prompt_lines) <= 1
+
+        # Step 3: Extract prompt character from the last line (status or text segment)
+        line_character = None
+        has_pill_prompt_user = False
+        last_left = prompt_lines[-1]["left"] if prompt_lines else []
+        connector_span = ""
+        for s in list(last_left):
+            stype = s.get("type")
+            tmpl = s.get("template", "")
+            fg, bg = self.get_seg_colors(s)
+            if stype == "text" and any(c in tmpl for c in ("\u2570", "╰")):
+                col = fg or bg or "#21c7a8"
+                connector_span = f"[{tmpl}](bold {col})"
+                last_left.remove(s)
+                break
+
+        for s in reversed(last_left):
+            stype = s.get("type")
+            tmpl = s.get("template", "")
+            fg, bg = self.get_seg_colors(s)
+            lead = s.get("leading_diamond", "")
+            trail = s.get("trailing_diamond", "")
+            has_prompt_char = any(c in tmpl for c in ("\u276f", "\u276e", "❯", "❮", ">", "$", "#", "➜", "λ", "", "", "▶", "»"))
+            if stype in ("text", "status") or (stype == "session" and has_prompt_char):
+                clean_sym = re.sub(r"\{\{.*?\}\}", "", tmpl)
+                clean_sym = re.sub(r"<[^>]+>", "", clean_sym).strip()
+                if len(clean_sym) > 4 and not any(k in tmpl for k in ("{{ .UserName }}", ".UserName")):
+                    continue
+                clean_sym = clean_sym.replace("\\", "").replace("$", "\\$")
+                clean_sym = clean_sym.replace("[", "\\[").replace("]", "\\]")
+                clean_sym = clean_sym.replace("(", "\\(").replace(")", "\\)")
+                sym = f"{clean_sym} " if clean_sym else "❯ "
+
+                col = fg or bg or "#22da6e"
+                err_col = "#ef5350"
+                for t in s.get("foreground_templates", []):
+                    m = re.search(r"#([0-9a-fA-F]{3,6})", t)
+                    if m:
+                        err_col = f"#{m.group(1)}"
+                        break
+
+                has_user = any(k in tmpl for k in ("{{ .UserName }}", ".UserName", "{{.UserName}}"))
+                is_pill_prompt = bg and ("\ue0b6" in lead or "\ue0b4" in trail or has_pill_diamonds)
+
+                if is_pill_prompt and has_user:
+                    has_pill_prompt_user = True
+                    self.modules["username"] = {
+                        "style_user": f"fg:{fg or '#ffffff'} bg:{bg}",
+                        "style_root": f"fg:#FFEB3B bg:{bg}",
+                        "format": f"[](fg:{bg})[ $user ]($style)",
+                        "show_always": True,
                     }
-                elif stype in ("text", "status"):
-                    # Extract glyph directly from template
-                    clean_sym = re.sub(r"\{\{.*?\}\}", "", tmpl)
-                    clean_sym = re.sub(r"<[^>]+>", "", clean_sym).strip()
-                    if len(clean_sym) > 4:
-                        # Skip long text/messages like "Error, check your command"
-                        continue
-                    # Escape literal $, [, ], (, ) for Starship parser
-                    clean_sym = clean_sym.replace("\\", "")
-                    clean_sym = clean_sym.replace("$", "\\$")
-                    clean_sym = clean_sym.replace("[", "\\[").replace("]", "\\]")
-                    clean_sym = clean_sym.replace("(", "\\(").replace(")", "\\)")
-                    sym = f"{clean_sym} " if clean_sym else "❯ "
-
-                    col = fg or bg or "green"
-                    err_col = "#ef5350"
-                    for t in s.get("foreground_templates", []):
-                        m = re.search(r"#([0-9a-fA-F]{3,6})", t)
-                        if m:
-                            err_col = f"#{m.group(1)}"
-                            break
-                    line2_character = {
+                    line_character = {
+                        "format": "$symbol",
+                        "success_symbol": f"[{sym}](bold {col} bg:{bg})[](fg:{bg}) ",
+                        "error_symbol": f"[{sym}](bold {err_col} bg:{bg})[](fg:{bg}) ",
+                    }
+                elif is_pill_prompt:
+                    line_character = {
+                        "format": "$symbol",
+                        "success_symbol": f"[](fg:{bg})[ {sym}](bold {col} bg:{bg})[](fg:{bg}) ",
+                        "error_symbol": f"[](fg:{bg})[ {sym}](bold {err_col} bg:{bg})[](fg:{bg}) ",
+                    }
+                else:
+                    line_character = {
                         "success_symbol": f"[{sym}](bold {col}) ",
                         "error_symbol": f"[{sym}](bold {err_col}) ",
                     }
+                    if connector_span:
+                        line_character["format"] = f"{connector_span}$symbol"
 
-        # Step 4: Process Line 1 Left segments
-        line1_left_mods = []
-        parsed_left = []
-        pending_lead = None  # leading_diamond from skipped segments (e.g. 'os')
-        for s in left_segs:
-            mod_info = self.parse_segment(s)
-            if mod_info:
-                # Propagate leading diamond from skipped segment
-                if pending_lead and not mod_info.get("leading"):
-                    mod_info["leading"] = pending_lead
-                pending_lead = None
-                parsed_left.append(mod_info)
+                last_left.remove(s)
+                break
+
+        self.modules["character"] = line_character or {
+            "success_symbol": "[❯ ](bold #22da6e) ",
+            "error_symbol": "[❯ ](bold #ef5350) ",
+        }
+
+        # Step 4: Process Line 1
+        line1_left = prompt_lines[0]["left"]
+        line1_right = prompt_lines[0]["right"]
+
+        # Relocate metrics and runtimes from left to right on Line 1
+        relocated = []
+        remaining_l1 = []
+        for s in line1_left:
+            stype = s.get("type", "")
+            if stype in ("executiontime", "sysinfo", "memory", "battery", "time") or stype in RUNTIME_MAPPINGS:
+                relocated.append(s)
             else:
-                # Capture leading diamond from skipped segment for propagation
-                raw_lead = s.get("leading_diamond", "")
-                if raw_lead:
-                    cleaned = re.sub(r"<[^>]+>", "", raw_lead).strip()
-                    if cleaned:
-                        pending_lead = cleaned
+                remaining_l1.append(s)
+        prompt_lines[0]["left"] = remaining_l1
+        if relocated:
+            line1_right[:0] = relocated
 
-        # Ensure directory is present
-        if not any(p["mod_name"] == "directory" for p in parsed_left):
-            parsed_left.insert(0, {
-                "mod_name": "directory",
-                "var_name": "$directory",
-                "fg": "cyan",
-                "bg": None,
-                "leading": "",
-                "trailing": "",
-                "icon": " ",
-                "raw_tmpl": "$path",
+        # Check if runtimes should be injected
+        has_orig_runtimes = any(s.get("type") in RUNTIME_MAPPINGS for s in all_segs)
+        should_inject_runtimes = self.force_runtimes or (
+            self.add_runtimes and has_orig_runtimes
+        )
+
+        # Parse Line 1 Left segments
+        parsed_l1_left = []
+        for s in prompt_lines[0]["left"]:
+            mod = self.parse_segment(s)
+            if mod:
+                parsed_l1_left.append(mod)
+
+        # Check if directory or git are missing completely across all lines
+        all_parsed_segs = [self.parse_segment(s) for pl in prompt_lines for s in pl["left"] + pl["right"]]
+        all_parsed_names = {p["mod_name"] for p in all_parsed_segs if p}
+
+        if "directory" not in all_parsed_names:
+            parsed_l1_left.insert(0, {
+                "mod_name": "directory", "var_name": "$directory",
+                "fg": "#82AAFF" if theme_style == "flat" else "#011627",
+                "bg": None if theme_style == "flat" else "#82AAFF",
+                "leading": "" if theme_style == "flat" else "╭─",
+                "trailing": "" if theme_style == "flat" else "",
+                "icon": " ", "raw_tmpl": "$path",
                 "options": {},
             })
 
-        # Ensure git is present
-        if not any(p["mod_name"] == "git_branch" for p in parsed_left):
-            dir_idx = next((i for i, p in enumerate(parsed_left) if p["mod_name"] == "directory"), 0)
-            parsed_left.insert(dir_idx + 1, {
-                "mod_name": "git_branch",
-                "var_name": "$git_branch",
-                "fg": "purple",
-                "bg": None,
-                "leading": "",
-                "trailing": "",
-                "icon": " ",
-                "raw_tmpl": "$branch",
+        if "git_branch" not in all_parsed_names:
+            dir_idx = next((i for i, p in enumerate(parsed_l1_left) if p["mod_name"] == "directory"), -1)
+            target_idx = dir_idx + 1 if dir_idx >= 0 else len(parsed_l1_left)
+            parsed_l1_left.insert(target_idx, {
+                "mod_name": "git_branch", "var_name": "$git_branch",
+                "fg": "#addb67" if theme_style == "flat" else "#011627",
+                "bg": None if theme_style == "flat" else "#addb67",
+                "leading": "" if theme_style == "flat" else "",
+                "trailing": "" if theme_style == "flat" else "",
+                "icon": " ", "raw_tmpl": "$branch",
                 "options": {},
             })
 
-        # Build module definitions for Line 1 Left with background-to-background transitions
-        for i, curr in enumerate(parsed_left):
-            prev = parsed_left[i - 1] if i > 0 else None
-            next_seg = parsed_left[i + 1] if i + 1 < len(parsed_left) else None
-            is_last = (i == len(parsed_left) - 1)
-
-            mod_def = self.build_module_format(curr, prev, next_seg, is_last=is_last)
-            self.modules[curr["mod_name"]] = mod_def
-
-            if curr["var_name"] not in line1_left_mods:
-                line1_left_mods.append(curr["var_name"])
-                if curr["mod_name"] == "git_branch" and "$git_status" not in line1_left_mods:
+        # Build Line 1 Left modules
+        line1_left_mods = []
+        for m in parsed_l1_left:
+            self.build_left_module(m, theme_style)
+            if m["var_name"] not in line1_left_mods:
+                line1_left_mods.append(m["var_name"])
+                if m["mod_name"] == "git_branch" and "$git_status" not in line1_left_mods:
                     line1_left_mods.append("$git_status")
 
-        # Step 5: Process Line 1 Right segments
-        line1_right_mods = []
-        parsed_right = []
-        pending_lead = None
-        for s in right_segs:
-            mod_info = self.parse_segment(s)
-            if mod_info:
-                if pending_lead and not mod_info.get("leading"):
-                    mod_info["leading"] = pending_lead
-                pending_lead = None
-                parsed_right.append(mod_info)
-            else:
-                raw_lead = s.get("leading_diamond", "")
-                if raw_lead:
-                    cleaned = re.sub(r"<[^>]+>", "", raw_lead).strip()
-                    if cleaned:
-                        pending_lead = cleaned
+        # Parse Line 1 Right segments
+        parsed_l1_right = []
+        for s in line1_right:
+            mod = self.parse_segment(s)
+            if mod:
+                parsed_l1_right.append(mod)
 
-        for i, curr in enumerate(parsed_right):
-            prev = parsed_right[i - 1] if i > 0 else None
-            next_seg = parsed_right[i + 1] if i + 1 < len(parsed_right) else None
-            is_first = (i == 0)
+        # Deduplicate right-side modules by mod_name
+        seen_mods = set()
+        deduped_right = []
+        for p in parsed_l1_right:
+            if p["mod_name"] not in seen_mods:
+                seen_mods.add(p["mod_name"])
+                deduped_right.append(p)
+        parsed_l1_right = deduped_right
 
-            mod_def = self.build_right_module_format(curr, prev, next_seg, is_first=is_first)
-            self.modules[curr["mod_name"]] = mod_def
+        # Inject developer runtimes if appropriate
+        if should_inject_runtimes:
+            has_runtime = any(p["mod_name"] in [r[0] for r in STANDARD_DEVELOPER_RUNTIMES] for p in parsed_l1_right)
+            if not has_runtime:
+                ins_idx = len(parsed_l1_right)
+                for i, p in enumerate(parsed_l1_right):
+                    if p["mod_name"] in ("cmd_duration", "time"):
+                        ins_idx = i
+                        break
+                injected = []
+                for m_name, v_name, ic, fg in STANDARD_DEVELOPER_RUNTIMES:
+                    if m_name not in seen_mods:
+                        seen_mods.add(m_name)
+                        injected.append({
+                            "mod_name": m_name, "var_name": v_name,
+                            "fg": fg, "bg": None if theme_style == "flat" else "#0b2942",
+                            "leading": "", "trailing": "",
+                            "icon": ic, "raw_tmpl": "$version",
+                            "options": {},
+                        })
+                parsed_l1_right[ins_idx:ins_idx] = injected
 
-            if curr["var_name"] not in line1_right_mods:
-                line1_right_mods.append(curr["var_name"])
-
-        # Configure Line 2 character / sudo
-        line2_mods = []
-        if not is_single_line:
-            if line2_sudo:
-                self.modules["sudo"] = line2_sudo
-                line2_mods.append("$sudo")
-            self.modules["character"] = line2_character or {
-                "success_symbol": "[❯](bold green) ",
-                "error_symbol": "[❯](bold red) ",
-            }
-            line2_mods.append("$character")
+        # Determine Right Style: flat, powerline (prev_bg), ribbon (unified), or pills
+        if theme_style == "flat":
+            right_style = "flat"
+        elif self.use_pills or has_pill_diamonds:
+            right_style = "pills"
+        elif theme_style == "powerline":
+            right_style = "powerline"
         else:
-            # Single-line theme: input character immediately on Line 1
-            self.modules["character"] = {
-                "success_symbol": "",
-                "error_symbol": "",
-            }
-            line1_left_mods.append("$character")
+            right_style = "ribbon"
 
-        return self.render_toml(line1_left_mods, line1_right_mods, line2_mods, is_single_line)
+        # Deduce ribbon background color for unified ribbon if applicable
+        ribbon_bg = self.ribbon_bg_override
+        if not ribbon_bg and right_style == "ribbon":
+            time_seg = next((p for p in parsed_l1_right if p["mod_name"] == "time"), None)
+            if time_seg and time_seg.get("bg"):
+                ribbon_bg = time_seg["bg"]
+
+            if not ribbon_bg:
+                user_seg = next((p for p in parsed_l1_right if p["mod_name"] == "username"), None)
+                if user_seg and user_seg.get("bg"):
+                    ribbon_bg = user_seg["bg"]
+
+            if not ribbon_bg:
+                bgs = [p["bg"] for p in parsed_l1_right if p.get("bg")]
+                if bgs:
+                    ribbon_bg = Counter(bgs).most_common(1)[0][0]
+
+            if not ribbon_bg:
+                for k in ("surface", "background", "mantle", "bg", "crust", "panel"):
+                    if k in self.palette:
+                        ribbon_bg = self.resolve_color(f"p:{k}")
+                        if ribbon_bg:
+                            break
+
+            if not ribbon_bg:
+                ribbon_bg = "#0b2942"
+
+        line1_right_mods = []
+        for m in parsed_l1_right:
+            self.build_right_module(m, right_style, ribbon_bg)
+            if m["var_name"] not in line1_right_mods:
+                line1_right_mods.append(m["var_name"])
+                if m["mod_name"] == "username" and m.get("has_host") and "$hostname" not in line1_right_mods:
+                    line1_right_mods.append("$hostname")
+
+        # Step 5: Process Subsequent Lines (Line 2+)
+        subsequent_line_mods: List[List[str]] = []
+        for pl in prompt_lines[1:]:
+            curr_sub_mods = []
+            for s in pl["left"]:
+                mod = self.parse_segment(s)
+                if mod:
+                    self.build_left_module(mod, theme_style)
+                    if mod["var_name"] not in curr_sub_mods:
+                        curr_sub_mods.append(mod["var_name"])
+                        if mod["mod_name"] == "git_branch" and "$git_status" not in curr_sub_mods:
+                            curr_sub_mods.append("$git_status")
+            subsequent_line_mods.append(curr_sub_mods)
+
+        has_rprompt = any(b.get("type") == "rprompt" for b in blocks)
+
+        # Attach $character (and $username if pill prompt user) to the last line
+        if is_single_line:
+            if has_rprompt:
+                if has_pill_prompt_user and "$username" not in line1_left_mods:
+                    line1_left_mods.append("$username")
+                line1_left_mods.append("$character")
+            else:
+                if has_pill_prompt_user and "$username" not in line1_right_mods and "$username" not in line1_left_mods:
+                    line1_right_mods.append("$username")
+                line1_right_mods.append("$character")
+        else:
+            if not subsequent_line_mods:
+                subsequent_line_mods.append([])
+            if has_pill_prompt_user and "$username" not in subsequent_line_mods[-1]:
+                subsequent_line_mods[-1].append("$username")
+            subsequent_line_mods[-1].append("$character")
+
+        return self.render_toml(
+            line1_left_mods=line1_left_mods,
+            line1_right_mods=line1_right_mods,
+            subsequent_lines=subsequent_line_mods,
+            is_single_line=is_single_line,
+            right_style=right_style,
+            ribbon_bg=ribbon_bg,
+            has_rprompt=has_rprompt,
+        )
 
     def parse_segment(self, s: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         stype = s.get("type", "")
@@ -422,32 +619,47 @@ class OmpTranspiler:
         lead = s.get("leading_diamond", "")
         trail = s.get("trailing_diamond", "") or s.get("powerline_symbol", "")
 
-        if lead:
-            lead = re.sub(r"<[^>]+>", "", lead).strip()
-        if trail:
-            trail = re.sub(r"<[^>]+>", "", trail).strip()
+        extra_text = ""
+        if stype == "session":
+            m = re.search(r"\{\{\s*\.UserName\s*\}\}\s*(.*)", tmpl)
+            if m:
+                extra_text = m.group(1)
+        elif stype == "executiontime":
+            if "\ue601" in tmpl:
+                options["icon"] = " "
+            elif "\ueba2" in tmpl:
+                options["icon"] = " "
 
-        runtime_map = {
-            "node": ("nodejs", "$nodejs", "󰎙 ", fg or "#6CA35E"),
-            "go": ("golang", "$golang", " ", fg or "#8ED1F7"),
-            "python": ("python", "$python", "󰌠 ", fg or "#FFDE57"),
-            "rust": ("rust", "$rust", " ", fg or "#DEA584"),
-            "ruby": ("ruby", "$ruby", " ", fg or "#AE1401"),
-            "java": ("java", "$java", " ", fg or "#ED8B00"),
-            "dotnet": ("dotnet", "$dotnet", "󰪮 ", fg or "#512BD4"),
-            "php": ("php", "$php", " ", fg or "#777BB4"),
-            "bun": ("bun", "$bun", "󰎙 ", fg or "#FF9F43"),
-            "dart": ("dart", "$dart", " ", fg or "#7FD5EA"),
-            "julia": ("julia", "$julia", " ", fg or "#4063D8"),
-            "shell": ("shell", "$shell", " ", fg or "#0077c2"),
-            "package": ("package", "$package", "󰏗 ", fg or "#AEA4BF"),
-        }
-
-        if stype == "path":
-            icon = " " if "\ue5ff" in tmpl else " "
+        if stype == "os":
+            win_sym = options.get("windows") or ""
+            return {
+                "mod_name": "os", "var_name": "$os",
+                "fg": fg or "#011627", "bg": bg or "#21c7a8",
+                "leading": lead, "trailing": trail,
+                "icon": win_sym, "raw_tmpl": "$symbol",
+                "options": options,
+            }
+        elif stype == "root":
+            sym = "⚡ "
+            if "\uf292" in tmpl or "#" in tmpl:
+                sym = " "
+            elif "\u26a1" in tmpl or "⚡" in tmpl:
+                sym = "⚡ "
+            return {
+                "mod_name": "sudo", "var_name": "$sudo",
+                "fg": fg or "#ffeb95", "bg": bg or "#ef5350",
+                "leading": lead, "trailing": trail,
+                "icon": sym, "raw_tmpl": "",
+                "options": options,
+            }
+        elif stype == "path":
+            has_icon = any(x in tmpl for x in ("\uf07c", "\ue5ff", "\uf115", ".Icon"))
+            icon = ""
+            if has_icon:
+                icon = " " if "\ue5ff" in tmpl else " "
             return {
                 "mod_name": "directory", "var_name": "$directory",
-                "fg": fg or "cyan", "bg": bg,
+                "fg": fg or "#82AAFF", "bg": bg,
                 "leading": lead, "trailing": trail,
                 "icon": icon, "raw_tmpl": "$path",
                 "options": options,
@@ -461,44 +673,54 @@ class OmpTranspiler:
                 b_icon = " "
             return {
                 "mod_name": "git_branch", "var_name": "$git_branch",
-                "fg": fg or "white", "bg": bg,
+                "fg": fg or "#addb67", "bg": bg,
                 "leading": lead, "trailing": trail,
                 "icon": b_icon, "raw_tmpl": "$branch",
                 "options": options,
             }
         elif stype == "session":
+            has_host = "{{ .HostName }}" in tmpl or ".HostName" in tmpl
+            has_icon = any(x in tmpl for x in ("\uf007", "\uf2bd", "\ue712", ".Icon"))
+            icon = " " if has_icon else ""
             return {
                 "mod_name": "username", "var_name": "$username",
-                "fg": fg or "white", "bg": bg,
+                "fg": fg or "#43CCEA", "bg": bg,
                 "leading": lead, "trailing": trail,
-                "icon": "", "raw_tmpl": "$user",
+                "extra_text": extra_text,
+                "has_host": has_host,
+                "icon": icon, "raw_tmpl": "$user",
                 "options": options,
             }
         elif stype == "executiontime":
-            icon = " "
-            if "\ueba2" in tmpl:
-                icon = " "
-            elif "\ue601" in tmpl:
-                icon = " "
+            icon = options.get("icon") or ""
+            if not icon:
+                if "\ue601" in tmpl:
+                    icon = " "
+                elif "\ueba2" in tmpl:
+                    icon = " "
+                elif any(c in tmpl for c in ("\uf017", "", "\uf252", "\uf253", "\uf251", "\uf250")):
+                    icon = " "
             return {
                 "mod_name": "cmd_duration", "var_name": "$cmd_duration",
-                "fg": fg or "white", "bg": bg,
+                "fg": fg or "#ECC48D", "bg": bg,
                 "leading": lead, "trailing": trail,
                 "icon": icon, "raw_tmpl": "$duration",
                 "options": options,
             }
         elif stype == "time":
+            has_icon = any(x in tmpl for x in ("\uf017", "\ue383", ".Icon"))
+            icon = " " if has_icon else ""
             return {
                 "mod_name": "time", "var_name": "$time",
-                "fg": fg or "white", "bg": bg,
+                "fg": fg or "#82AAFF", "bg": bg,
                 "leading": lead, "trailing": trail,
-                "icon": " ", "raw_tmpl": "$time",
+                "icon": icon, "raw_tmpl": "$time",
                 "options": options,
             }
         elif stype in ("battery",):
             return {
                 "mod_name": "battery", "var_name": "$battery",
-                "fg": fg or "white", "bg": bg,
+                "fg": fg or "#A6E3A1", "bg": bg,
                 "leading": lead, "trailing": trail,
                 "icon": "󰁹 ", "raw_tmpl": "$percentage",
                 "options": options,
@@ -506,13 +728,13 @@ class OmpTranspiler:
         elif stype in ("sysinfo", "memory"):
             return {
                 "mod_name": "memory_usage", "var_name": "$memory_usage",
-                "fg": fg or "green", "bg": bg,
+                "fg": fg or "#C792EA", "bg": bg,
                 "leading": lead, "trailing": trail,
                 "icon": "󰍛 ", "raw_tmpl": "$ram_pct",
                 "options": options,
             }
-        elif stype in runtime_map:
-            m_name, v_name, ic, def_fg = runtime_map[stype]
+        elif stype in RUNTIME_MAPPINGS:
+            m_name, v_name, ic, def_fg = RUNTIME_MAPPINGS[stype]
             return {
                 "mod_name": m_name, "var_name": v_name,
                 "fg": fg or def_fg, "bg": bg,
@@ -523,67 +745,30 @@ class OmpTranspiler:
 
         return None
 
-    def build_module_format(
-        self,
-        curr: Dict[str, Any],
-        prev: Optional[Dict[str, Any]],
-        next_seg: Optional[Dict[str, Any]],
-        is_last: bool,
-    ) -> Dict[str, Any]:
+    def build_left_module(self, curr: Dict[str, Any], style: str) -> None:
         mod_name = curr["mod_name"]
         bg = curr["bg"]
-        fg = curr["fg"]
+        fg = curr["fg"] or "#ffffff"
         icon = curr["icon"]
-        raw_tmpl = curr["raw_tmpl"]
 
-        # 1. Prefix: Transition from previous segment
-        prefix = ""
-        if prev and prev.get("bg") and bg:
-            if prev["bg"] != bg:
-                trans_sym = prev.get("trailing") or curr.get("leading") or ""
-                prefix = f"[{trans_sym}](fg:{prev['bg']} bg:{bg})"
-        elif curr.get("leading") and bg:
-            prefix = f"[{curr['leading']}](fg:{bg})"
+        # Case 1: Flat style or segment without background
+        if style == "flat" or not bg:
+            lead_span = parse_omp_markup(curr.get("leading"), fg)
+            trail_span = parse_omp_markup(curr.get("trailing"), fg)
+            extra_span = parse_omp_markup(curr.get("extra_text"), fg)
 
-        # 2. Suffix: Transition to next segment or terminal boundary
-        suffix = ""
-        if is_last:
-            end_sym = curr.get("trailing") or ""
-            if bg and end_sym:
-                suffix = f"[{end_sym}](fg:{bg}) "
-        elif next_seg and not next_seg.get("bg") and bg:
-            end_sym = curr.get("trailing") or ""
-            suffix = f"[{end_sym}](fg:{bg}) "
-
-        # 3. Assemble content format
-        if bg:
-            content_fmt = f"[ {icon}{raw_tmpl} ](fg:{fg} bg:{bg})"
-        else:
-            content_fmt = f"[{icon}{raw_tmpl}](fg:{fg}) "
-
-        final_fmt = f"{prefix}{content_fmt}{suffix}"
-
-        res: Dict[str, Any] = {"format": final_fmt}
-
-        if mod_name == "directory":
-            res["truncation_length"] = 3
-            res["truncation_symbol"] = "…/"
-        elif mod_name == "username":
-            res["show_always"] = True
-            if bg:
-                res["format"] = f"{prefix}[{icon}$user ](fg:{fg} bg:{bg}){suffix}"
-        elif mod_name == "cmd_duration":
-            res["min_time"] = 1
-        elif mod_name == "time":
-            res["disabled"] = False
-            raw_t_fmt = curr.get("options", {}).get("time_format", "15:04:05")
-            res["time_format"] = convert_go_date_format(raw_t_fmt)
-        elif mod_name == "git_branch":
-            if bg:
-                res["format"] = f"{prefix}[ {icon}$branch](fg:{fg} bg:{bg})"
-                stat_suffix = suffix
+            if mod_name == "directory":
+                self.modules["directory"] = {
+                    "format": f"{lead_span}[ {icon}$path ](bold {fg}){trail_span} ",
+                    "truncation_length": 3,
+                    "truncation_symbol": "…/",
+                }
+            elif mod_name == "git_branch":
+                self.modules["git_branch"] = {
+                    "format": f"[{icon}$branch](bold {fg})",
+                }
                 self.modules["git_status"] = {
-                    "format": f"([$all_status$ahead_behind ](fg:{fg} bg:{bg})){stat_suffix}",
+                    "format": f"([$all_status$ahead_behind](bold {fg})) ",
                     "modified": " ✎",
                     "staged": " ",
                     "stashed": " ",
@@ -591,61 +776,346 @@ class OmpTranspiler:
                     "behind": " ⇣${count}",
                     "diverged": " ⇕⇡${ahead_count}⇣${behind_count}",
                 }
-            else:
-                res["format"] = f"[{icon}$branch]({fg}) "
+            elif mod_name == "username":
+                self.modules["username"] = {
+                    "format": f"{lead_span}[$user ](bold {fg}){extra_span} ",
+                    "show_always": True,
+                }
+            elif mod_name == "time":
+                raw_t = curr.get("options", {}).get("time_format", "15:04:05")
+                self.modules["time"] = {
+                    "format": f"[ {icon}$time ](bold {fg}) ",
+                    "disabled": False,
+                    "time_format": convert_go_date_format(raw_t),
+                }
+            elif mod_name == "cmd_duration":
+                self.modules["cmd_duration"] = {
+                    "format": f"[ $duration {icon}](bold {fg}) ",
+                    "min_time": 2000,
+                }
+            elif mod_name == "os":
+                lead_str = parse_omp_markup(curr.get("leading"), fg)
+                self.modules["os"] = {
+                    "disabled": False,
+                    "style": f"bold {fg}",
+                    "format": f"{lead_str}[ $symbol ]($style) ",
+                }
+                self.modules["os.symbols"] = {
+                    "Windows": "",
+                    "Ubuntu": "",
+                    "Macos": "",
+                    "Linux": "",
+                }
+            elif mod_name == "sudo":
+                self.modules["sudo"] = {
+                    "style": f"bold {fg}",
+                    "format": f"[ {icon}]($style) ",
+                    "disabled": False,
+                }
+            elif mod_name == "memory_usage":
+                self.modules["memory_usage"] = {
+                    "format": f"[ MEM: $ram_pct ](bold {fg}) ",
+                }
+            return
+
+        # Case 2: Dual-Capsule style
+        if style == "capsule":
+            lead_bracket = "╭─" if (self.has_top_connector and "os" not in self.modules) else ""
+            if mod_name == "os":
+                self.modules["os"] = {
+                    "disabled": False,
+                    "style": f"fg:{fg} bg:{bg}",
+                    "format": f"[{lead_bracket}](fg:{bg})[ $symbol ]($style)[](fg:{bg}) ",
+                }
+                self.modules["os.symbols"] = {
+                    "Windows": "",
+                    "Ubuntu": "",
+                    "Macos": "",
+                    "Linux": "",
+                }
+            elif mod_name == "sudo":
+                self.modules["sudo"] = {
+                    "style": f"fg:{fg} bg:{bg}",
+                    "format": f"[](fg:{bg})[ {icon}]($style)[](fg:{bg}) ",
+                    "disabled": False,
+                }
+            elif mod_name == "directory":
+                icon_str = f" {icon}" if icon else " "
+                self.modules["directory"] = {
+                    "format": f"[{lead_bracket}](fg:{bg})[{icon_str}$path ](fg:{fg} bg:{bg})[](fg:{bg}) ",
+                    "truncation_length": 3,
+                    "truncation_symbol": "…/",
+                }
+            elif mod_name == "git_branch":
+                icon_str = f" {icon}" if icon else " "
+                self.modules["git_branch"] = {
+                    "format": f"[](fg:{bg})[{icon_str}$branch ](fg:{fg} bg:{bg})",
+                }
                 self.modules["git_status"] = {
-                    "format": "([$all_status$ahead_behind](red) )",
+                    "format": f"([$all_status$ahead_behind ](fg:{fg} bg:{bg}))[](fg:{bg}) ",
                     "modified": " ✎",
                     "staged": " ",
+                    "stashed": " ",
+                    "ahead": " ⇡${count}",
+                    "behind": " ⇣${count}",
+                    "diverged": " ⇕⇡${ahead_count}⇣${behind_count}",
+                }
+            elif mod_name == "username":
+                icon_str = f" {icon}" if icon else " "
+                self.modules["username"] = {
+                    "format": f"[](fg:{bg})[{icon_str}$user ](fg:{fg} bg:{bg})[](fg:{bg}) ",
+                    "show_always": True,
+                }
+            elif mod_name == "cmd_duration":
+                icon_str = f" {icon}" if icon else " "
+                thresh = curr.get("options", {}).get("threshold", 0)
+                self.modules["cmd_duration"] = {
+                    "format": f"[](fg:{bg})[{icon_str}$duration ](fg:{fg} bg:{bg})[](fg:{bg}) ",
+                    "min_time": thresh,
+                }
+            elif mod_name == "time":
+                raw_t = curr.get("options", {}).get("time_format", "15:04:05")
+                icon_str = f" {icon}" if icon else " "
+                self.modules["time"] = {
+                    "format": f"[](fg:{bg})[{icon_str}$time ](fg:{fg} bg:{bg})[](fg:{bg}) ",
+                    "disabled": False,
+                    "time_format": convert_go_date_format(raw_t),
+                }
+            else:
+                icon_str = f" {icon}" if icon else " "
+                raw_t = curr.get("raw_tmpl", "")
+                self.modules[mod_name] = {
+                    "format": f"[](fg:{bg})[{icon_str}{raw_t} ](fg:{fg} bg:{bg})[](fg:{bg}) ",
+                }
+            return
+
+        # Case 3: Powerline chevron style
+        if style == "powerline":
+            if mod_name == "os":
+                lead_str = f"[{curr['leading']}](fg:{bg})" if curr.get("leading") else ""
+                self.modules["os"] = {
+                    "disabled": False,
+                    "style": f"fg:{fg} bg:{bg}",
+                    "format": f"{lead_str}[ $symbol ]($style)",
+                }
+                self.modules["os.symbols"] = {
+                    "Windows": "",
+                    "Ubuntu": "",
+                    "Macos": "",
+                    "Linux": "",
+                }
+            elif mod_name == "sudo":
+                lead_chevron = f"[](fg:prev_bg bg:{bg})" if "os" in self.modules else ""
+                self.modules["sudo"] = {
+                    "style": f"fg:{fg} bg:{bg}",
+                    "format": f"{lead_chevron}[ {icon}]($style)",
+                    "disabled": False,
+                }
+            elif mod_name == "directory":
+                icon_part = f"{icon}" if icon else ""
+                lead_chevron = f"[](fg:prev_bg bg:{bg})" if "os" in self.modules else ""
+                self.modules["directory"] = {
+                    "format": f"{lead_chevron}[ {icon_part}$path ](fg:{fg} bg:{bg})",
+                    "truncation_length": 3,
+                    "truncation_symbol": "…/",
+                }
+            elif mod_name == "git_branch":
+                icon_part = f"{icon}" if icon else ""
+                self.modules["git_branch"] = {
+                    "format": f"[](fg:prev_bg bg:{bg})[ {icon_part}$branch ](fg:{fg} bg:{bg})",
+                }
+                self.modules["git_status"] = {
+                    "format": f"([$all_status$ahead_behind ](fg:{fg} bg:{bg}))[](fg:{bg}) ",
+                    "modified": " ✎",
+                    "staged": " ",
+                    "stashed": " ",
+                    "ahead": " ⇡${count}",
+                    "behind": " ⇣${count}",
+                    "diverged": " ⇕⇡${ahead_count}⇣${behind_count}",
+                }
+            elif mod_name == "username":
+                self.modules["username"] = {
+                    "format": f"[](fg:prev_bg bg:{bg})[ {icon}$user ](fg:{fg} bg:{bg})",
+                    "show_always": True,
                 }
 
-        return res
-
-    def build_right_module_format(
-        self,
-        curr: Dict[str, Any],
-        prev: Optional[Dict[str, Any]],
-        next_seg: Optional[Dict[str, Any]],
-        is_first: bool,
-    ) -> Dict[str, Any]:
-        bg = curr["bg"]
-        fg = curr["fg"]
+    def build_right_module(self, curr: Dict[str, Any], style: str, ribbon_bg: Optional[str]) -> None:
+        mod_name = curr["mod_name"]
         icon = curr["icon"]
         raw_tmpl = curr["raw_tmpl"]
+        fg = curr["fg"]
+        bg = curr["bg"]
+        lead = curr.get("leading", "")
+        trail = curr.get("trailing", "")
 
-        prefix = ""
-        if is_first and bg:
-            # Inverted leading cap entering from terminal fill
-            prefix = f"[](fg:{bg})"
-        elif prev and prev.get("bg") and bg and prev["bg"] != bg:
-            prefix = f"[](fg:{bg} bg:{prev['bg']})"
+        # Check for custom diamonds or diamond style (e.g. \ue0c5, \ue0ba, \ue0bc, \ue0b8, \ue0be)
+        has_custom_diamond = any(c in (lead + trail) for c in ("\ue0c5", "\ue0ba", "\ue0bc", "\ue0b8", "\ue0be"))
 
-        if bg:
-            fmt = f"{prefix}[ {icon}{raw_tmpl} ](fg:{fg} bg:{bg})"
-        else:
-            fmt = f"[ {icon}{raw_tmpl} ](fg:{fg})"
+        if has_custom_diamond:
+            lead_str = f"[{lead}](fg:{bg})" if lead else ""
+            trail_str = f"[{trail}](fg:{bg}) " if trail else ""
+            if mod_name == "username":
+                if curr.get("has_host"):
+                    self.modules["username"] = {
+                        "style_user": f"fg:{fg} bg:{bg}",
+                        "style_root": f"fg:#FFEB3B bg:{bg}",
+                        "format": f"{lead_str}[ $user ]($style)",
+                        "show_always": True,
+                    }
+                    self.modules["hostname"] = {
+                        "style": f"fg:{fg} bg:{bg}",
+                        "format": f"[/ $hostname ]($style){trail_str}",
+                        "ssh_only": False,
+                    }
+                else:
+                    self.modules["username"] = {
+                        "style_user": f"fg:{fg} bg:{bg}",
+                        "style_root": f"fg:#FFEB3B bg:{bg}",
+                        "format": f"{lead_str}[ $user ]($style){trail_str}",
+                        "show_always": True,
+                    }
+            elif mod_name == "time":
+                raw_t = curr.get("options", {}).get("time_format", "15:04:05")
+                icon_str = f"{icon}" if icon else ""
+                if not trail and "\ue0ba" in lead:
+                    trail_str = f"[](fg:{bg}) "
+                self.modules["time"] = {
+                    "format": f"{lead_str}[ {icon_str}$time ](fg:{fg} bg:{bg}){trail_str}",
+                    "disabled": False,
+                    "time_format": convert_go_date_format(raw_t),
+                }
+            elif mod_name == "cmd_duration":
+                self.modules["cmd_duration"] = {
+                    "format": f"{lead_str}[ {icon}$duration ](fg:{fg} bg:{bg}){trail_str}",
+                    "min_time": 2000,
+                }
+            else:
+                self.modules[mod_name] = {
+                    "format": f"{lead_str}[ {icon}{raw_tmpl} ](fg:{fg} bg:{bg}){trail_str}",
+                }
+            return
 
-        res: Dict[str, Any] = {"format": fmt}
-        if curr["mod_name"] == "time":
-            res["disabled"] = False
-            raw_t_fmt = curr.get("options", {}).get("time_format", "15:04:05")
-            res["time_format"] = convert_go_date_format(raw_t_fmt)
-        elif curr["mod_name"] == "battery":
-            res["disabled"] = False
+        # Case 1: Flat style (no backgrounds)
+        if style == "flat":
+            fmt = f"[ {icon}{raw_tmpl} ](bold {fg})"
+            res: Dict[str, Any] = {"format": fmt}
+            if mod_name == "cmd_duration":
+                res["min_time"] = 2_000
+            elif mod_name == "time":
+                res["disabled"] = False
+                raw_t = curr.get("options", {}).get("time_format", "15:04:05")
+                res["time_format"] = convert_go_date_format(raw_t)
+            elif mod_name == "username":
+                res["show_always"] = True
+                if curr.get("has_host"):
+                    self.modules["hostname"] = {
+                        "style": f"bold {fg}",
+                        "format": "[/ $hostname ]($style) ",
+                        "ssh_only": False,
+                    }
+            self.modules[mod_name] = res
 
-        return res
+        # Case 2: Powerline style with Starship PR #6017 prev_bg
+        elif style == "powerline":
+            effective_bg = bg or ribbon_bg or "#0b2942"
+            if mod_name == "username" and curr.get("has_host"):
+                self.modules["username"] = {
+                    "style_user": f"fg:{fg} bg:{effective_bg}",
+                    "style_root": f"fg:#FFEB3B bg:{effective_bg}",
+                    "format": f"[](fg:{effective_bg} bg:prev_bg)[ $user ]($style)",
+                    "show_always": True,
+                }
+                self.modules["hostname"] = {
+                    "style": f"fg:{fg} bg:{effective_bg}",
+                    "format": "[/ $hostname ]($style) ",
+                    "ssh_only": False,
+                }
+                return
+            # In powerline style, intermediate modules must not have trailing diamonds to prevent breaking the ribbon.
+            trail_glyph = curr.get("trailing", "") if mod_name == "time" else ""
+            trail_str = f"[{trail_glyph}](fg:{effective_bg})" if trail_glyph else ""
+            fmt = f"[](fg:{effective_bg} bg:prev_bg)[ {icon}{raw_tmpl} ](fg:{fg} bg:{effective_bg}){trail_str}"
+            res = {"format": fmt}
+            if mod_name == "cmd_duration":
+                res["min_time"] = 2_000
+            elif mod_name == "time":
+                res["disabled"] = False
+                raw_t = curr.get("options", {}).get("time_format", "15:04:05")
+                res["time_format"] = convert_go_date_format(raw_t)
+            elif mod_name == "username":
+                res["show_always"] = True
+            self.modules[mod_name] = res
+
+        # Case 3: Unified Surface Ribbon (Capsule Themes)
+        elif style == "ribbon":
+            effective_bg = ribbon_bg or "#0b2942"
+            if mod_name == "username" and curr.get("has_host"):
+                self.modules["username"] = {
+                    "style_user": f"fg:{fg} bg:{effective_bg}",
+                    "style_root": f"fg:#FFEB3B bg:{effective_bg}",
+                    "format": "[ $user ]($style)",
+                    "show_always": True,
+                }
+                self.modules["hostname"] = {
+                    "style": f"fg:{fg} bg:{effective_bg}",
+                    "format": "[/ $hostname ]($style) ",
+                    "ssh_only": False,
+                }
+                return
+            fmt = f"[ {icon}{raw_tmpl} ](fg:{fg} bg:{effective_bg})"
+            res = {"format": fmt}
+            if mod_name == "cmd_duration":
+                res["min_time"] = 2_000
+            elif mod_name == "time":
+                res["disabled"] = False
+                raw_t = curr.get("options", {}).get("time_format", "15:04:05")
+                res["time_format"] = convert_go_date_format(raw_t)
+            elif mod_name == "username":
+                res["show_always"] = True
+            self.modules[mod_name] = res
+
+        # Case 4: Floating Pills
+        elif style == "pills":
+            pill_bg = bg or "#303030"
+            if mod_name == "username" and curr.get("has_host"):
+                self.modules["username"] = {
+                    "style_user": f"fg:{fg} bg:{pill_bg}",
+                    "style_root": f"fg:#FFEB3B bg:{pill_bg}",
+                    "format": f"[](fg:{pill_bg})[ $user ]($style)",
+                    "show_always": True,
+                }
+                self.modules["hostname"] = {
+                    "style": f"fg:{fg} bg:{pill_bg}",
+                    "format": f"[/ $hostname ]($style)[](fg:{pill_bg}) ",
+                    "ssh_only": False,
+                }
+                return
+            fmt = f"[](fg:{pill_bg})[ {icon}{raw_tmpl} ](fg:{fg} bg:{pill_bg})[](fg:{pill_bg}) "
+            res = {"format": fmt}
+            if mod_name == "cmd_duration":
+                res["min_time"] = 2_000
+            elif mod_name == "time":
+                res["disabled"] = False
+                raw_t = curr.get("options", {}).get("time_format", "15:04:05")
+                res["time_format"] = convert_go_date_format(raw_t)
+            elif mod_name == "username":
+                res["show_always"] = True
+            self.modules[mod_name] = res
 
     def render_toml(
         self,
-        left_mods: List[str],
-        right_mods: List[str],
-        line2_mods: List[str],
+        line1_left_mods: List[str],
+        line1_right_mods: List[str],
+        subsequent_lines: List[List[str]],
         is_single_line: bool,
+        right_style: str,
+        ribbon_bg: Optional[str],
+        has_rprompt: bool = False,
     ) -> str:
         lines = [
             "# =====================================================================",
             f"# Nirmana-Shell - Transpiled Theme: {self.theme_name}",
-            "# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler",
+            "# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1",
             "# =====================================================================",
             "",
             "scan_timeout = 30",
@@ -655,23 +1125,39 @@ class OmpTranspiler:
         ]
 
         lines.append("format = \"\"\"")
-        for m in left_mods:
+
+        # Line 1 Left
+        for m in line1_left_mods:
             lines.append(f"{m}\\")
 
-        if self.use_fill and right_mods:
+        # Line 1 Right (Separated by $fill if multi-line)
+        if is_single_line:
+            if not has_rprompt:
+                for m in line1_right_mods:
+                    lines.append(f"{m}\\")
+        elif self.use_fill and line1_right_mods:
             lines.append("$fill\\")
-            for m in right_mods:
-                lines.append(f"{m}\\")
+            if right_style == "ribbon":
+                effective_bg = ribbon_bg or "#0b2942"
+                lines.append("(\\")
+                lines.append(f"[](fg:{effective_bg})\\")
+                for m in line1_right_mods:
+                    lines.append(f"{m}\\")
+                lines.append(")\\")
+            else:
+                for m in line1_right_mods:
+                    lines.append(f"{m}\\")
 
-        if line2_mods and not is_single_line:
+        # Line 2 and beyond
+        for sub_mods in subsequent_lines:
             lines.append("$line_break\\")
-            for m in line2_mods:
+            for m in sub_mods:
                 lines.append(f"{m}\\")
 
         lines.append("\"\"\"")
         lines.append("")
 
-        if self.use_fill and right_mods:
+        if not is_single_line and self.use_fill and line1_right_mods:
             lines.append("[fill]")
             lines.append('symbol = " "')
             lines.append("")
@@ -691,34 +1177,181 @@ class OmpTranspiler:
         return "\n".join(lines)
 
 
+def get_preview_generator():
+    """Dynamically import generate-previews.py module if dependencies are present."""
+    gen_script = Path(__file__).parent / "generate-previews.py"
+    if gen_script.exists():
+        try:
+            import importlib.util
+            spec = importlib.util.spec_from_file_location("generate_previews", str(gen_script))
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            return mod
+        except Exception:
+            return None
+    return None
+
+
+def generate_theme_preview(toml_path: Path, theme_name: str, repo_root: Path) -> Tuple[Optional[Path], Optional[Path]]:
+    """Generate both ANSI text preview card (.previews/) and high-res PNG card (assets/previews/)."""
+    import shutil
+    import subprocess
+    import tempfile
+
+    preview_dir = repo_root / ".previews"
+    output_dir = repo_root / "assets" / "previews"
+    preview_dir.mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    mock_base = Path(tempfile.mkdtemp(prefix="nirmana-prev-"))
+    mock_dir = mock_base / "nirmana-shell"
+    mock_dir.mkdir(parents=True, exist_ok=True)
+    txt_path = preview_dir / f"{theme_name}.txt"
+    png_path = None
+
+    try:
+        (mock_dir / "package.json").write_text('{"name": "nirmana-shell", "version": "1.0.0"}', encoding="utf-8")
+        (mock_dir / "main.c").write_text("int main() {}", encoding="utf-8")
+
+        subprocess.run(["git", "-C", str(mock_dir), "init", "-b", "main", "--quiet"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["git", "-C", str(mock_dir), "config", "user.name", "Nirmana"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["git", "-C", str(mock_dir), "config", "user.email", "nirmana@shell.local"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["git", "-C", str(mock_dir), "add", "-A"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["git", "-C", str(mock_dir), "commit", "-m", "init", "--quiet"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        with open(mock_dir / "main.c", "a", encoding="utf-8") as f:
+            f.write("\n// change")
+
+        env = os.environ.copy()
+        env["STARSHIP_CONFIG"] = str(toml_path.resolve())
+        proc = subprocess.run(
+            ["starship", "prompt", "--path", str(mock_dir), "--status", "0", "--cmd-duration", "2500", "--terminal-width", "88"],
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+            encoding="utf-8",
+        )
+        raw_lines = proc.stdout.splitlines() if proc.returncode == 0 else []
+        while raw_lines and not raw_lines[0].strip():
+            raw_lines.pop(0)
+
+        indented = "\n".join(f"  {line}" for line in raw_lines)
+        esc = chr(27)
+        card_content = f"""
+  {esc}[1;35mCategory:{esc}[0m   {esc}[1;37m[Oh-My-Posh]{esc}[0m
+  {esc}[1;36mTheme:{esc}[0m      {esc}[1;37m{theme_name}{esc}[0m
+  {esc}[1;36mDetails:{esc}[0m    {esc}[0;37mCommunity theme ported from Oh My Posh{esc}[0m
+  {esc}[0;90m──────────────────────────────────────────────────────────────────────────────{esc}[0m
+  {esc}[1;33mRendered Prompt:{esc}[0m
+
+{indented}{esc}[1;32mgit status{esc}[0m
+
+  {esc}[0;90m──────────────────────────────────────────────────────────────────────────────{esc}[0m
+  {esc}[0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate{esc}[0m
+"""
+        txt_path.write_text(card_content, encoding="utf-8")
+        print(f"  [PREVIEW] ANSI card -> {txt_path}")
+
+        mod = get_preview_generator()
+        if mod and hasattr(mod, "generate_preview_png") and hasattr(mod, "find_nerd_fonts"):
+            nerd_fonts = mod.find_nerd_fonts()
+            png_path = mod.generate_preview_png(txt_path, output_dir, nerd_fonts)
+            print(f"  [PREVIEW] PNG card  -> {png_path}")
+        else:
+            print(f"  [PREVIEW] Tip: Run preview generation with:")
+            print(f"            uv run --with rich --with resvg-py python scripts/generate-previews.py -t {theme_name}")
+
+    except Exception as e:
+        print(f"  [WARNING] Preview generation error: {e}", file=sys.stderr)
+    finally:
+        shutil.rmtree(mock_base, ignore_errors=True)
+
+    return txt_path, png_path
+
+
 def main():
     parser = argparse.ArgumentParser(
-        description="Transpile Oh My Posh theme JSON to Starship TOML for Nirmana-Shell."
+        description="Transpile Oh My Posh theme JSON to clean Starship TOML for Nirmana-Shell."
     )
-    parser.add_argument("input", help="Path to .omp.json file or HTTP/HTTPS URL")
-    parser.add_argument("-o", "--output", help="Output path for .toml file")
-    parser.add_argument("-n", "--name", help="Theme name identifier")
-    parser.add_argument(
-        "--no-fill", action="store_true", help="Disable Nirmana right-aligned $fill layout"
-    )
+    parser.add_argument("input", help="Path to .omp.json file, HTTP/HTTPS URL, or OMP theme name")
+    parser.add_argument("-o", "--output", help="Output path for .toml file or directory (if batch)")
+    parser.add_argument("-n", "--name", help="Theme name identifier override")
+    parser.add_argument("--style", choices=["capsule", "powerline", "flat"], help="Visual style override")
+    parser.add_argument("--pills", action="store_true", help="Use floating pills for right side instead of unified ribbon")
+    parser.add_argument("--ribbon-bg", help="Override ribbon surface background color (e.g. '#0b2942')")
+    parser.add_argument("--no-fill", action="store_true", help="Disable Nirmana right-aligned $fill layout")
+    parser.add_argument("--no-runtimes", action="store_true", help="Do not inject developer runtime modules")
+    parser.add_argument("--add-runtimes", action="store_true", help="Force injection of developer runtime modules even on flat themes")
+    parser.add_argument("--no-preview", action="store_true", help="Skip generating ANSI and PNG preview cards")
+    parser.add_argument("--batch", action="store_true", help="Treat input as a directory of .omp.json files")
 
     args = parser.parse_args()
+    repo_root = Path(__file__).resolve().parent.parent
+
+    if args.batch:
+        input_dir = Path(args.input)
+        if not input_dir.is_dir():
+            print(f"Error: {input_dir} is not a directory.", file=sys.stderr)
+            sys.exit(1)
+        out_dir = Path(args.output) if args.output else repo_root / "themes"
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        json_files = sorted(input_dir.glob("*.omp.json"))
+        print(f"Found {len(json_files)} OMP themes in {input_dir}. Transpiling...")
+        for jf in json_files:
+            try:
+                data, theme_name = parse_omp_json(str(jf))
+                transpiler = OmpTranspiler(
+                    data,
+                    theme_name=theme_name,
+                    use_fill=not args.no_fill,
+                    left_style_override=args.style,
+                    use_pills=args.pills,
+                    ribbon_bg_override=args.ribbon_bg,
+                    add_runtimes=not args.no_runtimes,
+                    force_runtimes=args.add_runtimes,
+                )
+                toml_content = transpiler.transpile()
+                out_file = out_dir / f"{theme_name}.toml"
+                out_file.write_text(toml_content, encoding="utf-8")
+                print(f"  [OK] {theme_name} -> {out_file}")
+
+                if not args.no_preview:
+                    generate_theme_preview(out_file, theme_name, repo_root)
+            except Exception as e:
+                print(f"  [ERROR] {jf.name}: {e}", file=sys.stderr)
+        print("Batch transpilation complete.")
+        return
 
     data, parsed_name = parse_omp_json(args.input)
     theme_name = args.name or parsed_name
     theme_name = re.sub(r"[^a-zA-Z0-9_\-]", "-", theme_name).strip("-")
 
-    transpiler = OmpTranspiler(data, theme_name=theme_name, use_fill=not args.no_fill)
+    transpiler = OmpTranspiler(
+        data,
+        theme_name=theme_name,
+        use_fill=not args.no_fill,
+        left_style_override=args.style,
+        use_pills=args.pills,
+        ribbon_bg_override=args.ribbon_bg,
+        add_runtimes=not args.no_runtimes,
+        force_runtimes=args.add_runtimes,
+    )
     toml_content = transpiler.transpile()
 
     if args.output:
         out_path = Path(args.output)
+        if out_path.is_dir():
+            out_path = out_path / f"{theme_name}.toml"
     else:
-        out_path = Path("themes") / f"{theme_name}.toml"
+        out_path = repo_root / "themes" / f"{theme_name}.toml"
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(toml_content, encoding="utf-8")
     print(f"Successfully transpiled Oh My Posh theme '{theme_name}' -> '{out_path}'")
+
+    if not args.no_preview:
+        generate_theme_preview(out_path, theme_name, repo_root)
 
 
 if __name__ == "__main__":

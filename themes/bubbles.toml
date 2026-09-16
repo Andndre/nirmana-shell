@@ -1,5 +1,6 @@
 # =====================================================================
-# Nirmana-Shell - Custom Theme: Bubbles Theme
+# Nirmana-Shell - Transpiled Theme: bubbles
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -7,73 +8,73 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$username\
 $directory\
 $git_branch\
 $git_status\
 $fill\
-$bun\
-$dart\
-$nodejs\
 $python\
-$package\
-$cmd_duration\
+$golang\
+$nodejs\
+$ruby\
+$java\
+$julia\
+$battery\
 $line_break\
-$character"""
+$cmd_duration\
+$character\
+"""
 
 [fill]
 symbol = " "
 
 [character]
-success_symbol = "[❯](bold #43CCEA) "
-error_symbol = "[❯](bold #E64747) "
+format = "$symbol"
+success_symbol = "[](fg:#29315A)[ ❯ ](bold #7FD5EA bg:#29315A)[](fg:#29315A) "
+error_symbol = "[](fg:#29315A)[ ❯ ](bold #ef5350 bg:#29315A)[](fg:#29315A) "
+
+[username]
+format = "[](fg:#29315A)[ $user ](fg:#E64747 bg:#29315A)[](fg:#29315A) "
+show_always = true
 
 [directory]
-format = "[](fg:#29315A)[ $path](bg:#29315A fg:#3EC669)[](fg:#29315A) "
+format = "[](fg:#29315A)[  $path ](fg:#3EC669 bg:#29315A)[](fg:#29315A) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[](fg:#29315A)[ $branch](bg:#29315A fg:#43CCEA)"
+format = "[](fg:#29315A)[  $branch ](fg:#43CCEA bg:#29315A)"
 
 [git_status]
-format = "[$all_status$ahead_behind](bg:#29315A fg:#43CCEA)[](fg:#29315A) "
-style = "bg:#29315A fg:#43CCEA"
-conflicted = " 󰞇"
+format = "([$all_status$ahead_behind ](fg:#43CCEA bg:#29315A))[](fg:#29315A) "
+modified = " ✎"
+staged = " "
+stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-untracked = " ?"
-stashed = " "
-modified = " !"
-staged = " +"
-renamed = " »"
-deleted = " ✘"
-
-[bun]
-format = "[](fg:#29315A)[ $version](bg:#29315A fg:#FF9F43)[](fg:#29315A) "
-version_format = "v${raw}"
-
-[dart]
-symbol = " "
-format = "[](fg:#29315A)[$symbol$version](bg:#29315A fg:#7FD5EA)[](fg:#29315A) "
-version_format = "v${raw}"
-
-[nodejs]
-symbol = "󰎙 "
-format = "[](fg:#29315A)[$symbol$version](bg:#29315A fg:#42E66C)[](fg:#29315A) "
-version_format = "v${raw}"
 
 [python]
-symbol = "󰌠 "
-format = "[](fg:#29315A)[$symbol$version](bg:#29315A fg:#E4F34A)[](fg:#29315A) "
-version_format = "v${raw}"
+format = "[](fg:#29315A)[ 󰌠 $version ](fg:#E4F34A bg:#29315A)[](fg:#29315A) "
 
-[package]
-symbol = "󰏗 "
-format = "[](fg:#29315A)[$symbol$version](bg:#29315A fg:#AEA4BF)[](fg:#29315A) "
-version_format = "v${raw}"
-disabled = false
+[golang]
+format = "[](fg:#29315A)[  $version ](fg:#7FD5EA bg:#29315A)[](fg:#29315A) "
+
+[nodejs]
+format = "[](fg:#29315A)[ 󰎙 $version ](fg:#42E66C bg:#29315A)[](fg:#29315A) "
+
+[ruby]
+format = "[](fg:#29315A)[  $version ](fg:#E64747 bg:#29315A)[](fg:#29315A) "
+
+[java]
+format = "[](fg:#29315A)[  $version ](fg:#E64747 bg:#29315A)[](fg:#29315A) "
+
+[julia]
+format = "[](fg:#29315A)[  $version ](fg:#9B6BDF bg:#29315A)[](fg:#29315A) "
+
+[battery]
+format = "[](fg:#29315A)[ 󰁹 $percentage ](fg:#9B6BDF bg:#29315A)[](fg:#29315A) "
 
 [cmd_duration]
-min_time = 2_000
-format = "[](fg:#29315A)[ $duration](bg:#29315A fg:#AEA4BF)[](fg:#29315A) "
+format = "[](fg:#29315A)[ $duration ](fg:#AEA4BF bg:#29315A)[](fg:#29315A) "
+min_time = 150

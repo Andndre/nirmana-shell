@@ -212,7 +212,7 @@ if (-not $ThemeName) {
         )
         $selected = $menuItems | & fzf $fzfArgs
         if ($selected) {
-            $ThemeName = ($selected -replace '^\[(Custom|Starship|Official|Oh-My-Posh)\]\s+', '').Trim()
+            $ThemeName = ($selected.Trim([char]0xFEFF) -replace '^[\uFEFF\s]*\[(Custom|Starship|Official|Oh-My-Posh)\]\s+', '').Trim()
         }
     } else {
         Write-Host "`nAvailable Themes & Presets:" -ForegroundColor Cyan
@@ -222,7 +222,7 @@ if (-not $ThemeName) {
         $choice = Read-Host "`nEnter number (1-$($menuItems.Count))"
         if ($choice -match '^\d+$' -and [int]$choice -le $menuItems.Count -and [int]$choice -gt 0) {
             $selected = $menuItems[[int]$choice - 1]
-            $ThemeName = ($selected -replace '^\[(Custom|Starship|Official|Oh-My-Posh)\]\s+', '').Trim()
+            $ThemeName = ($selected.Trim([char]0xFEFF) -replace '^[\uFEFF\s]*\[(Custom|Starship|Official|Oh-My-Posh)\]\s+', '').Trim()
         }
     }
 }
@@ -233,7 +233,7 @@ if (-not $ThemeName) {
 }
 
 # Clean input if user passed bracketed label
-$cleanThemeName = ($ThemeName -replace '^\[(Custom|Starship|Official|Oh-My-Posh)\]\s+', '').Trim()
+$cleanThemeName = ($ThemeName.Trim([char]0xFEFF) -replace '^[\uFEFF\s]*\[(Custom|Starship|Official|Oh-My-Posh)\]\s+', '').Trim()
 
 # 6. Apply Theme or Preset
 $targetConfigDir = Split-Path -Parent $targetConfig
@@ -263,6 +263,7 @@ $themeToWtScheme = @{
     'spaceship'             = 'Tokyo Night'
     'clean-detailed'        = 'Nirmana'
     'takuya'                = 'Tokyo Night'
+    'night-owl'             = 'Night Owl'
 }
 
 $wtCandidatePaths = @(

@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: bubblesextra
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -12,8 +12,6 @@ $directory\
 $git_branch\
 $git_status\
 $fill\
-$directory\
-$git_branch\
 $python\
 $golang\
 $nodejs\
@@ -23,48 +21,66 @@ $julia\
 $php\
 $battery\
 $line_break\
+$cmd_duration\
+$username\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[directory]
-format = "[](fg:#29315A)[  $path ](fg:#3EC669 bg:#29315A)"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[  $branch ](fg:#43CCEA bg:#29315A)"
-
-[python]
-format = "[ 󰌠 $version ](fg:#E4F34A bg:#29315A)"
-
-[golang]
-format = "[  $version ](fg:#7FD5EA bg:#29315A)"
-
-[nodejs]
-format = "[ 󰎙 $version ](fg:#42E66C bg:#29315A)"
-
-[ruby]
-format = "[  $version ](fg:#E64747 bg:#29315A)"
-
-[java]
-format = "[  $version ](fg:#E64747 bg:#29315A)"
-
-[julia]
-format = "[  $version ](fg:#9B6BDF bg:#29315A)"
-
-[php]
-format = "[](fg:#4063D8 bg:#29315A)[  $version ](fg:#ffffff bg:#4063D8)"
-
-[battery]
-format = "[](fg:#29315A bg:#4063D8)[ 󰁹 $percentage ](fg:#9B6BDF bg:#29315A)"
-disabled = false
+[username]
+style_user = "fg:#E64747 bg:#29315A"
+style_root = "fg:#FFEB3B bg:#29315A"
+format = "[](fg:#29315A)[ $user ]($style)"
+show_always = true
 
 [character]
-success_symbol = "[❯ ](bold #E64747) "
-error_symbol = "[❯ ](bold #ef5350) "
+format = "$symbol"
+success_symbol = "[❯ ](bold #E64747 bg:#29315A)[](fg:#29315A) "
+error_symbol = "[❯ ](bold #ef5350 bg:#29315A)[](fg:#29315A) "
+
+[directory]
+format = "[](fg:#29315A)[  $path ](fg:#3EC669 bg:#29315A)[](fg:#29315A) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:#29315A)[  $branch ](fg:#43CCEA bg:#29315A)"
+
+[git_status]
+format = "([$all_status$ahead_behind ](fg:#43CCEA bg:#29315A))[](fg:#29315A) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[python]
+format = "[](fg:#29315A)[ 󰌠 $version ](fg:#E4F34A bg:#29315A)[](fg:#29315A) "
+
+[golang]
+format = "[](fg:#29315A)[  $version ](fg:#7FD5EA bg:#29315A)[](fg:#29315A) "
+
+[nodejs]
+format = "[](fg:#29315A)[ 󰎙 $version ](fg:#42E66C bg:#29315A)[](fg:#29315A) "
+
+[ruby]
+format = "[](fg:#29315A)[  $version ](fg:#E64747 bg:#29315A)[](fg:#29315A) "
+
+[java]
+format = "[](fg:#29315A)[  $version ](fg:#E64747 bg:#29315A)[](fg:#29315A) "
+
+[julia]
+format = "[](fg:#29315A)[  $version ](fg:#9B6BDF bg:#29315A)[](fg:#29315A) "
+
+[php]
+format = "[](fg:#4063D8)[  $version ](fg:#ffffff bg:#4063D8)[](fg:#4063D8) "
+
+[battery]
+format = "[](fg:#29315A)[ 󰁹 $percentage ](fg:#9B6BDF bg:#29315A)[](fg:#29315A) "
+
+[cmd_duration]
+format = "[](fg:#29315A)[ $duration ](fg:#AEA4BF bg:#29315A)[](fg:#29315A) "
+min_time = 150

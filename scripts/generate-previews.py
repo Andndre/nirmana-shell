@@ -69,10 +69,12 @@ def generate_preview_png(txt_path: Path, output_dir: Path, font_files: list[str]
     raw_text = txt_path.read_text(encoding="utf-8")
     prompt_text = extract_prompt_lines(raw_text)
 
-    # Render via Rich Console to SVG with sufficient width to prevent
-    # artificial wrapping of wide 1-line ribbon presets (e.g. catppuccin-powerline)
+    # Calculate required console width dynamically to prevent artificial wrapping
+    max_cell = max((Text.from_ansi(line).cell_len for line in prompt_text.splitlines()), default=80)
+    console_width = max(96, max_cell + 4)
+
     stream = io.StringIO()
-    console = Console(record=True, file=stream, width=96)
+    console = Console(record=True, file=stream, width=console_width)
     console.print(Text.from_ansi(prompt_text))
     svg_data = console.export_svg(title=theme_name)
 

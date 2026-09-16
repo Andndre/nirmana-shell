@@ -318,6 +318,29 @@ $schemesToInject = @'
       "brightWhite": "#FFFFFF"
     },
     {
+      "name": "Night Owl",
+      "background": "#011627",
+      "foreground": "#D6DEEB",
+      "cursorColor": "#7E57C2",
+      "selectionBackground": "#1D3B53",
+      "black": "#011627",
+      "red": "#EF5350",
+      "green": "#22DA6E",
+      "yellow": "#ADDB67",
+      "blue": "#82AAFF",
+      "purple": "#C792EA",
+      "cyan": "#21C7A8",
+      "white": "#FFFFFF",
+      "brightBlack": "#575656",
+      "brightRed": "#EF5350",
+      "brightGreen": "#22DA6E",
+      "brightYellow": "#FFEB95",
+      "brightBlue": "#82AAFF",
+      "brightPurple": "#C792EA",
+      "brightCyan": "#7FDBCA",
+      "brightWhite": "#FFFFFF"
+    },
+    {
       "name": "Catppuccin Mocha",
       "background": "#1E1E2E",
       "foreground": "#CDD6F4",
@@ -392,7 +415,9 @@ foreach ($wtPath in $wtSettingsPaths) {
     if (Test-Path $wtPath) {
         try {
             $raw = Get-Content $wtPath -Raw -Encoding utf8
-            if ($raw -notmatch '"Catppuccin Mocha"' -and $raw -match '("schemes"\s*:\s*\[)') {
+            if ($raw -notmatch '"Night Owl"' -and $raw -match '("schemes"\s*:\s*\[)') {
+                $raw = $raw -replace '("schemes"\s*:\s*\[)', "`$1`n$schemesToInject,"
+            } elseif ($raw -notmatch '"Catppuccin Mocha"' -and $raw -match '("schemes"\s*:\s*\[)') {
                 $raw = $raw -replace '("schemes"\s*:\s*\[)', "`$1`n$schemesToInject,"
             } elseif ($raw -notmatch '"Dracula"' -and $raw -match '("schemes"\s*:\s*\[)') {
                 $raw = $raw -replace '("schemes"\s*:\s*\[)', "`$1`n$schemesToInject,"
@@ -415,6 +440,7 @@ foreach ($wtPath in $wtSettingsPaths) {
                 'spaceship'             = 'Tokyo Night'
                 'clean-detailed'        = 'Nirmana'
                 'takuya'                = 'Tokyo Night'
+                'night-owl'             = 'Night Owl'
             }
             $targetScheme = if ($savedTheme -and $themeToWtScheme.ContainsKey($savedTheme)) {
                 $themeToWtScheme[$savedTheme]

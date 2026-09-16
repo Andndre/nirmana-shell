@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: 1_shell
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,49 +8,54 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$directory\
 $username\
-$time\
 $git_branch\
 $git_status\
 $fill\
+$time\
 $cmd_duration\
 $memory_usage\
 $line_break\
+$directory\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[username]
-format = "[$user](fg:#ffbebc) "
-show_always = true
-
-[time]
-format = "[ $time](fg:#bc93ff) "
-disabled = false
-time_format = "%A at %I:%M %p"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](#ee79d1) "
-
-[cmd_duration]
-format = "[  $duration ](fg:#a9ffb4)"
-
-[memory_usage]
-format = "[ 󰍛 $ram_pct ](fg:#94ffa2)"
-
 [character]
 success_symbol = "[ ](bold #A9FFB4) "
 error_symbol = "[ ](bold #ef5350) "
+
+[username]
+format = "[  ](bold #ff70a6)[$user ](bold #ffbebc)[on](bold #ffffff) "
+show_always = true
+
+[git_branch]
+format = "[ $branch](bold #ee79d1)"
+
+[git_status]
+format = "([$all_status$ahead_behind](bold #ee79d1)) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[time]
+format = "[  $time ](bold #bc93ff)"
+disabled = false
+time_format = "%A at %I:%M %p"
+
+[cmd_duration]
+format = "[  $duration ](bold #a9ffb4)"
+min_time = 2000
+
+[memory_usage]
+format = "[ 󰍛 $ram_pct ](bold #94ffa2)"
+
+[directory]
+format = "[  ](bold #00c7fc)[{](bold #ffafd2)[  $path ](bold #ffafd2)[}](bold #ffafd2) "
+truncation_length = 3
+truncation_symbol = "…/"
