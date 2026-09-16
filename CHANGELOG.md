@@ -14,6 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Shorthand Remote Theme Fetcher**: Enhanced `convert-omp.py` and `nirmana import-theme` to accept raw theme identifiers without requiring full GitHub URLs (e.g., `nirmana import-theme quick-term`).
 - **Powerline Segment Tag Normalization**: Resolved edge cases in diamond and powerline segment transitions where background tags were treated as literals, ensuring accurate color inheritance across chevrons.
 
+### Fixed
+
+- **Transparent Palette Color Sanitization**: Fixed `resolve_color` and `normalize_color` to filter out `transparent` post-palette lookup, preventing fallback to foreground white/grey and eliminating stray diamond brackets on transparent segments.
+- **Multi-Block Module Deduplication**: Enforced automatic module deduplication across multi-block Oh My Posh configurations, eliminating duplicated time, git branch, and prompt symbols.
+- **Canonical Nirmana Layout Enforcement**: Standardized segment routing so left-aligned project identity (`$directory`, `$git_branch`, `$git_status`) stays on Line 1 Left, metrics and runtimes route to Line 1 Right via `$fill`, and prompt symbols (`$character`) reside strictly on Line 2.
+- **Starship Dollar Character Escaping**: Properly escaped literal `$` characters in prompt symbols as TOML sequences (`[\\$ ]`), resolving Starship parser warnings.
+
 ## [1.0.9] - 2026-09-16
 
 ### Added
