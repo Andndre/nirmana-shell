@@ -1,79 +1,95 @@
 # =====================================================================
-# Nirmana-Shell - Custom Theme: JanDeDobbeleer Signature Theme
+# Nirmana-Shell - Transpiled Theme: jandedobbeleer
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
+$username\
 $directory\
 $git_branch\
 $git_status\
-$fill\
-$bun\
-$dart\
 $nodejs\
+$golang\
+$julia\
 $python\
-$package\
+$ruby\
+$aws\
+$sudo\
 $cmd_duration\
-$line_break\
-$character"""
-
-[fill]
-symbol = " "
+$character\
+"""
 
 [character]
-success_symbol = "[❯](bold #ff479c) "
-error_symbol = "[❯](bold #ef5350) "
+format = "[](fg:prev_bg) "
+success_symbol = ""
+error_symbol = ""
+
+[username]
+format = "[](fg:#c386f1)[ $user ](fg:#ffffff bg:#c386f1)[](fg:#c386f1)"
+show_always = true
 
 [directory]
-format = "[](fg:#ff479c)[ $path](bg:#ff479c fg:#ffffff)[](fg:#ff479c bg:#fffb38)"
+format = "[](fg:#ff479c inverted)[ $path ](fg:#ffffff bg:#ff479c)[](fg:#ff479c) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[  $branch](bg:#fffb38 fg:#193549)"
+format = "[](fg:#fffb38)[  $branch ](fg:#193549 bg:#fffb38)"
 
 [git_status]
-format = "[$all_status$ahead_behind](bg:#fffb38 fg:#193549)[](fg:#fffb38) "
-style = "bg:#fffb38 fg:#193549"
-conflicted = " 󰞇"
+format = "([$all_status$ahead_behind ](fg:#193549 bg:#fffb38))[](fg:#fffb38) "
+modified = " ✎"
+staged = " "
+stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-untracked = " ?"
-stashed = " "
-modified = " !"
-staged = " +"
-renamed = " »"
-deleted = " ✘"
-
-[bun]
-format = "[](fg:#FEAC19)[ $version](bg:#FEAC19 fg:#ffffff)[](fg:#FEAC19) "
-version_format = "v${raw}"
-
-[dart]
-symbol = " "
-format = "[](fg:#00897b)[$symbol$version](bg:#00897b fg:#ffffff)[](fg:#00897b) "
-version_format = "v${raw}"
 
 [nodejs]
-symbol = "󰎙 "
-format = "[](fg:#6CA35E)[$symbol$version](bg:#6CA35E fg:#ffffff)[](fg:#6CA35E) "
-version_format = "v${raw}"
+format = "[](fg:prev_bg bg:#6CA35E)[  $version ](fg:#ffffff bg:#6CA35E)"
+
+[golang]
+format = "[](fg:prev_bg bg:#8ED1F7)[  $version ](fg:#111111 bg:#8ED1F7)"
+
+[julia]
+format = "[](fg:prev_bg bg:#4063D8)[  $version ](fg:#111111 bg:#4063D8)"
 
 [python]
-symbol = "󰌠 "
-format = "[](fg:#FFDE57)[$symbol$version](bg:#FFDE57 fg:#111111)[](fg:#FFDE57) "
-version_format = "v${raw}"
+format = "[](fg:prev_bg bg:#FFDE57)[ 󰌠 $version ](fg:#111111 bg:#FFDE57)"
+version_format = "${raw}"
 
-[package]
-symbol = "󰏗 "
-format = "[](fg:#83769c)[$symbol$version](bg:#83769c fg:#ffffff)[](fg:#83769c) "
-version_format = "v${raw}"
+[ruby]
+format = "[](fg:prev_bg bg:#AE1401)[  $version ](fg:#ffffff bg:#AE1401)"
+
+[aws]
+format = "[](fg:prev_bg bg:#FFA400)[  $version ](fg:#ffffff bg:#FFA400)"
+
+[sudo]
+style = "fg:#111111 bg:#ffff66"
+format = "[](fg:prev_bg bg:#ffff66)[ ⚡ ]($style)[](fg:#ffff66)"
 disabled = false
 
 [cmd_duration]
-min_time = 2_000
-format = "[](fg:#83769c)[ $duration](bg:#83769c fg:#ffffff)[](fg:#83769c) "
+format = "[](fg:#83769c inverted)[  $duration ](fg:#ffffff bg:#83769c)"
+min_time = 0
+show_milliseconds = true
+
+[shell]
+format = "[](fg:#0077c2 bg:prev_bg)[  $indicator ](fg:#ffffff bg:#0077c2)"
+
+[battery]
+format = "[](fg:#f36943 bg:prev_bg)[ 󰁹 $percentage ](fg:#ffffff bg:#f36943)"
+disabled = false
+
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"
+
+[time]
+format = "[](fg:#2e9599 bg:prev_bg)[ $time ](fg:#111111 bg:#2e9599)[](fg:#2e9599)"
+disabled = false
+time_format = "%H:%M:%S"

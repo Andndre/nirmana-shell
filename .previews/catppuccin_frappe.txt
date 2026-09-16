@@ -1,11 +1,11 @@
 
-  [1;35m Category:[0m   [1;37m[Oh-My-Posh][0m
+  [1;35mCategory:[0m   [1;37m[Oh-My-Posh][0m
   [1;36mTheme:[0m      [1;37mcatppuccin_frappe[0m
   [1;36mDetails:[0m    [0;37mCommunity theme ported from Oh My Posh[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 
-  [38;2;140;170;238mAndndre[0m [38;2;244;184;228m …\nirmana-shell[0m [38;2;186;187;241m main[0m [31m ✎[0m  [1;32mgit status[0m
+  [1;38;2;172;176;190m  [0m [1;38;2;140;170;238mAndndre [0m[38;2;244;184;228m…\nirmana-shell [0m [1;38;2;186;187;241m main ✎[0m    [1;32mgit status[0m
 
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m

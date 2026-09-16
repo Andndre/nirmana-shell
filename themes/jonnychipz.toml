@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: jonnychipz
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,37 +8,76 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$username\
+$hostname\
+$azure\
+$status\
+$line_break\
+$os\
+$sudo\
 $directory\
 $git_branch\
 $git_status\
-$username\
-$line_break\
-$sudo\
+$terraform\
 $character\
 """
 
+[character]
+success_symbol = "[❯ ](bold #1a1af5) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[username]
+format = "[](fg:#4707a8)[ $user](fg:#ffffff bg:#4707a8)"
+show_always = true
+
+[hostname]
+format = "[@$hostname ](fg:#ffffff bg:#4707a8)"
+ssh_only = false
+
+[azure]
+format = "[](fg:prev_bg bg:#1a1af5)[ 󰠅 $subscription ](fg:#ffffff bg:#1a1af5)"
+disabled = false
+
+[status]
+format = "[](fg:prev_bg bg:#4707a8)[ $symbol ](fg:#ffffff bg:#4707a8)[](fg:#4707a8) "
+disabled = false
+symbol = "❌"
+success_symbol = "󰄬"
+
+[os]
+disabled = false
+style = "fg:#000000 bg:#ffffff"
+format = "[](fg:#ffffff)[ $symbol ]($style)[ ](fg:#000000 bg:#ffffff)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
+[sudo]
+style = "fg:#ffffff bg:#000000"
+format = "[](fg:prev_bg bg:#000000)[  ]($style)"
+disabled = true
+
 [directory]
-format = "[ $path](fg:cyan) "
+format = "[  $path ](fg:#000000 bg:#ffffff)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
 [git_branch]
-format = "[ $branch](purple) "
+format = "[  $branch ](fg:#ffea00 bg:#ffffff)"
 
-[username]
-format = "[](fg:#4707a8)[$user ](fg:#ffffff bg:#4707a8)[](fg:#4707a8) "
-show_always = true
+[git_status]
+format = "([$all_status$ahead_behind ](fg:#000000 bg:#ffffff))"
+modified = "[  ${count}](fg:#e84855 bg:#ffffff)"
+staged = "[  ${count}](fg:#2fda4e bg:#ffffff)"
+stashed = " *${count}"
+ahead = " ↑${count}"
+behind = " ↓${count}"
+diverged = " ↕↑${ahead_count}↓${behind_count}"
+deleted = " -${count}"
 
-[sudo]
+[terraform]
+format = "[ ](fg:#000000 bg:#ffffff)[ 󱁢 $workspace ](fg:#000000 bg:#ffffff)"
 disabled = false
-symbol = " "
-format = "[ ](#ffffff) "
-
-[character]
-success_symbol = "[❯ ](bold #000000) "
-error_symbol = "[❯ ](bold #ef5350) "

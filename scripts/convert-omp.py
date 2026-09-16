@@ -212,6 +212,7 @@ class OmpTranspiler:
         self.palette = data.get("palette", {})
         self.modules: Dict[str, Dict[str, Any]] = {}
         self.has_top_connector = False
+        self.char_is_plain = False
 
     def resolve_color(self, col: Optional[str]) -> Optional[str]:
         """Resolve hex, named, or palette-referenced colors to clean hex strings."""
@@ -466,6 +467,7 @@ class OmpTranspiler:
                         "error_symbol": f"[](fg:{bg})[ {sym}](bold {err_col} bg:{bg})[](fg:{bg}) ",
                     }
                 else:
+                    self.char_is_plain = (s.get("style") == "plain")
                     line_character = {
                         "success_symbol": f"[{sym}](bold {col}) ",
                         "error_symbol": f"[{sym}](bold {err_col}) ",
@@ -494,13 +496,14 @@ class OmpTranspiler:
         line1_left = prompt_lines[0]["left"]
         line1_right = prompt_lines[0]["right"]
 
-        # Relocate metrics and runtimes from left to right on Line 1 ONLY if right side is initially empty
-        if not has_block_diamonds and not line1_right and not (is_single_line and theme_style == "powerline"):
+        # Relocate metrics and runtimes from left to right on Line 1 ONLY if Line 1 has project identity and right side is initially empty
+        has_project_identity = any(s.get("type") in ("path", "git") for s in line1_left)
+        if has_project_identity and not has_block_diamonds and not line1_right and not (is_single_line and theme_style == "powerline"):
             relocated = []
             remaining_l1 = []
             for s in line1_left:
                 stype = s.get("type", "")
-                if stype in ("executiontime", "sysinfo", "memory", "battery", "time") or stype in RUNTIME_MAPPINGS:
+                if stype in ("executiontime", "sysinfo", "memory", "battery", "time") or stype in ("nodejs", "python", "golang", "rust", "php", "ruby", "java", "dotnet", "package"):
                     relocated.append(s)
                     continue
                 remaining_l1.append(s)
@@ -513,6 +516,8 @@ class OmpTranspiler:
         should_inject_runtimes = not has_block_diamonds and (
             self.force_runtimes or (self.add_runtimes and has_orig_runtimes)
         )
+        if not line1_right and not has_project_identity and not self.force_runtimes:
+            should_inject_runtimes = False
 
         # Parse Line 1 Left segments
         parsed_l1_left = []
@@ -558,8 +563,9 @@ class OmpTranspiler:
         self.parsed_l1_left = parsed_l1_left
         line1_left_mods = []
         for i, m in enumerate(parsed_l1_left):
+            prev_m = parsed_l1_left[i - 1] if i > 0 else None
             next_m = parsed_l1_left[i + 1] if i + 1 < len(parsed_l1_left) else None
-            self.build_left_module(m, theme_style, next_mod=next_m, is_first_on_line=(i == 0))
+            self.build_left_module(m, theme_style, next_mod=next_m, prev_mod=prev_m, is_first_on_line=(i == 0))
             if m["var_name"] not in line1_left_mods:
                 line1_left_mods.append(m["var_name"])
                 if m["mod_name"] == "username" and m.get("has_host") and "$hostname" not in line1_left_mods:
@@ -676,9 +682,10 @@ class OmpTranspiler:
                     else:
                         parsed_pl_left.append(mod)
             for i, mod in enumerate(parsed_pl_left):
+                prev_m = parsed_pl_left[i - 1] if i > 0 else None
                 next_m = parsed_pl_left[i + 1] if i + 1 < len(parsed_pl_left) else None
                 if mod.get("mod_name") != "connector":
-                    self.build_left_module(mod, theme_style, next_mod=next_m, is_first_on_line=(i == 0))
+                    self.build_left_module(mod, theme_style, next_mod=next_m, prev_mod=prev_m, is_first_on_line=(i == 0))
                 if mod["var_name"] not in curr_sub_mods:
                     curr_sub_mods.append(mod["var_name"])
                     if mod["mod_name"] == "username" and mod.get("has_host") and "$hostname" not in curr_sub_mods:
@@ -712,10 +719,17 @@ class OmpTranspiler:
 
         # Configure character module for single-line powerline
         if is_single_line and theme_style == "powerline":
+            last_left_mod = parsed_l1_left[-1] if parsed_l1_left else None
+            last_has_closed = bool(
+                last_left_mod and (
+                    last_left_mod.get("trailing") or
+                    "<transparent" in last_left_mod.get("trailing", "")
+                )
+            )
             dir_mod = next((p for p in parsed_l1_left if p["mod_name"] == "directory"), None)
             git_mod = next((p for p in parsed_l1_left if p["mod_name"] == "git_branch"), None)
             is_same_bg_powerline = bool(dir_mod and git_mod and dir_mod.get("bg") == git_mod.get("bg"))
-            if is_same_bg_powerline:
+            if is_same_bg_powerline or last_has_closed:
                 self.modules["character"] = {
                     "format": "$symbol",
                     "success_symbol": "",
@@ -727,6 +741,16 @@ class OmpTranspiler:
                     "success_symbol": "",
                     "error_symbol": "",
                 }
+        elif not is_single_line and theme_style == "powerline":
+            last_line_segs = prompt_lines[-1]["left"] if prompt_lines else []
+            last_seg = last_line_segs[-1] if last_line_segs else None
+            char_is_plain = getattr(self, "char_is_plain", False)
+            if last_seg and (last_seg.get("background") or last_seg.get("trailing_diamond") == "\ue0b0") and not char_is_plain:
+                sym_fmt = self.modules.get("character", {}).get("format", "$symbol")
+                if "" not in sym_fmt:
+                    if "character" not in self.modules:
+                        self.modules["character"] = {}
+                    self.modules["character"]["format"] = f"[](fg:prev_bg) {sym_fmt}"
 
         return self.render_toml(
             line1_left_mods=line1_left_mods,
@@ -739,6 +763,14 @@ class OmpTranspiler:
         )
 
     def parse_segment(self, s: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        res = self._parse_segment_raw(s)
+        if res:
+            res["trailing_diamond"] = s.get("trailing_diamond", "")
+            res["leading_diamond"] = s.get("leading_diamond", "")
+            res["seg_style"] = s.get("style", "")
+        return res
+
+    def _parse_segment_raw(self, s: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         stype = s.get("type", "")
         if stype == "block_connector":
             return {
@@ -764,9 +796,11 @@ class OmpTranspiler:
 
         extra_text = ""
         if stype == "session":
-            m = re.search(r"\{\{\s*\.UserName\s*\}\}(.*)", tmpl)
+            m = re.search(r"\{\{\s*\.UserName\s*\}\}(.*?)\{\{\s*\.HostName\s*\}\}", tmpl)
             if m:
-                extra_text = m.group(1).strip()
+                extra_text = m.group(1)
+            elif ".HostName" in tmpl:
+                extra_text = "@"
         elif stype == "executiontime":
             if "\ue601" in tmpl:
                 options["icon"] = " "
@@ -986,7 +1020,7 @@ class OmpTranspiler:
 
         return None
 
-    def build_left_module(self, curr: Dict[str, Any], style: str, next_mod: Optional[Dict[str, Any]] = None, is_first_on_line: bool = False) -> None:
+    def build_left_module(self, curr: Dict[str, Any], style: str, next_mod: Optional[Dict[str, Any]] = None, prev_mod: Optional[Dict[str, Any]] = None, is_first_on_line: bool = False) -> None:
         mod_name = curr["mod_name"]
         if mod_name == "connector":
             return
@@ -1289,10 +1323,18 @@ class OmpTranspiler:
             next_bg = next_mod.get("bg") if next_mod else None
             connects_to_next = bool(
                 bg and next_bg and
+                not curr.get("trailing_diamond") and
                 "<transparent" not in curr.get("trailing", "") and
                 "<transparent" not in (next_mod.get("leading", "") if next_mod else "") and
                 curr.get("trailing") not in ("\ue0b4", "\ue0c0", "\ue0b2") and
                 (next_mod.get("leading") not in ("\ue0b2", "\ue0b6") if next_mod else True)
+            )
+
+            next_has_inward = bool(
+                next_mod and (
+                    "<transparent" in next_mod.get("leading", "") or
+                    (curr.get("trailing_diamond") == "\ue0b0" and not next_mod.get("leading"))
+                )
             )
 
             def format_dia_lead(c: Dict[str, Any], fallback_lead: str = "") -> str:
@@ -1322,15 +1364,25 @@ class OmpTranspiler:
                         return f"[](fg:{c_bg} inverted) "
                 if connects:
                     return ""
+                sp = "" if next_has_inward else " "
                 if tr:
                     glyph = re.sub(r"<[^>]+>", "", tr).strip()
                     if glyph:
-                        return f"[{glyph}](fg:{c_bg}) "
+                        return f"[{glyph}](fg:{c_bg}){sp}"
                 return default_close
 
-            lead_chevron = "" if is_first else f"[](fg:prev_bg bg:{bg})"
+            if is_first:
+                lead_chevron = ""
+            elif prev_mod and prev_mod.get("trailing_diamond") == "\ue0b0" and not curr.get("leading"):
+                lead_chevron = f"[](fg:{bg} inverted)"
+            elif prev_mod and prev_mod.get("bg") and prev_mod.get("bg") == bg:
+                lead_chevron = f"[ ](fg:{fg} bg:{bg})"
+            else:
+                lead_chevron = f"[](fg:prev_bg bg:{bg})"
 
             if mod_name == "os":
+                tmpl = curr.get("template", "")
+                os_divider = f"[ ](fg:{fg} bg:{bg})" if "\ue0b1" in tmpl else ""
                 if not bg:
                     self.modules["os"] = {
                         "disabled": False,
@@ -1343,7 +1395,7 @@ class OmpTranspiler:
                     self.modules["os"] = {
                         "disabled": False,
                         "style": f"fg:{fg} bg:{bg}",
-                        "format": f"{lead_str}[ $symbol ]($style){trail_str}",
+                        "format": f"{lead_str}[ $symbol ]($style){os_divider}{trail_str}",
                     }
                 self.modules["os.symbols"] = {
                     "Windows": "󰕮",
@@ -1399,10 +1451,21 @@ class OmpTranspiler:
                 if bg:
                     lead_str = format_dia_lead(curr, lead_chevron)
                     trail_str = format_dia_trail(curr, connects=connects_to_next)
-                    self.modules["username"] = {
-                        "format": f"{lead_str}[ {icon}$user ](fg:{fg} bg:{bg}){trail_str}",
-                        "show_always": True,
-                    }
+                    if curr.get("has_host"):
+                        sep = curr.get("extra_text") or "@"
+                        self.modules["username"] = {
+                            "format": f"{lead_str}[ {icon}$user](fg:{fg} bg:{bg})",
+                            "show_always": True,
+                        }
+                        self.modules["hostname"] = {
+                            "format": f"[{sep}$hostname ](fg:{fg} bg:{bg}){trail_str}",
+                            "ssh_only": False,
+                        }
+                    else:
+                        self.modules["username"] = {
+                            "format": f"{lead_str}[ {icon}$user ](fg:{fg} bg:{bg}){trail_str}",
+                            "show_always": True,
+                        }
                 else:
                     self.modules["username"] = {
                         "format": f"[$user ](fg:{fg})",
@@ -1420,9 +1483,10 @@ class OmpTranspiler:
             elif mod_name == "git_branch":
                 icon_part = f"{icon}" if icon else ""
                 dir_mod = next((p for p in l1_mods if p["mod_name"] == "directory"), None)
-                same_bg = bool(dir_mod and dir_mod.get("bg") == bg)
+                same_bg = bool((prev_mod and prev_mod.get("bg") == bg) or (dir_mod and dir_mod.get("bg") == bg))
                 lead_str = format_dia_lead(curr, lead_chevron)
-                trail_str = format_dia_trail(curr, connects=connects_to_next, default_close=f"[](fg:{bg}) ")
+                def_close = f"[](fg:{bg})" if next_has_inward else f"[](fg:{bg}) "
+                trail_str = format_dia_trail(curr, connects=connects_to_next, default_close=def_close)
 
                 if same_bg:
                     self.modules["git_branch"] = {
@@ -1452,14 +1516,24 @@ class OmpTranspiler:
                         "diverged": " ⇕⇡${ahead_count}⇣${behind_count}",
                     }
             elif mod_name == "status":
+                tmpl = curr.get("template", "")
+                always_en = curr.get("options", {}).get("always_enabled", False)
+                sym = curr.get("icon") or "❌"
+                tmpl_icons = [c for c in tmpl if ord(c) > 127 and c not in ("\ue0b0", "\ue0b2", "\ue0b4", "\ue0b6", "\ue0b1", "\ue0b3", "\ue0c2")]
+                if tmpl_icons:
+                    sym = "".join(tmpl_icons).strip()
                 if bg:
                     lead_str = format_dia_lead(curr, lead_chevron)
-                    self.modules["status"] = {
-                        "format": f"{lead_str}[ $status ](fg:{fg} bg:{bg})",
+                    trail_str = format_dia_trail(curr, connects=connects_to_next)
+                    status_dict = {
+                        "format": f"{lead_str}[ $symbol ](fg:{fg} bg:{bg}){trail_str}",
                         "disabled": False,
+                        "symbol": "❌",
                     }
+                    if always_en or tmpl_icons:
+                        status_dict["success_symbol"] = sym or "󰄬"
+                    self.modules["status"] = status_dict
                 else:
-                    sym = curr.get("icon") or "❌"
                     self.modules["status"] = {
                         "format": f"[$symbol ](fg:{fg})",
                         "symbol": sym,
@@ -1468,9 +1542,32 @@ class OmpTranspiler:
             elif mod_name in RUNTIME_MAPPINGS or mod_name in [r[0] for r in STANDARD_DEVELOPER_RUNTIMES] or mod_name == "python":
                 lead_str = format_dia_lead(curr, lead_chevron)
                 trail_str = format_dia_trail(curr, connects=connects_to_next)
-                self.modules[mod_name] = {
-                    "format": f"{lead_str}[ {icon}$version ](fg:{fg} bg:{bg}){trail_str}"
+                tmpl = curr.get("template", "")
+                raw_t = "$version"
+                mod_icon = icon
+                if mod_name == "azure":
+                    raw_t = "$subscription"
+                    if not mod_icon:
+                        mod_icon = "󰠅 "
+                elif mod_name == "terraform":
+                    raw_t = "$workspace"
+                    if not mod_icon:
+                        mod_icon = "󱁢 "
+                elif mod_name == "python":
+                    if ".Venv" in tmpl:
+                        raw_t = "${virtualenv} $version"
+                    has_icon_in_tmpl = any(ord(c) > 127 for c in re.sub(r'\{\{[^}]*\}\}', '', tmpl))
+                    if not has_icon_in_tmpl:
+                        mod_icon = ""
+                icon_str = f"{mod_icon} " if mod_icon and not mod_icon.endswith(" ") else (mod_icon or "")
+                mod_dict = {
+                    "format": f"{lead_str}[ {icon_str}{raw_t} ](fg:{fg} bg:{bg}){trail_str}"
                 }
+                if mod_name in ("azure", "terraform"):
+                    mod_dict["disabled"] = False
+                if mod_name == "python" and ".Full" in tmpl:
+                    mod_dict["version_format"] = "${raw}"
+                self.modules[mod_name] = mod_dict
             elif mod_name == "time":
                 raw_t = curr.get("options", {}).get("time_format", "15:04:05")
                 lead_str = format_dia_lead(curr, lead_chevron)
@@ -1850,6 +1947,24 @@ def generate_theme_preview(toml_path: Path, theme_name: str, repo_root: Path) ->
         (mock_dir / "package.json").write_text('{"name": "nirmana-shell", "version": "1.0.0"}', encoding="utf-8")
         (mock_dir / "main.c").write_text("int main() {}", encoding="utf-8")
         (mock_dir / "app.py").write_text("print('hello')", encoding="utf-8")
+        (mock_dir / "main.tf").write_text("terraform {}", encoding="utf-8")
+        (mock_dir / ".terraform").mkdir(parents=True, exist_ok=True)
+        (mock_dir / ".terraform" / "environment").write_text("example_corp-prod", encoding="utf-8")
+
+        azure_dir = mock_base / ".azure"
+        azure_dir.mkdir(parents=True, exist_ok=True)
+        azure_profile = {
+            "installationId": "nirmana-mock",
+            "subscriptions": [
+                {
+                    "id": "mock-sub",
+                    "name": "Contoso Production",
+                    "user": {"name": "alice"},
+                    "isDefault": True,
+                }
+            ],
+        }
+        (azure_dir / "azureProfile.json").write_text(json.dumps(azure_profile), encoding="utf-8")
 
         subprocess.run(["git", "-C", str(mock_dir), "init", "-b", "main", "--quiet"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run(["git", "-C", str(mock_dir), "config", "user.name", "Nirmana"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -1861,6 +1976,7 @@ def generate_theme_preview(toml_path: Path, theme_name: str, repo_root: Path) ->
 
         env = os.environ.copy()
         env["STARSHIP_CONFIG"] = str(toml_path.resolve())
+        env["AZURE_CONFIG_DIR"] = str(azure_dir)
         proc = subprocess.run(
             ["starship", "prompt", "--path", str(mock_dir), "--status", "0", "--cmd-duration", "2500", "--terminal-width", "88"],
             env=env,
