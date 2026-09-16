@@ -47,16 +47,16 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [cmd_duration]
 min_time = 1
-format = "[ $duration](fg:#ffffff bg:#4d4d4d)[](fg:#4d4d4d) "
+format = "[](fg:#4d4d4d)[ $duration](fg:#ffffff bg:#4d4d4d)[](fg:#4d4d4d) "
 
 [username]
 show_always = true
-format = "[](fg:#4d4d4d)[$user](fg:#43CCEA bg:#4d4d4d)[ on](white) "
+format = "[](fg:#4d4d4d)[$user](fg:#43CCEA bg:#4d4d4d) "
 
 [time]
 disabled = false
 time_format = "%I:%M:%S %p"
-format = "[$time](fg:#43CCEA bg:#4d4d4d)[](fg:#4d4d4d) "
+format = "[ $time](fg:#43CCEA bg:#4d4d4d)[](fg:#4d4d4d) "
 
 [character]
 success_symbol = "[❯ ](bold #00ff0d) "

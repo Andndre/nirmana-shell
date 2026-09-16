@@ -61,9 +61,9 @@ error_symbol = "[❯ ](bold #ef5350) "
 
 [username]
 show_always = true
-format = "[](fg:#292929)[$user](fg:#fb7e14 bg:#292929)[ on](white) "
+format = "[](fg:#292929)[$user](fg:#fb7e14 bg:#292929) "
 
 [time]
 disabled = false
 time_format = "%H:%M:%S, _2"
-format = "[$time](fg:#fb7e14 bg:#292929)[](fg:#292929) "
+format = "[ $time](fg:#fb7e14 bg:#292929)[](fg:#292929) "

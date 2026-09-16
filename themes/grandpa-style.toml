@@ -48,7 +48,7 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [cmd_duration]
 min_time = 1
-format = "[](fg:parentBackground bg:#2ba1bb)[ $duration](fg:#5a3d29 bg:#2ba1bb) "
+format = "[](fg:parentBackground bg:#2ba1bb)[ $duration](fg:#5a3d29 bg:#2ba1bb)[](fg:#2ba1bb) "
 
 [character]
 success_symbol = "[❯ ](bold #ffffff) "
@@ -56,7 +56,7 @@ error_symbol = "[❯ ](bold #ff0000) "
 
 [username]
 show_always = true
-format = "[](fg:#5a3d29)[$user](fg:#43CCEA bg:#5a3d29)[ on](white) "
+format = "[](fg:#5a3d29)[$user](fg:#43CCEA bg:#5a3d29) "
 
 [time]
 disabled = false

@@ -389,12 +389,14 @@ class OmpTranspiler:
             style_str = self.build_style(fg, bg)
             user_icon = " " if "\ue200" in leading or "\ue200" in template else " "
 
-            # Check if template has trailing text like "<#ffffff>on</>"
+            # Check if template has trailing connector like "<#ffffff>on</>"
             trailing_text = ""
-            if "on" in template:
-                trailing_text = "[ on](white)"
+            clean_tmpl = template.replace("SSHSession", "").replace("Session", "")
+            if re.search(r">\s*on\s*<", template) or re.search(r"\b on \b", clean_tmpl):
+                trailing_style = self.build_style("white", bg)
+                trailing_text = f"[ on]({trailing_style})"
 
-            if leading_fmt:
+            if leading_fmt or trailing_fmt:
                 fmt = f"{leading_fmt}[$user]({style_str}){trailing_text}{trailing_fmt} "
             elif bg:
                 fmt = f"[](fg:{bg})[{user_icon}$user]({style_str})[](fg:{bg}) "
@@ -413,7 +415,11 @@ class OmpTranspiler:
             style_str = self.build_style(fg, bg)
 
             if leading_fmt or trailing_fmt:
-                fmt = f"{leading_fmt}[$time]({style_str}){trailing_fmt} "
+                leading_part = leading_fmt if leading_fmt else ""
+                trailing_part = trailing_fmt if trailing_fmt else ""
+                if trailing_part and not trailing_part.endswith(" "):
+                    trailing_part = f"{trailing_part} "
+                fmt = f"{leading_part}[ $time]({style_str}){trailing_part}"
             elif bg:
                 fmt = f"[](fg:{bg})[ $time]({style_str})[](fg:{bg}) "
             else:
@@ -435,7 +441,11 @@ class OmpTranspiler:
                 icon = " "
 
             if leading_fmt or trailing_fmt:
-                fmt = f"{leading_fmt}[{icon}$duration]({style_str}){trailing_fmt} "
+                leading_part = leading_fmt if leading_fmt else (f"[](fg:{bg})" if bg else "")
+                trailing_part = trailing_fmt if trailing_fmt else (f"[](fg:{bg})" if bg else "")
+                if trailing_part and not trailing_part.endswith(" "):
+                    trailing_part = f"{trailing_part} "
+                fmt = f"{leading_part}[{icon}$duration]({style_str}){trailing_part}"
             elif bg:
                 fmt = f"[](fg:{bg})[{icon}$duration]({style_str})[](fg:{bg}) "
             else:

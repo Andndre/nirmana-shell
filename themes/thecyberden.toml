@@ -25,7 +25,7 @@ symbol = " "
 
 [username]
 show_always = true
-format = "[](fg:#2e9599)[$user](fg:#ffffff bg:#2e9599)[ on](white)[](fg:#2e9599) "
+format = "[](fg:#2e9599)[$user](fg:#ffffff bg:#2e9599)[](fg:#2e9599) "
 
 [directory]
 format = "[ $path](fg:#ffffff bg:#0080ff)[](fg:#0080ff) "
@@ -51,7 +51,7 @@ error_symbol = "[❯ ](bold #ef5350) "
 [time]
 disabled = false
 time_format = "%H:%M:%S"
-format = "[](fg:#2e9599)[$time](fg:#ffffff bg:#2e9599)[](fg:#2e9599) "
+format = "[](fg:#2e9599)[ $time](fg:#ffffff bg:#2e9599)[](fg:#2e9599) "
 
 [sudo]
 disabled = false
