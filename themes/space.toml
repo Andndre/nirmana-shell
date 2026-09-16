@@ -5,72 +5,57 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
 $username\
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $python\
 $golang\
 $nodejs\
 $ruby\
 $java\
 $julia\
-$line_break\
 $character\
 """
 
-[fill]
-symbol = " "
-
 [username]
+format = "[$user](fg:#26C6DA) "
 show_always = true
-format = "[ ](#ff70a6)[$user](#26C6DA) "
 
 [directory]
-format = "[ $path](lightGreen) "
+format = "[ $path](fg:#A5D6A7) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](purple)"
-
 [git_status]
-format = "([$all_status$ahead_behind](purple) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[git_branch]
+format = "[ $branch](white) "
 
 [python]
-symbol = "󰌠 "
-format = "[󰌠 $version](#906cff) "
+format = "[󰌠 $version](fg:#906cff) "
 
 [golang]
-symbol = " "
-format = "[ $version](#7FD5EA) "
+format = "[ $version](fg:#7FD5EA) "
 
 [nodejs]
-symbol = "󰎙 "
-format = "[󰎙 $version](#76b367) "
+format = "[󰎙 $version](fg:#76b367) "
 
 [ruby]
-symbol = " "
-format = "[ $version](#f44336) "
+format = "[ $version](fg:#f44336) "
 
 [java]
-symbol = " "
-format = "[ $version](#ea2d2e) "
+format = "[ $version](fg:#ea2d2e) "
 
 [julia]
-symbol = " "
-format = "[ $version](#4063D8) "
+format = "[ $version](fg:#4063D8) "
 
 [character]
-success_symbol = "[❯ ](bold #FFD54F) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = ""
+error_symbol = ""

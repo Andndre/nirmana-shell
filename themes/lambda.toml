@@ -5,33 +5,28 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
 $directory\
 $git_branch\
 $git_status\
-$line_break\
 $character\
 """
 
 [directory]
-format = "[ $path](#B80101) "
+format = "[ $path](fg:#B80101) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](#B80101)"
-
 [git_status]
-format = "([$all_status$ahead_behind](#B80101) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[git_branch]
+format = "[ $branch](#B80101) "
 
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+success_symbol = ""
+error_symbol = ""

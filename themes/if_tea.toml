@@ -11,11 +11,10 @@ format = """
 $directory\
 $git_branch\
 $git_status\
-$fill\
-$shell\
 $memory_usage\
 $cmd_duration\
-$time\
+$fill\
+$git_branch\
 $line_break\
 $sudo\
 $character\
@@ -24,46 +23,31 @@ $character\
 [fill]
 symbol = " "
 
-[memory_usage]
-disabled = false
-threshold = 0
-format = "[MEM: $ram_pct](fg:#000000 bg:#00c7fc)[](bg:#00c7fc) "
-
-[cmd_duration]
-min_time = 1
-format = "[](fg:#2343e2)[ $duration](fg:#ffffff bg:#2343e2)[](fg:#2343e2) "
-
-[git_branch]
-format = "[](fg:#ee79d1)[ $branch](fg:#000000 bg:#ee79d1)"
+[directory]
+format = "[ $path](fg:cyan) "
+truncation_length = 3
+truncation_symbol = "…/"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#000000 bg:#ee79d1)[](fg:#ee79d1) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[shell]
-disabled = false
-format = "[](fg:#91f2ff)[ $indicator](fg:#000000 bg:#91f2ff)[](bg:#91f2ff) "
+[git_branch]
+format = "[](fg:#ee79d1)[  $branch ](fg:#000000 bg:#ee79d1)"
 
-[time]
-disabled = false
-time_format = "%I:%M:%S %p | %A"
-format = "[](fg:#ff8c94)[ $time](fg:#000000 bg:#ff8c94)[](fg:#ff8c94) "
+[memory_usage]
+format = "[ 󰍛 $ram_pct ](fg:#000000 bg:#00c7fc)"
+
+[cmd_duration]
+format = "[](fg:#00c7fc bg:#2343e2)[  $duration ](fg:#ffffff bg:#2343e2)[](fg:#2343e2) "
+min_time = 1
 
 [sudo]
 disabled = false
 symbol = " "
 format = "[ ](yellow) "
 
-[directory]
-format = "[](bg:#F8677b)[ $path](fg:#000000 bg:#f8677b)[](fg:#f8677b) "
-truncation_length = 3
-truncation_symbol = "…/"
-
 [character]
-success_symbol = "[❯ ](bold #00BCF9) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[╭─ ](bold #91f2ff) "
+error_symbol = "[╭─ ](bold #ef5350) "

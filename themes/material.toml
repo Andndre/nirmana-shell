@@ -5,43 +5,34 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $time\
-$line_break\
 $character\
 """
 
-[fill]
-symbol = " "
-
-[character]
-success_symbol = "[❯ ](bold #DCB977) "
-error_symbol = "[❯ ](bold #ef5350) "
-
 [directory]
-format = "[ $path](#56B6C2) "
+format = "[ $path](fg:#56B6C2) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](#D0666F)"
-
 [git_status]
-format = "([$all_status$ahead_behind](#D0666F) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[git_branch]
+format = "[ $branch](#D0666F) "
 
 [time]
+format = "[ $time](fg:#66F68F) "
 disabled = false
 time_format = "%H:%M"
-format = "[ $time](#66F68F) "
+
+[character]
+success_symbol = ""
+error_symbol = ""

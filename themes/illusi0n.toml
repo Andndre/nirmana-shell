@@ -5,48 +5,41 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
 $username\
 $directory\
 $git_branch\
 $git_status\
+$character\
 $fill\
 $memory_usage\
-$line_break\
-$character\
 """
 
 [fill]
 symbol = " "
 
-[memory_usage]
-disabled = false
-threshold = 0
-format = "[󰍛 $ram_pct](#ff8800) "
-
-[character]
-success_symbol = "[❯ ](bold #ff8800) "
-error_symbol = "[❯ ](bold #ef5350) "
-
 [username]
+format = "[$user](fg:#ff8800) "
 show_always = true
-format = "[ ](#ff70a6)[$user](#ff8800) "
 
 [directory]
-format = "[ $path](#62c0ff) "
+format = "[ $path](fg:#62c0ff) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](#62c0ff)"
-
 [git_status]
-format = "([$all_status$ahead_behind](#62c0ff) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[git_branch]
+format = "[ $branch](#62c0ff) "
+
+[memory_usage]
+format = "[ 󰍛 $ram_pct ](fg:#ff8800)"
+
+[character]
+success_symbol = ""
+error_symbol = ""

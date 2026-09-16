@@ -8,12 +8,12 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$python\
 $directory\
 $git_branch\
 $git_status\
-$fill\
-$python\
 $nodejs\
+$fill\
 $cmd_duration\
 $time\
 $line_break\
@@ -24,39 +24,32 @@ $character\
 symbol = " "
 
 [python]
-symbol = "󰌠 "
-format = "[󰌠 $version](#b1ff4f) "
+format = "[󰌠 $version](fg:#b1ff4f) "
 
 [directory]
-format = "[ $path](#ffaed8) "
+format = "[ $path](fg:#ffaed8) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](#62beff)"
-
 [git_status]
-format = "([$all_status$ahead_behind](#62beff) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[git_branch]
+format = "[ $branch](#62beff) "
 
 [nodejs]
-symbol = "󰎙 "
-format = "[󰎙 $version](#98C379) "
-
-[character]
-success_symbol = "[❯ ](bold #3ce6bf) "
-error_symbol = "[❯ ](bold #ef5350) "
+format = "[󰎙 $version](fg:#98C379) "
 
 [cmd_duration]
-min_time = 1
-format = "[ $duration](#9966ff) "
+format = "[  $duration ](fg:#9966ff)"
 
 [time]
+format = "[  $time ](fg:#f5f5a6)"
 disabled = false
 time_format = "%H:%M:%S"
-format = "[ $time](#f5f5a6) "
+
+[character]
+success_symbol = "[❯](bold green) "
+error_symbol = "[❯](bold red) "

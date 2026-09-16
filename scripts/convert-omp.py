@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-Nirmana-Shell - Oh My Posh to Starship Theme Transpiler
+Nirmana-Shell - Oh My Posh to Starship Theme Transpiler (Overhauled)
 Converts Oh My Posh theme JSON configurations (*.omp.json) into clean,
-high-performance Starship themes (*.toml) aligned with Nirmana layout standards.
+high-performance Starship themes (*.toml) with accurate powerline color chaining,
+faithful single-line/multi-line layout detection, and authentic prompt glyphs.
 """
 
 import argparse
@@ -37,7 +38,6 @@ GO_DATE_TO_STRFTIME = [
     ("MST", "%Z"),
 ]
 
-
 OMP_COLOR_MAP = {
     "lightyellow": "#FFF59D",
     "lightblue": "#80D8FF",
@@ -59,15 +59,18 @@ OMP_COLOR_MAP = {
     "darkyellow": "#F9A825",
     "white": "#FFFFFF",
     "black": "#000000",
+    "red": "#FF5252",
+    "green": "#69F0AE",
+    "blue": "#448AFF",
+    "yellow": "#FFD740",
+    "magenta": "#FF4081",
+    "cyan": "#18FFFF",
 }
 
 
 def convert_go_date_format(go_fmt: str) -> str:
     """Convert Go time reference format to strftime format."""
-    res = go_fmt
-    # Strip any inline OMP tags like <#fff>at</>, <#ffffff>...</>, <b>, etc.
-    res = re.sub(r"<[^>]+>", "", res)
-
+    res = re.sub(r"<[^>]+>", "", go_fmt)
     for go_pat, strftime_pat in GO_DATE_TO_STRFTIME:
         res = re.sub(r"\b" + re.escape(go_pat) + r"\b", strftime_pat, res)
     return res
@@ -127,11 +130,8 @@ def clean_template_tags(template_str: str, current_bg: Optional[str] = None, pal
             return txt
         return f"[{txt}]({col})"
 
-    # <#fg,#bg>text</>
     s = re.sub(r"<([^,>]+),([^>]+)>(.*?)</>", repl_fg_bg, template_str)
-    # <#hex>text</> or <color_name>text</>
     s = re.sub(r"<#?([0-9a-fA-F]{3,6}|[a-zA-Z0-9_\-:]+)>(.*?)</>", repl_color, s)
-    # Strip remaining XML-like tags (e.g. <b>, </b>, unclosed <#...>, </>)
     s = re.sub(r"<[^>]+>", "", s)
     return s
 
@@ -143,7 +143,6 @@ def parse_omp_json(source: str) -> Tuple[Dict[str, Any], str]:
     if not source.startswith("http://") and not source.startswith("https://"):
         path = Path(source)
         if not path.exists():
-            # If neither local file nor full URL, try Oh My Posh official repository
             candidate_name = source.replace(".omp.json", "").replace(".json", "")
             url = f"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/{candidate_name}.omp.json"
             theme_name = candidate_name
@@ -155,7 +154,7 @@ def parse_omp_json(source: str) -> Tuple[Dict[str, Any], str]:
     if url.startswith("http://") or url.startswith("https://"):
         req = urllib.request.Request(
             url,
-            headers={"User-Agent": "Nirmana-Shell-Transpiler/1.0"},
+            headers={"User-Agent": "Nirmana-Shell-Transpiler/2.0"},
         )
         try:
             with urllib.request.urlopen(req, timeout=15) as resp:
@@ -175,10 +174,6 @@ class OmpTranspiler:
         self.use_fill = use_fill
         self.palette = data.get("palette", {})
         self.modules: Dict[str, Dict[str, Any]] = {}
-        self.line1_left: List[str] = []
-        self.line1_right: List[str] = []
-        self.line2_modules: List[str] = []
-        self.all_segments: List[Dict[str, Any]] = []
 
     def resolve_color(self, col: Optional[str]) -> Optional[str]:
         if not col:
@@ -186,7 +181,6 @@ class OmpTranspiler:
         col = str(col).strip()
         if col.lower() == "transparent":
             return None
-        # Handle OMP palette prefix "p:color_name"
         if col.startswith("p:"):
             key = col[2:]
             col = self.palette.get(key, key)
@@ -209,215 +203,15 @@ class OmpTranspiler:
             return f"#{h[:6]}"
         return col
 
-    def build_style(self, fg: Optional[str], bg: Optional[str]) -> str:
-        fg = self.resolve_color(fg)
-        bg = self.resolve_color(bg)
-        parts = []
-        if fg:
-            parts.append(f"fg:{fg}" if bg else fg)
-        if bg:
-            parts.append(f"bg:{bg}")
-        return " ".join(parts)
+    def get_seg_colors(self, seg: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
+        fg = self.resolve_color(seg.get("foreground"))
+        bg = self.resolve_color(seg.get("background"))
 
-    def extract_segments(self):
-        blocks = self.data.get("blocks", [])
-        current_line = 1
-        for block_idx, block in enumerate(blocks):
-            alignment = block.get("alignment", "left")
-            block_type = block.get("type", "prompt")
-            is_rprompt = block_type == "rprompt" or alignment == "right"
-
-            # In OMP, newline on block 0 is add_newline before prompt
-            if block_idx > 0 and block.get("newline", False):
-                current_line += 1
-
-            for seg in block.get("segments", []):
-                self.all_segments.append({
-                    "seg": seg,
-                    "is_right": is_rprompt,
-                    "line": current_line,
-                })
-
-    def transpile(self) -> str:
-        self.extract_segments()
-
-        LEFT_CANDIDATES = {"$username", "$directory", "$git_branch", "$git_status"}
-        PROMPT_CANDIDATES = {"$sudo", "$character"}
-
-        detected_left: List[str] = []
-        detected_right: List[str] = []
-        detected_prompt: List[str] = []
-
-        for item in self.all_segments:
-            seg = item["seg"]
-            is_right = item["is_right"]
-
-            res = self.process_segment(seg)
-            if not res:
-                continue
-
-            mods = res if isinstance(res, list) else [res]
-            for m in mods:
-                if m in PROMPT_CANDIDATES:
-                    if m not in detected_prompt:
-                        detected_prompt.append(m)
-                elif m in LEFT_CANDIDATES:
-                    # If explicitly placed in a right-aligned block (e.g. username on right)
-                    if is_right and m == "$username":
-                        if m not in detected_right:
-                            detected_right.append(m)
-                    else:
-                        if m not in detected_left:
-                            detected_left.append(m)
-                else:
-                    # Runtimes, cloud, duration, time, memory, battery -> always right-aligned
-                    if m not in detected_right:
-                        detected_right.append(m)
-
-        # Ensure directory is present on left
-        if "$directory" not in detected_left:
-            detected_left.insert(0, "$directory")
-            if "directory" not in self.modules:
-                self.modules["directory"] = {
-                    "format": "[$path](bold cyan) ",
-                    "truncation_length": 3,
-                    "truncation_symbol": "…/",
-                }
-
-        # Ensure git is present on left
-        if "$git_branch" not in detected_left:
-            detected_left.append("$git_branch")
-            detected_left.append("$git_status")
-            if "git_branch" not in self.modules:
-                self.modules["git_branch"] = {
-                    "symbol": " ",
-                    "format": "[$symbol$branch](bold purple) ",
-                }
-            if "git_status" not in self.modules:
-                self.modules["git_status"] = {
-                    "format": "([$all_status$ahead_behind](red) )",
-                }
-
-        # Check if the theme is a continuous powerline/diamond ribbon
-        blocks = self.data.get("blocks", [])
-        has_right_block = any(b.get("alignment") == "right" or b.get("type") == "rprompt" for b in blocks)
-        b0_segs = blocks[0].get("segments", []) if blocks else []
-
-        def get_seg_bg(s):
-            b_col = s.get("background", "")
-            if b_col.startswith("p:"):
-                b_col = self.palette.get(b_col[2:], "")
-            elif b_col in self.palette:
-                b_col = self.palette[b_col]
-            return None if not b_col or str(b_col).strip().lower() == "transparent" else b_col
-
-        is_continuous_ribbon = (
-            not has_right_block and
-            len(b0_segs) >= 2 and
-            all(bool(get_seg_bg(s)) for s in b0_segs if s.get("type") not in ("text", "status")) and
-            any(bool(s.get("trailing_diamond") or s.get("powerline_symbol") or s.get("leading_diamond")) for s in b0_segs)
-        )
-
-        if is_continuous_ribbon:
-            ribbon_order = ["$username", "$directory", "$git_branch", "$git_status", "$cmd_duration", "$time"]
-            all_detected = detected_left + detected_right
-            self.line1_left = [m for m in ribbon_order if m in all_detected]
-            self.line1_right = []
-
-            # Find trailing chevron from the end of block 0
-            last_b0_seg = b0_segs[-1] if b0_segs else {}
-            last_trailing = last_b0_seg.get("trailing_diamond") or last_b0_seg.get("powerline_symbol")
-            last_bg = get_seg_bg(last_b0_seg)
-            if not last_bg and len(b0_segs) >= 2:
-                last_bg = get_seg_bg(b0_segs[-2])
-
-            trailing_cap = self.format_diamond(last_trailing, last_bg) if last_trailing and last_bg else ""
-            if trailing_cap:
-                last_mod_name = self.line1_left[-1].replace("$", "")
-                if last_mod_name in self.modules:
-                    self.modules[last_mod_name]["format"] = self.modules[last_mod_name]["format"].rstrip() + trailing_cap + " "
-        else:
-            # Sort left modules in canonical order: $username, $directory, $git_branch, $git_status
-            left_order = ["$username", "$directory", "$git_branch", "$git_status"]
-            self.line1_left = [m for m in left_order if m in detected_left]
-            for m in detected_left:
-                if m not in self.line1_left:
-                    self.line1_left.append(m)
-
-            # Sort right modules in canonical order:
-            # runtimes & cloud -> metrics -> cmd_duration -> time
-            def right_sort_key(mod: str) -> int:
-                if mod == "$cmd_duration":
-                    return 80
-                elif mod == "$time":
-                    return 90
-                elif mod in ("$memory_usage", "$battery", "$username"):
-                    return 50
-                return 10
-
-            self.line1_right = sorted(detected_right, key=right_sort_key)
-
-        # Line 2 modules: $sudo (if present) followed by $character
-        self.line2_modules = []
-        if "$sudo" in detected_prompt:
-            self.line2_modules.append("$sudo")
-        self.line2_modules.append("$character")
-
-        if "character" not in self.modules:
-            self.modules["character"] = {
-                "success_symbol": "[❯](bold green) ",
-                "error_symbol": "[❯](bold red) ",
-            }
-
-        return self.render_toml()
-
-    def format_diamond(self, raw: str, bg: Optional[str], fg: Optional[str] = None, is_leading: bool = True) -> str:
-        """Format leading/trailing diamond glyph, ensuring it is properly styled with colors."""
-        if not raw:
-            return ""
-
-        # If background is missing/transparent, powerline separators must not be drawn
-        if not bg:
-            if "<" not in raw:
-                return ""
-
-        if "<" in raw:
-            cleaned = clean_template_tags(raw, current_bg=bg, palette=self.palette)
-            if "[" in cleaned and "]" in cleaned and "(" in cleaned:
-                return cleaned
-
-            stripped = cleaned.strip()
-            color = f"fg:{bg}" if bg else (f"fg:{fg}" if fg else None)
-            if stripped and color:
-                prefix = " " if raw.startswith(" ") else ""
-                suffix = " " if raw.endswith(" ") else ""
-                return f"{prefix}[{stripped}]({color}){suffix}"
-            return ""
-
-        stripped = raw.strip()
-        if not stripped:
-            return raw
-
-        color = f"fg:{bg}" if bg else (f"fg:{fg}" if fg else None)
-        if color:
-            prefix = " " if raw.startswith(" ") else ""
-            suffix = " " if raw.endswith(" ") else ""
-            return f"{prefix}[{stripped}]({color}){suffix}"
-
-        return ""
-
-    def process_segment(self, seg: Dict[str, Any]) -> Optional[Union[str, List[str]]]:
-        stype = seg.get("type", "")
-        fg = self.resolve_color(seg.get("foreground", ""))
-        bg = self.resolve_color(seg.get("background", ""))
         if not bg and "background_templates" in seg:
             for bt in seg["background_templates"]:
                 m = re.search(r"(?:#([0-9a-fA-F]{3,6})|p:([a-zA-Z0-9_\-]+))", bt)
                 if m:
-                    if m.group(1):
-                        bg = self.resolve_color(f"#{m.group(1)}")
-                    elif m.group(2):
-                        bg = self.resolve_color(f"p:{m.group(2)}")
+                    bg = self.resolve_color(f"#{m.group(1)}" if m.group(1) else f"p:{m.group(2)}")
                     if bg:
                         break
 
@@ -425,281 +219,429 @@ class OmpTranspiler:
             for ft in seg["foreground_templates"]:
                 m = re.search(r"(?:#([0-9a-fA-F]{3,6})|p:([a-zA-Z0-9_\-]+))", ft)
                 if m:
-                    if m.group(1):
-                        fg = self.resolve_color(f"#{m.group(1)}")
-                    elif m.group(2):
-                        fg = self.resolve_color(f"p:{m.group(2)}")
+                    fg = self.resolve_color(f"#{m.group(1)}" if m.group(1) else f"p:{m.group(2)}")
                     if fg:
                         break
 
-        leading = seg.get("leading_diamond", "")
-        trailing = seg.get("trailing_diamond", "")
-        powerline_sym = seg.get("powerline_symbol", "")
-        template = seg.get("template", "")
-        options = seg.get("options") or seg.get("properties") or {}
+        return fg, bg
 
-        leading_fmt = self.format_diamond(leading, bg, fg=fg, is_leading=True)
-        trailing_fmt = self.format_diamond(trailing or powerline_sym, bg, fg=fg, is_leading=False)
+    def transpile(self) -> str:
+        blocks = self.data.get("blocks", [])
+        if not blocks:
+            return ""
 
-        if stype == "path":
-            icon = " "
-            if "\ue5ff" in template:
-                icon = " "
-            elif "\uea83" in template:
-                icon = " "
+        # Step 1: Classify blocks into Left (Line 1), Right (Line 1), and Newline (Line 2+)
+        left_blocks = []
+        right_blocks = []
+        newline_blocks = []
 
-            style_str = self.build_style(fg, bg)
-            content = f"{icon}$path"
-            leading_part = leading_fmt or ""
-            trailing_part = trailing_fmt or ""
-            if bg:
-                fmt = f"{leading_part}[ {content} ]({style_str}){trailing_part}"
+        for idx, b in enumerate(blocks):
+            b_type = b.get("type", "prompt")
+            alignment = b.get("alignment", "left")
+            newline = b.get("newline", False)
+
+            if idx > 0 and newline:
+                newline_blocks.append(b)
+            elif alignment == "right" or b_type == "rprompt":
+                right_blocks.append(b)
             else:
-                fmt = f"{leading_part}[{content}]({style_str or (fg or 'cyan')}){trailing_part} "
+                left_blocks.append(b)
 
-            self.modules["directory"] = {
-                "format": fmt,
-                "truncation_length": 3,
-                "truncation_symbol": "…/",
-            }
-            return "$directory"
+        is_single_line = len(newline_blocks) == 0
 
-        elif stype == "git":
-            raw_branch_icon = options.get("branch_icon", "")
-            branch_icon = re.sub(r"<[^>]+>", "", raw_branch_icon).strip()
-            if not branch_icon:
-                branch_icon = ""
-            if "\ue725" in raw_branch_icon or "\ue725" in template:
-                branch_icon = ""
-            elif "\ue0a0" in raw_branch_icon or "\ue0a0" in template:
-                branch_icon = ""
-            branch_icon = f"{branch_icon} "
-            style_str = self.build_style(fg, bg)
+        # Step 2: Extract segments
+        left_segs = []
+        for b in left_blocks:
+            left_segs.extend(b.get("segments", []))
 
-            leading_part = leading_fmt or ""
-            branch_fmt = f"{leading_part}[ {branch_icon}$branch]({style_str})" if bg else f"[{branch_icon}$branch]({fg or 'purple'})"
+        right_segs = []
+        for b in right_blocks:
+            right_segs.extend(b.get("segments", []))
 
-            self.modules["git_branch"] = {
-                "format": branch_fmt,
-            }
+        # Step 3: Extract Line 2 character & sudo if multi-line
+        line2_character = None
+        line2_sudo = None
+        for b in newline_blocks:
+            for s in b.get("segments", []):
+                stype = s.get("type")
+                tmpl = s.get("template", "")
+                fg, bg = self.get_seg_colors(s)
 
-            status_style = style_str if bg else (fg or "purple")
-            end_cap = trailing_fmt or (" " if not bg else "")
-            status_content = "[$all_status$ahead_behind ]" if bg else "[$all_status$ahead_behind]"
-            self.modules["git_status"] = {
-                "format": f"({status_content}({status_style}){end_cap})",
-                "modified": " ",
-                "staged": " ",
-                "stashed": " ",
-                "ahead": " ⇡${count}",
-                "behind": " ⇣${count}",
-                "diverged": " ⇕⇡${ahead_count}⇣${behind_count}",
-            }
-            return ["$git_branch", "$git_status"]
-
-        elif stype == "session":
-            style_str = self.build_style(fg, bg)
-            user_icon = " " if "\ue200" in leading or "\ue200" in template else " "
-
-            # Check if template has trailing connector like "<#ffffff>on</>"
-            trailing_text = ""
-            clean_tmpl = template.replace("SSHSession", "").replace("Session", "")
-            if re.search(r">\s*on\s*<", template) or re.search(r"\b on \b", clean_tmpl):
-                trailing_style = self.build_style("white", bg)
-                trailing_text = f"[ on]({trailing_style})"
-
-            leading_part = leading_fmt or ""
-            trailing_part = trailing_fmt or ""
-            if bg:
-                fmt = f"{leading_part}[$user ]({style_str}){trailing_text}{trailing_part}"
-            else:
-                fmt = f"[{user_icon}](#ff70a6)[$user]({fg or 'yellow'}){trailing_text} "
-
-            self.modules["username"] = {
-                "show_always": True,
-                "format": fmt,
-            }
-            return "$username"
-
-        elif stype == "time":
-            raw_time_fmt = options.get("time_format", "15:04:05")
-            strftime_fmt = convert_go_date_format(raw_time_fmt)
-            style_str = self.build_style(fg, bg)
-
-            leading_part = leading_fmt or ""
-            trailing_part = trailing_fmt or ""
-            if bg:
-                fmt = f"{leading_part}[  $time ]({style_str}){trailing_part}"
-            else:
-                fmt = f"[ $time]({fg or 'yellow'}) "
-
-            self.modules["time"] = {
-                "disabled": False,
-                "time_format": strftime_fmt,
-                "format": fmt,
-            }
-            return "$time"
-
-        elif stype == "executiontime":
-            style_str = self.build_style(fg, bg)
-            icon = " "
-            if "\ue601" in template:
-                icon = " "
-            elif "\ueba2" in template:
-                icon = " "
-
-            leading_part = leading_fmt or ""
-            trailing_part = trailing_fmt or ""
-            if bg:
-                fmt = f"{leading_part}[ {icon}$duration ]({style_str}){trailing_part}"
-            else:
-                fmt = f"[{icon}$duration]({fg or 'yellow'}) "
-
-            self.modules["cmd_duration"] = {
-                "min_time": 1,
-                "format": fmt,
-            }
-            return "$cmd_duration"
-
-        elif stype in ("sysinfo", "memory"):
-            style_str = self.build_style(fg, bg)
-            if leading_fmt or trailing_fmt:
-                fmt = f"{leading_fmt}[MEM: $ram_pct]({style_str}){trailing_fmt} "
-            elif bg:
-                fmt = f"[](fg:{bg})[󰍛 $ram_pct]({style_str})[](fg:{bg}) "
-            else:
-                fmt = f"[󰍛 $ram_pct]({fg or 'green'}) "
-
-            self.modules["memory_usage"] = {
-                "disabled": False,
-                "threshold": 0,
-                "format": fmt,
-            }
-            return "$memory_usage"
-
-        elif stype == "battery":
-            style_str = self.build_style(fg, bg)
-            if leading_fmt or trailing_fmt:
-                fmt = f"{leading_fmt}[$symbol$percentage]({style_str}){trailing_fmt} "
-            elif bg:
-                fmt = f"[](fg:{bg})[$symbol$percentage]({style_str})[](fg:{bg}) "
-            else:
-                fmt = f"[$symbol$percentage]({fg or 'green'}) "
-
-            self.modules["battery"] = {
-                "disabled": False,
-                "format": fmt,
-            }
-            return "$battery"
-
-        elif stype == "root":
-            style_color = fg or bg or "yellow"
-            symbol = " " if "\uf0e7" in template else "⚡ "
-            self.modules["sudo"] = {
-                "disabled": False,
-                "symbol": symbol,
-                "format": f"[{symbol}]({style_color}) ",
-            }
-            return "$sudo"
-
-        elif stype == "status":
-            sym = " " if "\ue286" in template else (" " if "\ue23a" in template else ("⚡ " if "\uf0e7" in template else "❯ "))
-            col = fg or bg
-
-            is_error_seg = "ne .Code 0" in template or ".Code != 0" in template or "gt .Code 0" in template
-            if is_error_seg:
-                err_color = col or "#ef5350"
-                if "character" in self.modules:
-                    self.modules["character"]["error_symbol"] = f"[{sym}](bold {err_color}) "
-                else:
-                    self.modules["character"] = {
-                        "success_symbol": f"[{sym}](bold green) ",
-                        "error_symbol": f"[{sym}](bold {err_color}) ",
+                if stype == "root":
+                    sym = " " if "\uf0e7" in tmpl else "⚡ "
+                    col = fg or bg or "yellow"
+                    line2_sudo = {
+                        "disabled": False,
+                        "symbol": sym,
+                        "format": f"[{sym}]({col}) ",
                     }
+                elif stype in ("text", "status"):
+                    # Extract glyph directly from template
+                    clean_sym = re.sub(r"\{\{.*?\}\}", "", tmpl)
+                    clean_sym = re.sub(r"<[^>]+>", "", clean_sym).strip()
+                    if len(clean_sym) > 4:
+                        # Skip long text/messages like "Error, check your command"
+                        continue
+                    # Escape literal $, [, ], (, ) for Starship parser
+                    clean_sym = clean_sym.replace("\\", "")
+                    clean_sym = clean_sym.replace("$", "\\$")
+                    clean_sym = clean_sym.replace("[", "\\[").replace("]", "\\]")
+                    clean_sym = clean_sym.replace("(", "\\(").replace(")", "\\)")
+                    sym = f"{clean_sym} " if clean_sym else "❯ "
+
+                    col = fg or bg or "green"
+                    err_col = "#ef5350"
+                    for t in s.get("foreground_templates", []):
+                        m = re.search(r"#([0-9a-fA-F]{3,6})", t)
+                        if m:
+                            err_col = f"#{m.group(1)}"
+                            break
+                    line2_character = {
+                        "success_symbol": f"[{sym}](bold {col}) ",
+                        "error_symbol": f"[{sym}](bold {err_col}) ",
+                    }
+
+        # Step 4: Process Line 1 Left segments
+        line1_left_mods = []
+        parsed_left = []
+        pending_lead = None  # leading_diamond from skipped segments (e.g. 'os')
+        for s in left_segs:
+            mod_info = self.parse_segment(s)
+            if mod_info:
+                # Propagate leading diamond from skipped segment
+                if pending_lead and not mod_info.get("leading"):
+                    mod_info["leading"] = pending_lead
+                pending_lead = None
+                parsed_left.append(mod_info)
             else:
-                success_color = col or "green"
-                err_color = "#ef5350"
-                for t in seg.get("foreground_templates", []):
-                    m = re.search(r"#([0-9a-fA-F]{3,6})", t)
-                    if m:
-                        raw_h = m.group(1)
-                        if len(raw_h) == 3:
-                            err_color = f"#{raw_h[0]*2}{raw_h[1]*2}{raw_h[2]*2}"
-                        else:
-                            err_color = f"#{raw_h}"
+                # Capture leading diamond from skipped segment for propagation
+                raw_lead = s.get("leading_diamond", "")
+                if raw_lead:
+                    cleaned = re.sub(r"<[^>]+>", "", raw_lead).strip()
+                    if cleaned:
+                        pending_lead = cleaned
 
-                self.modules["character"] = {
-                    "success_symbol": f"[{sym}](bold {success_color}) ",
-                    "error_symbol": f"[{sym}](bold {err_color}) ",
-                }
-            return "$character"
+        # Ensure directory is present
+        if not any(p["mod_name"] == "directory" for p in parsed_left):
+            parsed_left.insert(0, {
+                "mod_name": "directory",
+                "var_name": "$directory",
+                "fg": "cyan",
+                "bg": None,
+                "leading": "",
+                "trailing": "",
+                "icon": " ",
+                "raw_tmpl": "$path",
+                "options": {},
+            })
 
-        elif stype == "text":
-            if any(s in template for s in [">", "❯", "", "", "λ", "$", "%", "#", "»", "→", "\ue285", "\ue286"]):
-                sym = "❯ "
-                if "\ue285" in template:
-                    sym = " "
-                elif "\ue286" in template:
-                    sym = " "
-                elif "λ" in template:
-                    sym = "λ "
-                elif "$" in template:
-                    sym = "\\\\$ "
-                elif ">" in template:
-                    sym = "❯ "
+        # Ensure git is present
+        if not any(p["mod_name"] == "git_branch" for p in parsed_left):
+            dir_idx = next((i for i, p in enumerate(parsed_left) if p["mod_name"] == "directory"), 0)
+            parsed_left.insert(dir_idx + 1, {
+                "mod_name": "git_branch",
+                "var_name": "$git_branch",
+                "fg": "purple",
+                "bg": None,
+                "leading": "",
+                "trailing": "",
+                "icon": " ",
+                "raw_tmpl": "$branch",
+                "options": {},
+            })
 
-                success_color = fg or bg or "green"
-                self.modules["character"] = {
-                    "success_symbol": f"[{sym}](bold {success_color}) ",
-                    "error_symbol": f"[{sym}](bold #ef5350) ",
-                }
-                return "$character"
-            return None
+        # Build module definitions for Line 1 Left with background-to-background transitions
+        for i, curr in enumerate(parsed_left):
+            prev = parsed_left[i - 1] if i > 0 else None
+            next_seg = parsed_left[i + 1] if i + 1 < len(parsed_left) else None
+            is_last = (i == len(parsed_left) - 1)
 
-        # Runtimes mapping
+            mod_def = self.build_module_format(curr, prev, next_seg, is_last=is_last)
+            self.modules[curr["mod_name"]] = mod_def
+
+            if curr["var_name"] not in line1_left_mods:
+                line1_left_mods.append(curr["var_name"])
+                if curr["mod_name"] == "git_branch" and "$git_status" not in line1_left_mods:
+                    line1_left_mods.append("$git_status")
+
+        # Step 5: Process Line 1 Right segments
+        line1_right_mods = []
+        parsed_right = []
+        pending_lead = None
+        for s in right_segs:
+            mod_info = self.parse_segment(s)
+            if mod_info:
+                if pending_lead and not mod_info.get("leading"):
+                    mod_info["leading"] = pending_lead
+                pending_lead = None
+                parsed_right.append(mod_info)
+            else:
+                raw_lead = s.get("leading_diamond", "")
+                if raw_lead:
+                    cleaned = re.sub(r"<[^>]+>", "", raw_lead).strip()
+                    if cleaned:
+                        pending_lead = cleaned
+
+        for i, curr in enumerate(parsed_right):
+            prev = parsed_right[i - 1] if i > 0 else None
+            next_seg = parsed_right[i + 1] if i + 1 < len(parsed_right) else None
+            is_first = (i == 0)
+
+            mod_def = self.build_right_module_format(curr, prev, next_seg, is_first=is_first)
+            self.modules[curr["mod_name"]] = mod_def
+
+            if curr["var_name"] not in line1_right_mods:
+                line1_right_mods.append(curr["var_name"])
+
+        # Configure Line 2 character / sudo
+        line2_mods = []
+        if not is_single_line:
+            if line2_sudo:
+                self.modules["sudo"] = line2_sudo
+                line2_mods.append("$sudo")
+            self.modules["character"] = line2_character or {
+                "success_symbol": "[❯](bold green) ",
+                "error_symbol": "[❯](bold red) ",
+            }
+            line2_mods.append("$character")
+        else:
+            # Single-line theme: input character immediately on Line 1
+            self.modules["character"] = {
+                "success_symbol": "",
+                "error_symbol": "",
+            }
+            line1_left_mods.append("$character")
+
+        return self.render_toml(line1_left_mods, line1_right_mods, line2_mods, is_single_line)
+
+    def parse_segment(self, s: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        stype = s.get("type", "")
+        fg, bg = self.get_seg_colors(s)
+        tmpl = s.get("template", "")
+        options = s.get("options") or s.get("properties") or {}
+        lead = s.get("leading_diamond", "")
+        trail = s.get("trailing_diamond", "") or s.get("powerline_symbol", "")
+
+        if lead:
+            lead = re.sub(r"<[^>]+>", "", lead).strip()
+        if trail:
+            trail = re.sub(r"<[^>]+>", "", trail).strip()
+
         runtime_map = {
-            "node": ("nodejs", "󰎙 ", fg or "#6CA35E", bg),
-            "go": ("golang", " ", fg or "#8ED1F7", bg),
-            "python": ("python", "󰌠 ", fg or "#FFDE57", bg),
-            "rust": ("rust", " ", fg or "#DEA584", bg),
-            "ruby": ("ruby", " ", fg or "#AE1401", bg),
-            "java": ("java", " ", fg or "#ED8B00", bg),
-            "dotnet": ("dotnet", "󰪮 ", fg or "#512BD4", bg),
-            "php": ("php", " ", fg or "#777BB4", bg),
-            "bun": ("bun", "󰎙 ", fg or "#FF9F43", bg),
-            "dart": ("dart", " ", fg or "#7FD5EA", bg),
-            "julia": ("julia", " ", fg or "#4063D8", bg),
-            "aws": ("aws", " ", fg or "#FFA400", bg),
-            "azure": ("azure", "󰠅 ", fg or "#0089D6", bg),
-            "shell": ("shell", " ", fg or "#0077c2", bg),
-            "package": ("package", "󰏗 ", fg or "#AEA4BF", bg),
+            "node": ("nodejs", "$nodejs", "󰎙 ", fg or "#6CA35E"),
+            "go": ("golang", "$golang", " ", fg or "#8ED1F7"),
+            "python": ("python", "$python", "󰌠 ", fg or "#FFDE57"),
+            "rust": ("rust", "$rust", " ", fg or "#DEA584"),
+            "ruby": ("ruby", "$ruby", " ", fg or "#AE1401"),
+            "java": ("java", "$java", " ", fg or "#ED8B00"),
+            "dotnet": ("dotnet", "$dotnet", "󰪮 ", fg or "#512BD4"),
+            "php": ("php", "$php", " ", fg or "#777BB4"),
+            "bun": ("bun", "$bun", "󰎙 ", fg or "#FF9F43"),
+            "dart": ("dart", "$dart", " ", fg or "#7FD5EA"),
+            "julia": ("julia", "$julia", " ", fg or "#4063D8"),
+            "shell": ("shell", "$shell", " ", fg or "#0077c2"),
+            "package": ("package", "$package", "󰏗 ", fg or "#AEA4BF"),
         }
 
-        if stype in runtime_map:
-            mod_name, icon, r_fg, r_bg = runtime_map[stype]
-            style_str = self.build_style(r_fg, r_bg)
-            if leading_fmt or trailing_fmt:
-                fmt = f"{leading_fmt}[{icon}$version]({style_str}){trailing_fmt} "
-            elif r_bg:
-                fmt = f"[](fg:{r_bg})[{icon}$version]({style_str})[](fg:{r_bg}) "
-            else:
-                fmt = f"[{icon}$version]({r_fg}) "
-
-            if mod_name == "shell":
-                self.modules[mod_name] = {
-                    "disabled": False,
-                    "format": fmt.replace("$version", "$indicator"),
-                }
-            else:
-                self.modules[mod_name] = {
-                    "symbol": icon,
-                    "format": fmt,
-                }
-            return f"${mod_name}"
+        if stype == "path":
+            icon = " " if "\ue5ff" in tmpl else " "
+            return {
+                "mod_name": "directory", "var_name": "$directory",
+                "fg": fg or "cyan", "bg": bg,
+                "leading": lead, "trailing": trail,
+                "icon": icon, "raw_tmpl": "$path",
+                "options": options,
+            }
+        elif stype == "git":
+            raw_b = options.get("branch_icon", "")
+            b_icon = " "
+            if "\ue725" in raw_b or "\ue725" in tmpl:
+                b_icon = " "
+            elif "\ue0a0" in raw_b or "\ue0a0" in tmpl:
+                b_icon = " "
+            return {
+                "mod_name": "git_branch", "var_name": "$git_branch",
+                "fg": fg or "white", "bg": bg,
+                "leading": lead, "trailing": trail,
+                "icon": b_icon, "raw_tmpl": "$branch",
+                "options": options,
+            }
+        elif stype == "session":
+            return {
+                "mod_name": "username", "var_name": "$username",
+                "fg": fg or "white", "bg": bg,
+                "leading": lead, "trailing": trail,
+                "icon": "", "raw_tmpl": "$user",
+                "options": options,
+            }
+        elif stype == "executiontime":
+            icon = " "
+            if "\ueba2" in tmpl:
+                icon = " "
+            elif "\ue601" in tmpl:
+                icon = " "
+            return {
+                "mod_name": "cmd_duration", "var_name": "$cmd_duration",
+                "fg": fg or "white", "bg": bg,
+                "leading": lead, "trailing": trail,
+                "icon": icon, "raw_tmpl": "$duration",
+                "options": options,
+            }
+        elif stype == "time":
+            return {
+                "mod_name": "time", "var_name": "$time",
+                "fg": fg or "white", "bg": bg,
+                "leading": lead, "trailing": trail,
+                "icon": " ", "raw_tmpl": "$time",
+                "options": options,
+            }
+        elif stype in ("battery",):
+            return {
+                "mod_name": "battery", "var_name": "$battery",
+                "fg": fg or "white", "bg": bg,
+                "leading": lead, "trailing": trail,
+                "icon": "󰁹 ", "raw_tmpl": "$percentage",
+                "options": options,
+            }
+        elif stype in ("sysinfo", "memory"):
+            return {
+                "mod_name": "memory_usage", "var_name": "$memory_usage",
+                "fg": fg or "green", "bg": bg,
+                "leading": lead, "trailing": trail,
+                "icon": "󰍛 ", "raw_tmpl": "$ram_pct",
+                "options": options,
+            }
+        elif stype in runtime_map:
+            m_name, v_name, ic, def_fg = runtime_map[stype]
+            return {
+                "mod_name": m_name, "var_name": v_name,
+                "fg": fg or def_fg, "bg": bg,
+                "leading": lead, "trailing": trail,
+                "icon": ic, "raw_tmpl": "$version",
+                "options": options,
+            }
 
         return None
 
-    def render_toml(self) -> str:
+    def build_module_format(
+        self,
+        curr: Dict[str, Any],
+        prev: Optional[Dict[str, Any]],
+        next_seg: Optional[Dict[str, Any]],
+        is_last: bool,
+    ) -> Dict[str, Any]:
+        mod_name = curr["mod_name"]
+        bg = curr["bg"]
+        fg = curr["fg"]
+        icon = curr["icon"]
+        raw_tmpl = curr["raw_tmpl"]
+
+        # 1. Prefix: Transition from previous segment
+        prefix = ""
+        if prev and prev.get("bg") and bg:
+            if prev["bg"] != bg:
+                trans_sym = prev.get("trailing") or curr.get("leading") or ""
+                prefix = f"[{trans_sym}](fg:{prev['bg']} bg:{bg})"
+        elif curr.get("leading") and bg:
+            prefix = f"[{curr['leading']}](fg:{bg})"
+
+        # 2. Suffix: Transition to next segment or terminal boundary
+        suffix = ""
+        if is_last:
+            end_sym = curr.get("trailing") or ""
+            if bg and end_sym:
+                suffix = f"[{end_sym}](fg:{bg}) "
+        elif next_seg and not next_seg.get("bg") and bg:
+            end_sym = curr.get("trailing") or ""
+            suffix = f"[{end_sym}](fg:{bg}) "
+
+        # 3. Assemble content format
+        if bg:
+            content_fmt = f"[ {icon}{raw_tmpl} ](fg:{fg} bg:{bg})"
+        else:
+            content_fmt = f"[{icon}{raw_tmpl}](fg:{fg}) "
+
+        final_fmt = f"{prefix}{content_fmt}{suffix}"
+
+        res: Dict[str, Any] = {"format": final_fmt}
+
+        if mod_name == "directory":
+            res["truncation_length"] = 3
+            res["truncation_symbol"] = "…/"
+        elif mod_name == "username":
+            res["show_always"] = True
+            if bg:
+                res["format"] = f"{prefix}[{icon}$user ](fg:{fg} bg:{bg}){suffix}"
+        elif mod_name == "cmd_duration":
+            res["min_time"] = 1
+        elif mod_name == "time":
+            res["disabled"] = False
+            raw_t_fmt = curr.get("options", {}).get("time_format", "15:04:05")
+            res["time_format"] = convert_go_date_format(raw_t_fmt)
+        elif mod_name == "git_branch":
+            if bg:
+                res["format"] = f"{prefix}[ {icon}$branch](fg:{fg} bg:{bg})"
+                stat_suffix = suffix
+                self.modules["git_status"] = {
+                    "format": f"([$all_status$ahead_behind ](fg:{fg} bg:{bg})){stat_suffix}",
+                    "modified": " ✎",
+                    "staged": " ",
+                    "stashed": " ",
+                    "ahead": " ⇡${count}",
+                    "behind": " ⇣${count}",
+                    "diverged": " ⇕⇡${ahead_count}⇣${behind_count}",
+                }
+            else:
+                res["format"] = f"[{icon}$branch]({fg}) "
+                self.modules["git_status"] = {
+                    "format": "([$all_status$ahead_behind](red) )",
+                    "modified": " ✎",
+                    "staged": " ",
+                }
+
+        return res
+
+    def build_right_module_format(
+        self,
+        curr: Dict[str, Any],
+        prev: Optional[Dict[str, Any]],
+        next_seg: Optional[Dict[str, Any]],
+        is_first: bool,
+    ) -> Dict[str, Any]:
+        bg = curr["bg"]
+        fg = curr["fg"]
+        icon = curr["icon"]
+        raw_tmpl = curr["raw_tmpl"]
+
+        prefix = ""
+        if is_first and bg:
+            # Inverted leading cap entering from terminal fill
+            prefix = f"[](fg:{bg})"
+        elif prev and prev.get("bg") and bg and prev["bg"] != bg:
+            prefix = f"[](fg:{bg} bg:{prev['bg']})"
+
+        if bg:
+            fmt = f"{prefix}[ {icon}{raw_tmpl} ](fg:{fg} bg:{bg})"
+        else:
+            fmt = f"[ {icon}{raw_tmpl} ](fg:{fg})"
+
+        res: Dict[str, Any] = {"format": fmt}
+        if curr["mod_name"] == "time":
+            res["disabled"] = False
+            raw_t_fmt = curr.get("options", {}).get("time_format", "15:04:05")
+            res["time_format"] = convert_go_date_format(raw_t_fmt)
+        elif curr["mod_name"] == "battery":
+            res["disabled"] = False
+
+        return res
+
+    def render_toml(
+        self,
+        left_mods: List[str],
+        right_mods: List[str],
+        line2_mods: List[str],
+        is_single_line: bool,
+    ) -> str:
         lines = [
             "# =====================================================================",
             f"# Nirmana-Shell - Transpiled Theme: {self.theme_name}",
@@ -708,28 +650,28 @@ class OmpTranspiler:
             "",
             "scan_timeout = 30",
             "command_timeout = 1000",
-            "add_newline = true",
+            f"add_newline = {'false' if is_single_line else 'true'}",
             "",
         ]
 
         lines.append("format = \"\"\"")
-        for m in self.line1_left:
+        for m in left_mods:
             lines.append(f"{m}\\")
 
-        if self.use_fill and self.line1_right:
+        if self.use_fill and right_mods:
             lines.append("$fill\\")
-            for m in self.line1_right:
+            for m in right_mods:
                 lines.append(f"{m}\\")
 
-        if self.line2_modules:
+        if line2_mods and not is_single_line:
             lines.append("$line_break\\")
-            for m in self.line2_modules:
+            for m in line2_mods:
                 lines.append(f"{m}\\")
 
         lines.append("\"\"\"")
         lines.append("")
 
-        if self.use_fill and self.line1_right:
+        if self.use_fill and right_mods:
             lines.append("[fill]")
             lines.append('symbol = " "')
             lines.append("")
@@ -742,7 +684,7 @@ class OmpTranspiler:
                 elif isinstance(v, (int, float)):
                     lines.append(f"{k} = {v}")
                 elif isinstance(v, str):
-                    escaped = v.replace('"', '\\"')
+                    escaped = v.replace("\\", "\\\\").replace('"', '\\"')
                     lines.append(f'{k} = "{escaped}"')
             lines.append("")
 
@@ -781,4 +723,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

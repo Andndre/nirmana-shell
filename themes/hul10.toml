@@ -8,12 +8,12 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$username\
 $directory\
+$shell\
+$username\
 $git_branch\
 $git_status\
 $fill\
-$shell\
 $cmd_duration\
 $time\
 $line_break\
@@ -23,39 +23,37 @@ $character\
 [fill]
 symbol = " "
 
+[directory]
+format = "[ $path](fg:cyan) "
+truncation_length = 3
+truncation_symbol = "…/"
+
 [shell]
-disabled = false
-format = "[](fg:#f7f7f7)[ $indicator](fg:#111111 bg:#f7f7f7)[](fg:#f7f7f7) "
+format = "[  $version ](fg:#111111 bg:#f7f7f7)"
 
 [username]
+format = "[](fg:#f7f7f7 bg:#ffe093)[$user ](fg:#111111 bg:#ffe093)"
 show_always = true
-format = "[](fg:#ffe093)[ $user](fg:#111111 bg:#ffe093)[](fg:#ffe093) "
-
-[git_branch]
-format = "[](fg:#ffffd6)[ $branch](fg:#111111 bg:#ffffd6)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#111111 bg:#ffffd6)[](fg:#ffffd6) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#111111 bg:#ffffd6))[](fg:#ffffd6) "
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
+[git_branch]
+format = "[](fg:#ffe093 bg:#ffffd6)[  $branch](fg:#111111 bg:#ffffd6)"
+
 [cmd_duration]
-min_time = 1
-format = "[ $duration](#b3ffde) "
+format = "[  $duration ](fg:#b3ffde)"
 
 [time]
+format = "[  $time ](fg:#b3ffde)"
 disabled = false
 time_format = "%d/%m/%y %H:%M"
-format = "[ $time](#b3ffde) "
-
-[directory]
-format = "[ $path](#f7f7f7) "
-truncation_length = 3
-truncation_symbol = "…/"
 
 [character]
 success_symbol = "[❯ ](bold #81ff91) "

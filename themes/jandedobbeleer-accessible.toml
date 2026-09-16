@@ -5,99 +5,81 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
 $username\
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $nodejs\
 $golang\
 $julia\
 $python\
 $ruby\
-$aws\
+$cmd_duration\
+$character\
+$fill\
 $shell\
 $battery\
-$cmd_duration\
 $time\
-$line_break\
-$sudo\
-$character\
 """
 
 [fill]
 symbol = " "
 
 [username]
+format = "[$user ](fg:#ffffff bg:#c386f1)"
 show_always = true
-format = "[$user](fg:#ffffff bg:#c386f1)[|](fg:#c386f1) "
 
 [directory]
-format = "[ $path](fg:#ffffff bg:#ff479c)[|](fg:#ff479c) "
+format = "[|](fg:#c386f1 bg:#ff479c)[  $path ](fg:#ffffff bg:#ff479c)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:#fffb38)[ $branch](fg:#193549 bg:#fffb38)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:#193549 bg:#fffb38)[|](fg:#fffb38) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#193549 bg:#fffb38))"
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
+[git_branch]
+format = "[|](fg:#ff479c bg:#fffb38)[  $branch](fg:#193549 bg:#fffb38)"
+
 [nodejs]
-symbol = "󰎙 "
-format = "[󰎙 $version](fg:#ffffff bg:#6CA35E)[|](fg:#6CA35E) "
+format = "[|](fg:#fffb38 bg:#6CA35E)[ 󰎙 $version ](fg:#ffffff bg:#6CA35E)"
 
 [golang]
-symbol = " "
-format = "[ $version](fg:#111111 bg:#8ED1F7)[|](fg:#8ED1F7) "
+format = "[|](fg:#6CA35E bg:#8ED1F7)[  $version ](fg:#111111 bg:#8ED1F7)"
 
 [julia]
-symbol = " "
-format = "[ $version](fg:#111111 bg:#4063D8)[|](fg:#4063D8) "
+format = "[|](fg:#8ED1F7 bg:#4063D8)[  $version ](fg:#111111 bg:#4063D8)"
 
 [python]
-symbol = "󰌠 "
-format = "[󰌠 $version](fg:#111111 bg:#FFDE57)[|](fg:#FFDE57) "
+format = "[|](fg:#4063D8 bg:#FFDE57)[ 󰌠 $version ](fg:#111111 bg:#FFDE57)"
 
 [ruby]
-symbol = " "
-format = "[ $version](fg:#ffffff bg:#AE1401)[|](fg:#AE1401) "
-
-[aws]
-symbol = " "
-format = "[ $version](fg:#ffffff bg:#FFA400)[|](fg:#FFA400) "
-
-[sudo]
-disabled = false
-symbol = "⚡ "
-format = "[⚡ ](#111111) "
+format = "[|](fg:#FFDE57 bg:#AE1401)[  $version ](fg:#ffffff bg:#AE1401)"
 
 [cmd_duration]
+format = "[|](fg:#AE1401 bg:#83769c)[  $duration ](fg:#ffffff bg:#83769c)[](fg:#83769c) "
 min_time = 1
-format = "[](fg:#83769c)[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769c) "
-
-[character]
-success_symbol = "[❯ ](bold green) "
-error_symbol = "[❯ ](bold #ffffff) "
 
 [shell]
-disabled = false
-format = "[](fg:#0077c2)[ $indicator](fg:#ffffff bg:#0077c2)[](fg:#0077c2) "
+format = "[](fg:#0077c2)[  $version ](fg:#ffffff bg:#0077c2)"
 
 [battery]
+format = "[](fg:#f36943 bg:#0077c2)[ 󰁹 $percentage ](fg:#ffffff bg:#f36943)"
 disabled = false
-format = "[$symbol$percentage](fg:#ffffff bg:#f36943)[|](fg:#f36943) "
 
 [time]
+format = "[](fg:#2e9599 bg:#f36943)[  $time ](fg:#111111 bg:#2e9599)"
 disabled = false
 time_format = "%H:%M:%S"
-format = "[|](fg:#2e9599)[ $time](fg:#111111 bg:#2e9599)"
+
+[character]
+success_symbol = ""
+error_symbol = ""

@@ -8,61 +8,48 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$username\
 $directory\
+$username\
+$time\
 $git_branch\
 $git_status\
 $fill\
-$memory_usage\
 $cmd_duration\
-$time\
+$memory_usage\
 $line_break\
-$sudo\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[username]
-show_always = true
-format = "[  ](#ff70a6)[$user](#ffbebc)[ on](white) "
-
-[time]
-disabled = false
-time_format = "%A at %I:%M %p"
-format = "[ $time](#bc93ff) "
-
-[git_branch]
-format = "[ $branch](#ee79d1)"
-
-[git_status]
-format = "([$all_status$ahead_behind](#ee79d1) )"
-modified = " "
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[cmd_duration]
-min_time = 1
-format = "[ $duration](#a9ffb4) "
-
-[sudo]
-disabled = false
-symbol = " "
-format = "[ ](yellow) "
-
-[memory_usage]
-disabled = false
-threshold = 0
-format = "[󰍛 $ram_pct](#94ffa2) "
-
 [directory]
-format = "[  ](#00c7fc)[{](#ffafd2)[ $path](#ffafd2)[}](#ffafd2) "
+format = "[ $path](fg:cyan) "
 truncation_length = 3
 truncation_symbol = "…/"
+
+[username]
+format = "[$user](fg:#ffbebc) "
+show_always = true
+
+[time]
+format = "[ $time](fg:#bc93ff) "
+disabled = false
+time_format = "%A at %I:%M %p"
+
+[git_status]
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
+staged = " "
+
+[git_branch]
+format = "[ $branch](#ee79d1) "
+
+[cmd_duration]
+format = "[  $duration ](fg:#a9ffb4)"
+
+[memory_usage]
+format = "[ 󰍛 $ram_pct ](fg:#94ffa2)"
 
 [character]
 success_symbol = "[ ](bold #A9FFB4) "

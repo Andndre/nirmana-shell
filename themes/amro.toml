@@ -18,25 +18,21 @@ $character\
 """
 
 [username]
+format = "[$user](fg:#45F1C2) "
 show_always = true
-format = "[ ](#ff70a6)[$user](#45F1C2) "
 
 [directory]
-format = "[ $path](#0CA0D8) "
+format = "[ $path](fg:#0CA0D8) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](#14A5AE)"
-
 [git_status]
-format = "([$all_status$ahead_behind](#14A5AE) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[git_branch]
+format = "[ $branch](#14A5AE) "
 
 [sudo]
 disabled = false
@@ -44,5 +40,5 @@ symbol = "⚡ "
 format = "[⚡ ](#cd5e42) "
 
 [character]
-success_symbol = "[❯ ](bold #CD4277) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[# ](bold #CD4277) "
+error_symbol = "[# ](bold #ef5350) "

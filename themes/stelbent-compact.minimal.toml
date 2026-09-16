@@ -12,41 +12,37 @@ $username\
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $time\
 $line_break\
 $character\
 """
 
-[fill]
-symbol = " "
-
 [username]
+format = "[$user](fg:#757575) "
 show_always = true
-format = "[ ](#ff70a6)[$user](#757575) "
 
 [directory]
-format = "[ $path](fg:#100e23 bg:#91ddff)[](fg:#91ddff) "
+format = "[  $path ](fg:#100e23 bg:#91ddff)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:#95ffa4)[ $branch](fg:#100e23 bg:#95ffa4)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:#100e23 bg:#95ffa4)[](fg:#95ffa4) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#100e23 bg:#95ffa4))[](fg:#95ffa4) "
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
+[git_branch]
+format = "[](fg:#91ddff bg:#95ffa4)[  $branch](fg:#100e23 bg:#95ffa4)"
+
+[time]
+format = "[ $time](fg:#689f38) "
+disabled = false
+time_format = "%H:%M:%S"
+
 [character]
 success_symbol = "[\\$ ](bold #ffffff) "
 error_symbol = "[\\$ ](bold #ef5350) "
-
-[time]
-disabled = false
-time_format = "%H:%M:%S"
-format = "[ $time](#689f38) "

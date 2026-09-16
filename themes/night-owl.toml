@@ -11,9 +11,10 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$cmd_duration\
 $fill\
 $shell\
-$aws\
+$memory_usage\
 $dart\
 $dotnet\
 $golang\
@@ -24,101 +25,76 @@ $php\
 $python\
 $ruby\
 $rust\
-$memory_usage\
-$cmd_duration\
 $time\
 $line_break\
-$sudo\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[sudo]
-disabled = false
-symbol = "⚡ "
-format = "[⚡ ](#ffeb95) "
-
 [directory]
-format = "[ $path](fg:#011627 bg:#82AAFF)[](fg:#82AAFF) "
+format = "[╭─](fg:#82AAFF)[  $path ](fg:#011627 bg:#82AAFF)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:#addb67)[ $branch](fg:#011627 bg:#addb67)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:#011627 bg:#addb67)[](fg:#addb67) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#011627 bg:#addb67))"
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
+[git_branch]
+format = "[](fg:#82AAFF bg:#addb67)[  $branch](fg:#011627 bg:#addb67)"
+
 [cmd_duration]
+format = "[](fg:#addb67 bg:#575656)[  $duration ](fg:#d6deeb bg:#575656)[](fg:#575656) "
 min_time = 1
-format = "[](fg:#575656)[ $duration](fg:#d6deeb bg:#575656)[](fg:#575656) "
 
 [shell]
-disabled = false
-format = "[](fg:#d6deeb)[ $indicator](fg:#011627 bg:#d6deeb)[](fg:#d6deeb) "
+format = "[](fg:#d6deeb)[  $version ](fg:#011627 bg:#d6deeb)"
 
 [memory_usage]
-disabled = false
-threshold = 0
-format = "[](fg:#8f43f3)[MEM: $ram_pct](fg:#ffffff bg:#8f43f3)[](fg:#8f43f3) "
-
-[aws]
-symbol = " "
-format = "[](fg:#565656)[ $version](fg:#faa029 bg:#565656)[](fg:#565656) "
+format = "[](fg:#8f43f3 bg:#d6deeb)[ 󰍛 $ram_pct ](fg:#ffffff bg:#8f43f3)"
 
 [dart]
-symbol = " "
-format = "[](fg:#e1e8e9)[ $version](fg:#055b9c bg:#e1e8e9)[](fg:#e1e8e9) "
+format = "[](fg:#e1e8e9 bg:#8f43f3)[  $version ](fg:#055b9c bg:#e1e8e9)"
 
 [dotnet]
-symbol = "󰪮 "
-format = "[](fg:#0e0e0e)[󰪮 $version](fg:#0d6da8 bg:#0e0e0e)[](fg:#0e0e0e) "
+format = "[](fg:#0e0e0e bg:#e1e8e9)[ 󰪮 $version ](fg:#0d6da8 bg:#0e0e0e)"
 
 [golang]
-symbol = " "
-format = "[](fg:#ffffff)[ $version](fg:#06aad5 bg:#ffffff)[](fg:#ffffff) "
+format = "[](fg:#ffffff bg:#0e0e0e)[  $version ](fg:#06aad5 bg:#ffffff)"
 
 [java]
-symbol = " "
-format = "[](fg:#ffffff)[ $version](fg:#ec2729 bg:#ffffff)[](fg:#ffffff) "
+format = "[  $version ](fg:#ec2729 bg:#ffffff)"
 
 [julia]
-symbol = " "
-format = "[](fg:#945bb3)[ $version](fg:#ffffff bg:#945bb3)[](fg:#945bb3) "
+format = "[](fg:#945bb3 bg:#ffffff)[  $version ](fg:#ffffff bg:#945bb3)"
 
 [nodejs]
-symbol = "󰎙 "
-format = "[](fg:#303030)[󰎙 $version](fg:#3C873A bg:#303030)[](fg:#303030) "
+format = "[](fg:#303030 bg:#945bb3)[ 󰎙 $version ](fg:#3C873A bg:#303030)"
 
 [php]
-symbol = " "
-format = "[](fg:#787CB5)[ $version](fg:#000000 bg:#787CB5)[](fg:#787CB5) "
+format = "[](fg:#787CB5 bg:#303030)[  $version ](fg:#000000 bg:#787CB5)"
 
 [python]
-symbol = "󰌠 "
-format = "[](fg:#306998)[󰌠 $version](fg:#FFE873 bg:#306998)[](fg:#306998) "
+format = "[](fg:#306998 bg:#787CB5)[ 󰌠 $version ](fg:#FFE873 bg:#306998)"
 
 [ruby]
-symbol = " "
-format = "[](fg:#ffffff)[ $version](fg:#9c1006 bg:#ffffff)[](fg:#ffffff) "
+format = "[](fg:#ffffff bg:#306998)[  $version ](fg:#9c1006 bg:#ffffff)"
 
 [rust]
-symbol = " "
-format = "[](fg:#ffffff)[ $version](fg:#000000 bg:#ffffff)[](fg:#ffffff) "
+format = "[  $version ](fg:#000000 bg:#ffffff)"
 
 [time]
+format = "[](fg:#234d70 bg:#ffffff)[  $time ](fg:#d6deeb bg:#234d70)"
 disabled = false
 time_format = "%H:%M:%S"
-format = "[](fg:#234d70)[ $time](fg:#d6deeb bg:#234d70)[](fg:#234d70) "
 
 [character]
-success_symbol = "[❯ ](bold #22da6e) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[ ](bold #22da6e) "
+error_symbol = "[ ](bold #ef5350) "

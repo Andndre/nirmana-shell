@@ -8,56 +8,36 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$username\
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $python\
-$time\
 $line_break\
 $sudo\
 $character\
 """
 
-[fill]
-symbol = " "
+[directory]
+format = "[ $path](fg:cyan) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_status]
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
+staged = " "
+
+[git_branch]
+format = "[ $branch](purple) "
 
 [python]
-symbol = "󰌠 "
-format = "[󰌠 $version](white) "
-
-[character]
-success_symbol = "[\\$ ](bold lightRed) "
-error_symbol = "[\\$ ](bold #ef5350) "
+format = "[󰌠 $version](fg:#FFFFFF) "
 
 [sudo]
 disabled = false
 symbol = "⚡ "
-format = "[⚡ ](red) "
+format = "[⚡ ](#FF5252) "
 
-[username]
-show_always = true
-format = "[ ](#ff70a6)[$user](yellow) "
-
-[directory]
-format = "[ $path](lightYellow) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_branch]
-format = "[ $branch](purple)"
-
-[git_status]
-format = "([$all_status$ahead_behind](purple) )"
-modified = " "
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[time]
-disabled = false
-time_format = "%H:%M:%S"
-format = "[ $time](darkGray) "
+[character]
+success_symbol = "[\\$ ](bold #FF8A80) "
+error_symbol = "[\\$ ](bold #ef5350) "

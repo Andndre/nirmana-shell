@@ -5,48 +5,47 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
 $username\
 $directory\
 $git_branch\
 $git_status\
+$character\
 $fill\
 $time\
-$line_break\
-$character\
 """
 
 [fill]
 symbol = " "
 
-[time]
-disabled = false
-time_format = "%H:%M:%S"
-format = "[ $time](#007ACC) "
-
 [username]
+format = "[$user ](fg:#100e23 bg:#ffffff)"
 show_always = true
-format = "[$user](fg:#100e23 bg:#ffffff)[](fg:#ffffff) "
 
 [directory]
-format = "[ $path](fg:#100e23 bg:#91ddff)[](fg:#91ddff) "
+format = "[](fg:#ffffff bg:#91ddff)[  $path ](fg:#100e23 bg:#91ddff)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:#95ffa4)[ $branch](fg:#193549 bg:#95ffa4)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:#193549 bg:#95ffa4)[](fg:#95ffa4) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#193549 bg:#95ffa4))[](fg:#95ffa4) "
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
+[git_branch]
+format = "[](fg:#91ddff bg:#95ffa4)[  $branch](fg:#193549 bg:#95ffa4)"
+
+[time]
+format = "[  $time ](fg:#007ACC)"
+disabled = false
+time_format = "%H:%M:%S"
+
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+success_symbol = ""
+error_symbol = ""

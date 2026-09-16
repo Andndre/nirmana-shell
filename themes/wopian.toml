@@ -24,39 +24,32 @@ $character\
 symbol = " "
 
 [directory]
-format = "[ $path](cyan) "
+format = "[ $path](fg:#18FFFF) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](lightYellow)"
-
 [git_status]
-format = "([$all_status$ahead_behind](lightYellow) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[git_branch]
+format = "[ $branch](#FFF59D) "
 
 [nodejs]
-symbol = "󰎙 "
-format = "[󰎙 $version](#68a063) "
+format = "[ 󰎙 $version ](fg:#68a063)"
 
 [ruby]
-symbol = " "
-format = "[ $version](#DE3F24) "
+format = "[  $version ](fg:#DE3F24)"
 
 [python]
-symbol = "󰌠 "
-format = "[󰌠 $version](#FED142) "
+format = "[ 󰌠 $version ](fg:#FED142)"
 
 [time]
+format = "[  $time ](fg:#A5D6A7)"
 disabled = false
 time_format = "%H:%M:%S"
-format = "[ $time](lightGreen) "
 
 [character]
-success_symbol = "[❯ ](bold lightGreen) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[➜ ](bold #A5D6A7) "
+error_symbol = "[➜ ](bold #ef5350) "

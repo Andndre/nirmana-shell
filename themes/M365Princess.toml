@@ -5,53 +5,47 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
 $username\
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $nodejs\
 $time\
-$line_break\
 $character\
 """
 
-[fill]
-symbol = " "
-
 [username]
+format = "[](fg:#9A348E)[$user ](fg:#FFFFFF bg:#9A348E)"
 show_always = true
-format = "[](fg:#9A348E)[$user](fg:#FFFFFF bg:#9A348E) "
 
 [directory]
-format = "[ $path](fg:#FFFFFF bg:#DA627D)[](fg:#DA627D) "
+format = "[](fg:#9A348E bg:#DA627D)[  $path ](fg:#FFFFFF bg:#DA627D)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:#FCA17D)[ $branch](fg:#FFFFFF bg:#FCA17D)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:#FFFFFF bg:#FCA17D)[](fg:#FCA17D) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#FFFFFF bg:#FCA17D))"
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
+[git_branch]
+format = "[](fg:#DA627D bg:#FCA17D)[  $branch](fg:#FFFFFF bg:#FCA17D)"
+
 [nodejs]
-symbol = "󰎙 "
-format = "[󰎙 $version](fg:#FFFFFF bg:#86BBD8)[](fg:#86BBD8) "
+format = "[](fg:#FCA17D bg:#86BBD8)[ 󰎙 $version ](fg:#FFFFFF bg:#86BBD8)"
 
 [time]
+format = "[](fg:#86BBD8 bg:#33658A)[  $time ](fg:#FFFFFF bg:#33658A)[](fg:#33658A) "
 disabled = false
 time_format = "%H:%M"
-format = "[ $time](fg:#FFFFFF bg:#33658A)[](fg:#33658A) "
 
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+success_symbol = ""
+error_symbol = ""

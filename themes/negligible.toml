@@ -18,7 +18,6 @@ $python\
 $battery\
 $time\
 $line_break\
-$sudo\
 $character\
 """
 
@@ -26,48 +25,36 @@ $character\
 symbol = " "
 
 [directory]
-format = "[ $path](cyan) "
+format = "[ $path](fg:#18FFFF) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](#F1502F)"
-
 [git_status]
-format = "([$all_status$ahead_behind](#F1502F) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[sudo]
-disabled = false
-symbol = "⚡ "
-format = "[⚡ ](red) "
+[git_branch]
+format = "[ $branch](#F1502F) "
 
 [dart]
-symbol = " "
-format = "[ $version](#06A4CE) "
+format = "[  $version ](fg:#06A4CE)"
 
 [nodejs]
-symbol = "󰎙 "
-format = "[󰎙 $version](#6CA35E) "
+format = "[ 󰎙 $version ](fg:#6CA35E)"
 
 [python]
-symbol = "󰌠 "
-format = "[󰌠 $version](#4584b6) "
+format = "[ 󰌠 $version ](fg:#4584b6)"
 
 [battery]
+format = "[ 󰁹 $percentage ](fg:#4caf50)"
 disabled = false
-format = "[$symbol$percentage](#4caf50) "
 
 [time]
+format = "[  $time ](fg:#A5D6A7)"
 disabled = false
 time_format = "%H:%M:%S"
-format = "[ $time](lightGreen) "
 
 [character]
-success_symbol = "[❯ ](bold lightGreen) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[➜ ](bold #A5D6A7) "
+error_symbol = "[➜ ](bold #ef5350) "

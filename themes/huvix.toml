@@ -10,56 +10,41 @@ add_newline = true
 format = """
 $username\
 $directory\
-$git_branch\
-$git_status\
-$fill\
 $golang\
 $python\
-$battery\
+$git_branch\
+$git_status\
 $cmd_duration\
 $line_break\
 $character\
 """
 
-[fill]
-symbol = " "
-
 [username]
+format = "[$user](fg:#FFE082) "
 show_always = true
-format = "[ ](#ff70a6)[$user](#FFE082) "
 
 [directory]
-format = "[ $path](#56B6C2) "
+format = "[ $path](fg:#56B6C2) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [golang]
-symbol = " "
-format = "[ $version](#7FD5EA) "
+format = "[ $version](fg:#7FD5EA) "
 
 [python]
-symbol = "󰌠 "
-format = "[󰌠 $version](#9e7eff) "
-
-[git_branch]
-format = "[ $branch](#56B6C2)"
+format = "[󰌠 $version](fg:#9e7eff) "
 
 [git_status]
-format = "([$all_status$ahead_behind](#56B6C2) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[git_branch]
+format = "[ $branch](#56B6C2) "
 
 [cmd_duration]
+format = "[ $duration](fg:#FFAB91) "
 min_time = 1
-format = "[ $duration](#FFAB91) "
-
-[battery]
-disabled = false
-format = "[$symbol$percentage](#193549) "
 
 [character]
 success_symbol = "[❯](bold green) "

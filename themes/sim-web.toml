@@ -12,8 +12,8 @@ $directory\
 $git_branch\
 $git_status\
 $fill\
-$nodejs\
 $cmd_duration\
+$nodejs\
 $line_break\
 $character\
 """
@@ -21,31 +21,25 @@ $character\
 [fill]
 symbol = " "
 
-[cmd_duration]
-min_time = 1
-format = "[ $duration](#a9ffb4) "
-
-[nodejs]
-symbol = "󰎙 "
-format = "[󰎙 $version](#45bf17) "
-
 [directory]
-format = "[ $path](#ffafd2) "
+format = "[ $path](fg:cyan) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](#f14e32)"
-
 [git_status]
-format = "([$all_status$ahead_behind](#f14e32) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[git_branch]
+format = "[ $branch](purple) "
+
+[cmd_duration]
+format = "[  $duration ](fg:#a9ffb4)"
+
+[nodejs]
+format = "[ 󰎙 $version ](fg:#45bf17)"
 
 [character]
-success_symbol = "[❯ ](bold #00c7fc) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[❯_: ](bold #00c7fc) "
+error_symbol = "[❯_: ](bold #ef5350) "

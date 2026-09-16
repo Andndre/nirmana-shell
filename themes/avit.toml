@@ -12,32 +12,22 @@ $directory\
 $git_branch\
 $git_status\
 $line_break\
-$sudo\
 $character\
 """
 
 [directory]
-format = "[ $path](#ffffff) "
+format = "[ $path](fg:#ffffff) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[ $branch](#C2C206)"
-
 [git_status]
-format = "([$all_status$ahead_behind](#C2C206) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[sudo]
-disabled = false
-symbol = " "
-format = "[ ](#B5B50D) "
+[git_branch]
+format = "[ $branch](#C2C206) "
 
 [character]
-success_symbol = "[❯ ](bold #C94A16) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[ ](bold #007ACC) "
+error_symbol = "[ ](bold #ef5350) "

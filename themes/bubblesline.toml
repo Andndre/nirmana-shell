@@ -5,14 +5,17 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
-$username\
 $directory\
 $git_branch\
 $git_status\
+$username\
+$character\
 $fill\
+$directory\
+$git_branch\
 $python\
 $golang\
 $nodejs\
@@ -20,62 +23,48 @@ $ruby\
 $java\
 $julia\
 $battery\
-$line_break\
-$character\
 """
 
 [fill]
 symbol = " "
 
 [directory]
-format = "[](fg:#424242)[ $path](fg:#3EC669 bg:#424242)[](fg:#424242) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_branch]
-format = " [](fg:#424242)[ $branch](fg:#43CCEA bg:#424242)"
+format = "[](fg:#424242)[  $path ](fg:#3EC669 bg:#424242)"
 
 [git_status]
-format = "([$all_status$ahead_behind](fg:#43CCEA bg:#424242)[](fg:#424242) )"
-modified = " "
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
 staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[python]
-symbol = "󰌠 "
-format = " [](fg:#424242)[󰌠 $version](fg:#E4F34A bg:#424242)[](fg:#424242) "
-
-[golang]
-symbol = " "
-format = " [](fg:#424242)[ $version](fg:#7FD5EA bg:#424242)[](fg:#424242) "
-
-[nodejs]
-symbol = "󰎙 "
-format = " [](fg:#424242)[󰎙 $version](fg:#42E66C bg:#424242)[](fg:#424242) "
-
-[ruby]
-symbol = " "
-format = " [](fg:#424242)[ $version](fg:#E64747 bg:#424242)[](fg:#424242) "
-
-[java]
-symbol = " "
-format = " [](fg:#424242)[ $version](fg:#E64747 bg:#424242)[](fg:#424242) "
-
-[julia]
-symbol = " "
-format = " [](fg:#424242)[ $version](fg:#9B6BDF bg:#424242)[](fg:#424242) "
-
-[battery]
-disabled = false
-format = " [](fg:#424242)[$symbol$percentage](fg:#9B6BDF bg:#424242)[](fg:#424242) "
+[git_branch]
+format = "[  $branch ](fg:#43CCEA bg:#424242)"
 
 [username]
+format = "[](fg:#424242)[$user ](fg:#9B6BDF bg:#424242)[](fg:#424242) "
 show_always = true
-format = "[](fg:#424242)[$user](fg:#9B6BDF bg:#424242)[](fg:#424242)  "
+
+[python]
+format = "[ 󰌠 $version ](fg:#E4F34A bg:#424242)"
+
+[golang]
+format = "[  $version ](fg:#7FD5EA bg:#424242)"
+
+[nodejs]
+format = "[ 󰎙 $version ](fg:#42E66C bg:#424242)"
+
+[ruby]
+format = "[  $version ](fg:#E64747 bg:#424242)"
+
+[java]
+format = "[  $version ](fg:#E64747 bg:#424242)"
+
+[julia]
+format = "[  $version ](fg:#9B6BDF bg:#424242)"
+
+[battery]
+format = "[ 󰁹 $percentage ](fg:#9B6BDF bg:#424242)"
+disabled = false
 
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+success_symbol = ""
+error_symbol = ""

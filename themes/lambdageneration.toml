@@ -8,16 +8,15 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$cmd_duration\
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $battery\
+$fill\
 $username\
-$cmd_duration\
 $time\
 $line_break\
-$sudo\
 $character\
 """
 
@@ -25,44 +24,37 @@ $character\
 symbol = " "
 
 [cmd_duration]
+format = "[╭─](fg:#292929)[  $duration ](fg:#fb7e14 bg:#292929)"
 min_time = 1
-format = "[](fg:#292929)[ $duration](fg:#fb7e14 bg:#292929)[](fg:#292929) "
-
-[sudo]
-disabled = false
-symbol = " "
-format = "[ ](#26C6DA) "
 
 [directory]
-format = "[╰─](fg:#fb7e14)[ $path](fg:#292929 bg:#fb7e14)[](fg:#fb7e14) "
+format = "[  $path ](fg:#fb7e14 bg:#292929)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:#292929)[ $branch](fg:#D4E157 bg:#292929)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:#D4E157 bg:#292929)[](fg:#292929) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#D4E157 bg:#292929))"
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[battery]
-disabled = false
-format = "[](fg:#292929)[$symbol$percentage](fg:#26C6DA bg:#292929)[](fg:#292929) "
+[git_branch]
+format = "[  $branch](fg:#D4E157 bg:#292929)"
 
-[character]
-success_symbol = "[❯ ](bold green) "
-error_symbol = "[❯ ](bold #fb7e14) "
+[battery]
+format = "[ 󰁹 $percentage ](fg:#26C6DA bg:#292929)[](fg:#292929) "
 
 [username]
-show_always = true
-format = "[](fg:#292929)[$user](fg:#fb7e14 bg:#292929) "
+format = "[](fg:#292929)[ $user ](fg:#fb7e14 bg:#292929)"
 
 [time]
+format = "[  $time ](fg:#fb7e14 bg:#292929)"
 disabled = false
 time_format = "%H:%M:%S, _2"
-format = "[ $time](fg:#fb7e14 bg:#292929)[](fg:#292929) "
+
+[character]
+success_symbol = "[❯](bold green) "
+error_symbol = "[❯](bold red) "

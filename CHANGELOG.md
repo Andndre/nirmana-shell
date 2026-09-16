@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-09-16
+
+### Changed
+
+- **OMP Transpiler Engine Overhaul (`convert-omp.py`)**: Rewrote the transpiler with a block-based layout architecture. Left blocks, right blocks, and newline blocks are classified independently, enabling accurate reconstruction of multi-line and right-aligned prompts.
+- **Background-to-Background Powerline Chaining**: Transition glyphs between adjacent segments now use proper `[](fg:prev_bg bg:curr_bg)` syntax instead of isolated caps with gaps, producing continuous ribbon layouts that match the original OMP themes.
+- **Authentic Line-2 Prompt Glyph Extraction**: The transpiler now strips Go template tags and XML color markup from `text`/`status` segments on Line 2, extracting the raw prompt glyph (e.g., rocket, lambda, arrow) for use in Starship's `[character]` module.
+- **Right-Aligned Inverted Powerline Caps**: Right-block modules now receive proper inverted leading caps (`\ue0b2`) for accurate right-side powerline rendering.
+
+### Fixed
+
+- **Leading Diamond Propagation from Skipped Segments**: When the first OMP segment is an unmapped type (e.g., `os`), its `leading_diamond` glyph is now propagated to the next valid segment. This fixes missing rounded opening caps on themes like `hunk` that start with an OS icon segment.
+- **TOML Backslash Escaping Order**: Fixed string value escaping to process backslashes before quotes, preventing double-escape corruption in paths and special characters.
+- **Bracket Escaping in Prompt Symbols**: Literal `[`, `]`, `(`, `)` characters extracted from OMP templates are now properly escaped for Starship's format parser.
+- **Long Text Symbol Filtering**: Glyphs longer than 4 characters (e.g., error messages used as templates) are now skipped during character extraction to avoid injecting prose into prompt symbols.
+
+### Updated
+
+- All 109 OMP-ported themes re-transpiled with the overhauled engine.
+- All 136 TUI preview cards and PNG gallery images regenerated.
+
 ## [1.1.0] - 2026-09-16
 
 ### Added

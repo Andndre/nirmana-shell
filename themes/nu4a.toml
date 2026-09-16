@@ -5,52 +5,49 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
 $username\
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $python\
-$cmd_duration\
-$line_break\
 $character\
+$fill\
+$cmd_duration\
 """
 
 [fill]
 symbol = " "
 
 [username]
+format = "[$user ](fg:#100e23 bg:#cfcfc4)"
 show_always = true
-format = "[](fg:#cfcfc4)[ $user](fg:#100e23 bg:#cfcfc4)[](fg:#cfcfc4) "
 
 [directory]
-format = "[ $path](fg:#100e23 bg:#ec9706)[](fg:#ec9706) "
+format = "[](fg:#cfcfc4 bg:#ec9706)[  $path ](fg:#100e23 bg:#ec9706)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:#3feb56)[ $branch](fg:#193549 bg:#3feb56)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:#193549 bg:#3feb56)[](fg:#3feb56) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#193549 bg:#3feb56))"
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[python]
-symbol = "󰌠 "
-format = "[󰌠 $version](fg:#100e23 bg:#906cff)[](fg:#906cff) "
+[git_branch]
+format = "[](fg:#ec9706 bg:#3feb56)[  $branch](fg:#193549 bg:#3feb56)"
 
-[character]
-success_symbol = "[❯ ](bold #ffffff) "
-error_symbol = "[❯ ](bold #ef5350) "
+[python]
+format = "[](fg:#3feb56 bg:#906cff)[ 󰌠 $version ](fg:#100e23 bg:#906cff)[](fg:#906cff) "
 
 [cmd_duration]
-min_time = 1
-format = "[](fg:#2f2f2f)[ $duration](fg:#fafafa bg:#2f2f2f)[](fg:#2f2f2f) "
+format = "[](fg:#2f2f2f)[  $duration ](fg:#fafafa bg:#2f2f2f)"
+
+[character]
+success_symbol = ""
+error_symbol = ""

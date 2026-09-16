@@ -8,41 +8,37 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$username\
 $directory\
 $git_branch\
 $git_status\
+$username\
 $line_break\
 $sudo\
 $character\
 """
 
-[username]
-show_always = true
-format = "[](fg:#4707a8)[$user](fg:#ffffff bg:#4707a8)[](fg:#4707a8) "
+[directory]
+format = "[ $path](fg:cyan) "
+truncation_length = 3
+truncation_symbol = "…/"
 
-[character]
-success_symbol = "[❯ ](bold #1a1af5) "
-error_symbol = "[❯ ](bold #ef5350) "
+[git_status]
+format = "([$all_status$ahead_behind](red) )"
+modified = " ✎"
+staged = " "
+
+[git_branch]
+format = "[ $branch](purple) "
+
+[username]
+format = "[](fg:#4707a8)[$user ](fg:#ffffff bg:#4707a8)[](fg:#4707a8) "
+show_always = true
 
 [sudo]
 disabled = false
 symbol = " "
 format = "[ ](#ffffff) "
 
-[directory]
-format = "[](fg:#ffffff)[ $path](fg:#000000 bg:#ffffff)[](fg:#ffffff) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_branch]
-format = "[](fg:#ffffff)[ $branch](fg:#000000 bg:#ffffff)"
-
-[git_status]
-format = "([$all_status$ahead_behind](fg:#000000 bg:#ffffff)[](fg:#ffffff) )"
-modified = " "
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+[character]
+success_symbol = "[❯ ](bold #000000) "
+error_symbol = "[❯ ](bold #ef5350) "

@@ -12,39 +12,35 @@ $username\
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $cmd_duration\
 $line_break\
 $character\
 """
 
-[fill]
-symbol = " "
-
 [username]
+format = "[$user ](fg:#1d1626 bg:#ffce7b)"
 show_always = true
-format = "[$user](fg:#1d1626 bg:#ffce7b)[](fg:#ffce7b) "
 
 [directory]
-format = "[ $path](fg:#fffef9 bg:#C678DD)[](fg:#C678DD) "
+format = "[](fg:#ffce7b bg:#C678DD)[  $path ](fg:#fffef9 bg:#C678DD)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:#fffffb)[ $branch](fg:#100e23 bg:#fffffb)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:#100e23 bg:#fffffb)[](fg:#fffffb) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#100e23 bg:#fffffb))"
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
+[git_branch]
+format = "[](fg:#C678DD bg:#fffffb)[  $branch](fg:#100e23 bg:#fffffb)"
+
 [cmd_duration]
+format = "[](fg:#fffffb bg:#33a3dc)[  $duration ](fg:#fffef9 bg:#33a3dc)[](fg:#33a3dc) "
 min_time = 1
-format = "[](fg:#33a3dc)[ $duration](fg:#fffef9 bg:#33a3dc)[](fg:#33a3dc) "
 
 [character]
 success_symbol = "[\\$ ](bold #ffffff) "

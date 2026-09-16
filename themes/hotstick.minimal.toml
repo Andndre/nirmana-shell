@@ -5,39 +5,32 @@
 
 scan_timeout = 30
 command_timeout = 1000
-add_newline = true
+add_newline = false
 
 format = """
 $directory\
 $git_branch\
 $git_status\
-$line_break\
-$sudo\
 $character\
 """
 
-[sudo]
-disabled = false
-symbol = "⚡ "
-format = "[⚡ ](yellow) "
-
 [directory]
-format = "[](fg:lightBlue)[ $path](fg:black bg:lightBlue)[](fg:lightBlue) "
+format = "[](fg:#80D8FF)[  $path ](fg:#000000 bg:#80D8FF)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:green)[ $branch](fg:black bg:green)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:black bg:green)[](fg:green) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#000000 bg:#69F0AE))[](fg:#69F0AE) "
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
+[git_branch]
+format = "[](fg:#80D8FF bg:#69F0AE)[  $branch](fg:#000000 bg:#69F0AE)"
+
 [character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+success_symbol = ""
+error_symbol = ""

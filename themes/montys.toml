@@ -11,7 +11,6 @@ format = """
 $directory\
 $git_branch\
 $git_status\
-$fill\
 $nodejs\
 $cmd_duration\
 $time\
@@ -20,44 +19,40 @@ $sudo\
 $character\
 """
 
-[fill]
-symbol = " "
-
 [directory]
-format = "[ $path](fg:#ffffff bg:#DA627D)[](fg:#DA627D) "
+format = "[](fg:#DA627D)[  $path ](fg:#ffffff bg:#DA627D)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_branch]
-format = "[](fg:#FCA17D)[ $branch](fg:#ffffff bg:#FCA17D)"
-
 [git_status]
-format = "([$all_status$ahead_behind](fg:#ffffff bg:#FCA17D)[](fg:#FCA17D) )"
-modified = " "
+format = "([$all_status$ahead_behind ](fg:#ffffff bg:#FCA17D))"
+modified = " ✎"
 staged = " "
 stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
+[git_branch]
+format = "[](fg:#DA627D bg:#FCA17D)[  $branch](fg:#ffffff bg:#FCA17D)"
+
 [nodejs]
-symbol = "󰎙 "
-format = "[󰎙 $version](fg:#ffffff bg:#76b367)[](fg:#76b367) "
+format = "[](fg:#FCA17D bg:#76b367)[ 󰎙 $version ](fg:#ffffff bg:#76b367)"
 
 [cmd_duration]
+format = "[](fg:#76b367 bg:#83769c)[  $duration ](fg:#ffffff bg:#83769c)"
 min_time = 1
-format = "[](fg:#83769c)[ $duration](fg:#ffffff bg:#83769c)[](fg:#83769c) "
 
 [time]
+format = "[](fg:#83769c bg:#33658A)[  $time ](fg:#ffffff bg:#33658A)[](fg:#33658A) "
 disabled = false
 time_format = "%I:%M %p"
-format = "[ $time](fg:#ffffff bg:#33658A)[](fg:#33658A) "
-
-[character]
-success_symbol = "[❯ ](bold #CD4277) "
-error_symbol = "[❯ ](bold #ef5350) "
 
 [sudo]
 disabled = false
 symbol = "⚡ "
 format = "[⚡ ](#cd5e42) "
+
+[character]
+success_symbol = "[⚡ ❯❯ ](bold #CD4277) "
+error_symbol = "[⚡ ❯❯ ](bold #ef5350) "
