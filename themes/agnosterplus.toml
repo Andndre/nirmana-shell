@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: agnosterplus
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -13,24 +13,27 @@ $directory\
 $git_branch\
 $git_status\
 $character\
-$fill\
-$time\
 """
 
-[fill]
-symbol = " "
+[character]
+format = "[](fg:prev_bg) "
+success_symbol = ""
+error_symbol = ""
 
 [username]
-format = "[$user ](fg:#100e23 bg:#ffffff)"
+format = "[ $user ](fg:#100e23 bg:#ffffff)"
 show_always = true
 
 [directory]
-format = "[](fg:#ffffff bg:#91ddff)[  $path ](fg:#100e23 bg:#91ddff)"
+format = "[](fg:prev_bg bg:#91ddff)[ $path ](fg:#100e23 bg:#91ddff)"
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[](fg:prev_bg bg:#95ffa4)[  $branch ](fg:#193549 bg:#95ffa4)"
+
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#193549 bg:#95ffa4))[](fg:#95ffa4) "
+format = "([$all_status$ahead_behind ](fg:#193549 bg:#95ffa4))"
 modified = " ✎"
 staged = " "
 stashed = " "
@@ -38,14 +41,7 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#91ddff bg:#95ffa4)[  $branch](fg:#193549 bg:#95ffa4)"
-
 [time]
-format = "[  $time ](fg:#007ACC)"
+format = "[](fg:#0b2942 bg:prev_bg)[ $time ](fg:#007ACC bg:#0b2942)"
 disabled = false
 time_format = "%H:%M:%S"
-
-[character]
-success_symbol = ""
-error_symbol = ""

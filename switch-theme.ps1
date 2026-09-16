@@ -59,6 +59,7 @@ function Ensure-Previews ([switch]$Force) {
             New-Item -ItemType Directory -Path $mockDir -Force | Out-Null
             Set-Content (Join-Path $mockDir "package.json") '{"name": "nirmana-shell", "version": "1.0.0"}' -Encoding utf8
             Set-Content (Join-Path $mockDir "main.c") "int main() {}" -Encoding utf8
+            Set-Content (Join-Path $mockDir "app.py") "print('hello')" -Encoding utf8
             if (Get-Command git -ErrorAction SilentlyContinue) {
                 & git -C $mockDir init -b main --quiet 2>$null
                 & git -C $mockDir config user.name "Nirmana" 2>$null
