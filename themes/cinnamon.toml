@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: cinnamon
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -9,23 +9,37 @@ add_newline = false
 
 format = """
 $username\
+$hostname\
 $directory\
 $git_branch\
 $git_status\
+$status\
 $character\
 """
 
+[character]
+format = "$symbol"
+success_symbol = ""
+error_symbol = ""
+
 [username]
-format = "[](fg:#07585c)[$user ](fg:#ffffff bg:#07585c)"
+format = "[](fg:#07585c)[ $user](fg:#ffffff bg:#07585c)"
 show_always = true
 
+[hostname]
+format = "[@$hostname ](fg:#ffffff bg:#07585c)"
+ssh_only = false
+
 [directory]
-format = "[](fg:#07585c bg:#3e9022)[  $path ](fg:#ffffff bg:#3e9022)"
+format = "[  $path ](fg:#ffffff bg:#3e9022)"
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[  $branch ](fg:#ffffff bg:#de076f)"
+
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#ffffff bg:#de076f))[](fg:#de076f) "
+format = "([$all_status$ahead_behind ](fg:#ffffff bg:#de076f))"
 modified = " ✎"
 staged = " "
 stashed = " "
@@ -33,9 +47,8 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#3e9022 bg:#de076f)[  $branch](fg:#ffffff bg:#de076f)"
-
-[character]
-success_symbol = ""
-error_symbol = ""
+[status]
+format = "[ $symbol ](fg:#ffffff bg:#491515)[](fg:#491515) "
+disabled = false
+symbol = "❌"
+success_symbol = ""

@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: darkblood
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,31 +8,40 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$directory\
+[┏](fg:#CB4B16)\
 $username\
 $git_branch\
 $git_status\
+[\\[](fg:#CB4B16)[⚡](fg:#ffffff)[\\]](fg:#CB4B16)\
+$status\
 $line_break\
+$directory\
 $character\
 """
 
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
+[character]
+format = "$symbol"
+success_symbol = "[> ](fg:#CB4B16)"
+error_symbol = "[> ](fg:#CB4B16)"
 
 [username]
-format = "[$user](fg:#ffffff) "
 show_always = true
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
+format = "[\\[](fg:#CB4B16)[$user](fg:#ffffff)[\\]](fg:#CB4B16)"
 
 [git_branch]
-format = "[ $branch](#ffffff) "
+symbol = ""
+format = "[\\[](fg:#CB4B16)[$symbol$branch](fg:#ffffff)[\\]](fg:#CB4B16)"
 
-[character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+[git_status]
+disabled = true
+
+[status]
+disabled = false
+format = "[\\[x](fg:#CB4B16)[$symbol](fg:#ffffff)[\\]](fg:#CB4B16)"
+success_symbol = "0"
+symbol = "$status"
+
+[directory]
+format = "[┗\\[](fg:#CB4B16)[$path](fg:#ffffff)[\\]](fg:#CB4B16)"
+truncation_length = 3
+truncation_symbol = "…/"

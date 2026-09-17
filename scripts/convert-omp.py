@@ -275,9 +275,32 @@ class OmpTranspiler:
 
         # Step 1: Detect Overall Theme Visual Style
         has_any_bg = any(self.get_seg_colors(s)[1] is not None for s in all_segs)
+
+        has_bracket_frame = any(
+            any(c in s.get("template", "") for c in ("\u250f", "┏", "\u2514", "┗", "\u2516", "┖"))
+            for s in all_segs
+        )
+
+        has_rounded_powerline = any(s.get("powerline_symbol") == "\ue0b4" for s in all_segs)
+        pixel_powerline_count = sum(
+            1 for s in all_segs
+            if s.get("powerline_symbol") in ("\ue0c4", "\ue0c5") or
+            any(g in (s.get("leading_diamond", "") + s.get("trailing_diamond", "")) for g in ("\ue0c6", "\ue0c7"))
+        )
+        rounded_powerline_count = sum(1 for s in all_segs if s.get("powerline_symbol") == "\ue0b4")
+        has_pixel_powerline = pixel_powerline_count > 0 and pixel_powerline_count >= rounded_powerline_count
+
+        is_flat_ribbon = False
+        if len(all_segs) >= 3 and not has_rounded_powerline and not has_pixel_powerline:
+            b0_segs = blocks[0].get("segments", []) if blocks else []
+            if b0_segs and b0_segs[0].get("leading_diamond") == "\ue0b6":
+                plain_bg_count = sum(1 for s in b0_segs[1:] if s.get("style") == "plain" and self.get_seg_colors(s)[1])
+                if plain_bg_count >= 2:
+                    is_flat_ribbon = True
+
         powerline_count = sum(
             1 for s in all_segs
-            if any(g in (s.get("leading_diamond", "") + s.get("trailing_diamond", "") + s.get("powerline_symbol", "") + s.get("template", "")) for g in ("\ue0b0", "\ue0b2", "\ue0b1", "\ue0b3"))
+            if any(g in (s.get("leading_diamond", "") + s.get("trailing_diamond", "") + s.get("powerline_symbol", "") + s.get("template", "")) for g in ("\ue0b0", "\ue0b2", "\ue0b1", "\ue0b3", "\ue0c4", "\ue0c5", "\ue0c0", "\ue0c2"))
         )
         capsule_count = sum(
             1 for s in all_segs
@@ -293,12 +316,33 @@ class OmpTranspiler:
             for s in all_segs
         )
 
-        if not has_any_bg:
+        self.powerline_symbol = "\ue0b0"
+        self.has_bracket_frame = has_bracket_frame
+        self.bracket_fg = "#CB4B16"
+        if has_bracket_frame:
+            for s in all_segs:
+                m_b = re.search(r"<([#a-zA-Z0-9_\-]+)>[┏┖┗\u250f\u2514\u2516\[]", s.get("template", ""))
+                if m_b:
+                    self.bracket_fg = self.resolve_color(m_b.group(1)) or self.bracket_fg
+                    break
+            theme_style = "bracket_frame"
+            self.use_fill = False
+        elif has_pixel_powerline:
+            theme_style = "powerline"
+            self.powerline_symbol = "\ue0c4"
+        elif has_rounded_powerline:
+            theme_style = "powerline"
+            self.powerline_symbol = "\ue0b4"
+        elif is_flat_ribbon:
+            theme_style = "powerline"
+            self.powerline_symbol = ""
+        elif not has_any_bg:
             theme_style = "flat"
         elif has_pill_diamonds:
             theme_style = "capsule"
         elif powerline_count >= capsule_count and powerline_count > 0:
             theme_style = "powerline"
+            self.powerline_symbol = "\ue0b0"
         elif capsule_count > 0:
             theme_style = "capsule"
         else:
@@ -400,6 +444,19 @@ class OmpTranspiler:
 
         is_single_line = len(prompt_lines) <= 1
 
+        # Dedup modules between lines in multi-line prompts (e.g. cloud-context)
+        if len(prompt_lines) > 1:
+            later_types = set()
+            for pl in prompt_lines[1:]:
+                for s in pl["left"]:
+                    st = s.get("type")
+                    if st in ("git", "time", "path"):
+                        later_types.add(st)
+            prompt_lines[0]["left"] = [s for s in prompt_lines[0]["left"] if s.get("type") not in later_types]
+
+        if len(prompt_lines) >= 3 and any(s.get("type") == "path" for s in prompt_lines[1]["left"]):
+            prompt_lines[1]["left"] = [s for s in prompt_lines[1]["left"] if s.get("type") != "time"]
+
         # Step 3: Extract prompt character from the last line (status or text segment)
         line_character = None
         has_pill_prompt_user = False
@@ -419,16 +476,45 @@ class OmpTranspiler:
                 last_left.remove(s)
                 break
 
+        # Check for pixelated badge cap + prompt character in last_left (e.g. cloud-context)
+        for i, s in enumerate(list(last_left)):
+            if s.get("type") == "root" and s.get("leading_diamond") in ("\ue0c7", "") and s.get("trailing_diamond") in ("\ue0c6", ""):
+                next_s = last_left[i + 1] if i + 1 < len(last_left) else None
+                if next_s and any(c in next_s.get("template", "") for c in (">", "❯", "➜", "\u276f")):
+                    fg_badge, bg_badge = self.get_seg_colors(s)
+                    b_col = bg_badge or "#dd0033"
+                    t_col = fg_badge or "#151515"
+                    char_fg = self.get_seg_colors(next_s)[0] or "#ffffff"
+                    line_character = {
+                        "format": "$symbol",
+                        "success_symbol": f"[](fg:{b_col})[ ⚡ ](fg:{t_col} bg:{b_col})[](fg:{b_col})[ > ](bold {char_fg})",
+                        "error_symbol": f"[](fg:{b_col})[ ⚡ ](fg:{t_col} bg:{b_col})[](fg:{b_col})[ > ](bold #ef5350)",
+                    }
+                    last_left.remove(s)
+                    last_left.remove(next_s)
+                    break
+
+        if has_bracket_frame and not line_character:
+            bracket_fg = getattr(self, "bracket_fg", "#CB4B16")
+            line_character = {
+                "format": "$symbol",
+                "success_symbol": f"[> ](fg:{bracket_fg})",
+                "error_symbol": f"[> ](fg:{bracket_fg})",
+            }
+
         for s in reversed(last_left):
             stype = s.get("type")
             tmpl = s.get("template", "")
             fg, bg = self.get_seg_colors(s)
             lead = s.get("leading_diamond", "")
             trail = s.get("trailing_diamond", "")
-            has_prompt_char = any(c in tmpl for c in ("\u276f", "\u276e", "❯", "❮", ">", "$", "#", "➜", "λ", "", "", "▶", "»", "\u2b9e", "⮞"))
-            if stype in ("text", "status") or (stype == "session" and has_prompt_char):
+            has_prompt_char = any(c in tmpl for c in ("\u276f", "\u276e", "❯", "❮", ">", "$", "#", "➜", "➔", "\u279c", "λ", "", "", "▶", "»", "\u2b9e", "⮞"))
+            is_ribbon_status = (stype == "status" and (bg or s.get("trailing_diamond") or s.get("powerline_symbol")) and not has_prompt_char)
+            if (stype == "text" or (stype == "status" and not is_ribbon_status)) or (stype == "session" and has_prompt_char):
                 clean_sym = re.sub(r"\{\{.*?\}\}", "", tmpl)
                 clean_sym = re.sub(r"<[^>]+>", "", clean_sym).strip()
+                if clean_sym == "\u279c":
+                    clean_sym = "➔ " 
                 if len(clean_sym) > 4 and not any(k in tmpl for k in ("{{ .UserName }}", ".UserName")):
                     continue
                 clean_sym = clean_sym.replace("\\", "").replace("$", "\\$")
@@ -498,7 +584,21 @@ class OmpTranspiler:
 
         # Relocate metrics and runtimes from left to right on Line 1 ONLY if Line 1 has project identity and right side is initially empty
         has_project_identity = any(s.get("type") in ("path", "git") for s in line1_left)
-        if has_project_identity and not has_block_diamonds and not line1_right and not (is_single_line and theme_style == "powerline"):
+        is_continuous_ribbon = (
+            has_rounded_powerline or is_flat_ribbon or has_pixel_powerline or
+            (theme_style == "powerline" and powerline_count > 0 and not has_pill_diamonds)
+        )
+        is_multiline_prompt = len(prompt_lines) > 1 and any(pl["left"] for pl in prompt_lines[1:])
+
+        has_dir_l1 = any(s.get("type") == "path" for s in line1_left)
+        if theme_style == "powerline" and has_dir_l1:
+            line1_left = [s for s in line1_left if s.get("type") != "time"]
+            prompt_lines[0]["left"] = [s for s in prompt_lines[0]["left"] if s.get("type") != "time"]
+
+        if (has_project_identity and has_dir_l1 and not has_block_diamonds and not line1_right and
+            not is_continuous_ribbon and
+            not has_bracket_frame and
+            not (is_multiline_prompt and len(prompt_lines) >= 3)):
             relocated = []
             remaining_l1 = []
             for s in line1_left:
@@ -516,7 +616,9 @@ class OmpTranspiler:
         should_inject_runtimes = not has_block_diamonds and (
             self.force_runtimes or (self.add_runtimes and has_orig_runtimes)
         )
-        if not line1_right and not has_project_identity and not self.force_runtimes:
+        if (not line1_right and not self.force_runtimes) and (
+            is_continuous_ribbon or has_bracket_frame or not has_dir_l1 or not has_project_identity
+        ):
             should_inject_runtimes = False
 
         # Parse Line 1 Left segments
@@ -722,7 +824,7 @@ class OmpTranspiler:
             last_left_mod = parsed_l1_left[-1] if parsed_l1_left else None
             last_has_closed = bool(
                 last_left_mod and (
-                    last_left_mod.get("trailing") or
+                    last_left_mod.get("trailing_diamond") or
                     "<transparent" in last_left_mod.get("trailing", "")
                 )
             )
@@ -736,10 +838,12 @@ class OmpTranspiler:
                     "error_symbol": "",
                 }
             else:
+                pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
+                close_glyph = "\ue0b4" if (pwr_sym in ("\ue0b4", "") or getattr(self, "powerline_symbol", "") in ("\ue0b4", "")) else ("\ue0c4" if pwr_sym == "\ue0c4" else "\ue0b0")
                 self.modules["character"] = {
-                    "format": "[](fg:prev_bg) ",
-                    "success_symbol": "",
-                    "error_symbol": "",
+                    "format": "$symbol",
+                    "success_symbol": f"[{close_glyph}](fg:prev_bg) ",
+                    "error_symbol": f"[{close_glyph}](fg:prev_bg) ",
                 }
         elif not is_single_line and theme_style == "powerline":
             last_line_segs = prompt_lines[-1]["left"] if prompt_lines else []
@@ -768,6 +872,25 @@ class OmpTranspiler:
             res["trailing_diamond"] = s.get("trailing_diamond", "")
             res["leading_diamond"] = s.get("leading_diamond", "")
             res["seg_style"] = s.get("style", "")
+            tmpl = s.get("template", "")
+            m_frame = re.search(r"<([#a-zA-Z0-9_\-]+)>([┏┖┗\u250f\u2514\u2516])?\[</>", tmpl)
+            bracket_color = None
+            box_char = ""
+            if m_frame:
+                bracket_color = self.resolve_color(m_frame.group(1))
+                box_char = m_frame.group(2) or ""
+            elif any(c in tmpl for c in ("┏", "\u250f", "┗", "┖", "\u2514", "\u2516")):
+                for c in ("┏", "\u250f", "┗", "┖", "\u2514", "\u2516"):
+                    if c in tmpl:
+                        box_char = c
+                        break
+                m_col = re.search(r"<([#a-zA-Z0-9_\-]+)>", tmpl)
+                if m_col:
+                    bracket_color = self.resolve_color(m_col.group(1))
+            if bracket_color or box_char:
+                res["bracket_fg"] = bracket_color
+                res["box_char"] = box_char
+                res["is_bracketed"] = True
         return res
 
     def _parse_segment_raw(self, s: Dict[str, Any]) -> Optional[Dict[str, Any]]:
@@ -792,7 +915,7 @@ class OmpTranspiler:
             m_lead = re.search(r"<transparent[^>]*>([\ue0b0\ue0b2])</>", tmpl)
             if m_lead:
                 lead = m_lead.group(0)
-        is_bracketed = tmpl.strip().startswith("[") and tmpl.strip().endswith("]")
+        is_bracketed = (tmpl.strip().startswith("[") and tmpl.strip().endswith("]")) or "<#CB4B16>[" in tmpl
 
         extra_text = ""
         if stype == "session":
@@ -1028,6 +1151,45 @@ class OmpTranspiler:
         bg = curr["bg"]
         fg = curr["fg"] or "#ffffff"
         icon = curr["icon"]
+
+        # Case 0: Bracket frame style (like darkblood)
+        if style == "bracket_frame" or curr.get("bracket_fg"):
+            b_fg = curr.get("bracket_fg") or getattr(self, "bracket_fg", "#CB4B16")
+            box_dir_prefix = f"[┗\\[](fg:{b_fg})"
+
+            if mod_name == "username":
+                self.modules["username"] = {
+                    "show_always": True,
+                    "format": f"[\\[](fg:{b_fg})[$user](fg:{fg})[\\]](fg:{b_fg})",
+                }
+            elif mod_name == "git_branch":
+                self.modules["git_branch"] = {
+                    "symbol": "",
+                    "format": f"[\\[](fg:{b_fg})[$symbol$branch](fg:{fg})[\\]](fg:{b_fg})",
+                }
+                self.modules["git_status"] = {
+                    "disabled": True,
+                }
+            elif mod_name == "sudo":
+                self.modules["sudo"] = {
+                    "disabled": False,
+                    "style": f"fg:{fg}",
+                    "format": f"[\\[](fg:{b_fg})[⚡](fg:{fg})[\\]](fg:{b_fg})",
+                }
+            elif mod_name == "status":
+                self.modules["status"] = {
+                    "disabled": False,
+                    "format": f"[\\[x](fg:{b_fg})[$symbol](fg:{fg})[\\]](fg:{b_fg})",
+                    "success_symbol": "0",
+                    "symbol": "$status",
+                }
+            elif mod_name == "directory":
+                self.modules["directory"] = {
+                    "format": f"{box_dir_prefix}[$path](fg:{fg})[\\]](fg:{b_fg})",
+                    "truncation_length": 3,
+                    "truncation_symbol": "…/",
+                }
+            return
 
         # Case 1: Flat style or segment without background
         if style == "flat" or not bg:
@@ -1378,7 +1540,15 @@ class OmpTranspiler:
             elif prev_mod and prev_mod.get("bg") and prev_mod.get("bg") == bg:
                 lead_chevron = f"[ ](fg:{fg} bg:{bg})"
             else:
-                lead_chevron = f"[](fg:prev_bg bg:{bg})"
+                pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
+                if pwr_sym == "\ue0b4":
+                    lead_chevron = f"[](fg:prev_bg bg:{bg})"
+                elif pwr_sym in ("\ue0c4", "\ue0c5"):
+                    lead_chevron = f"[](fg:prev_bg bg:{bg})"
+                elif pwr_sym == "":
+                    lead_chevron = ""
+                else:
+                    lead_chevron = f"[{pwr_sym}](fg:prev_bg bg:{bg})"
 
             if mod_name == "os":
                 tmpl = curr.get("template", "")
@@ -1391,7 +1561,13 @@ class OmpTranspiler:
                     }
                 else:
                     lead_str = format_dia_lead(curr, "")
-                    trail_str = format_dia_trail(curr, connects=connects_to_next)
+                    pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
+                    if next_mod and next_mod.get("bg") == bg:
+                        trail_str = ""
+                    elif pwr_sym in ("\ue0b4", "") and next_mod and next_mod.get("bg"):
+                        trail_str = ""
+                    else:
+                        trail_str = format_dia_trail(curr, connects=connects_to_next)
                     self.modules["os"] = {
                         "disabled": False,
                         "style": f"fg:{fg} bg:{bg}",
@@ -1434,12 +1610,19 @@ class OmpTranspiler:
                     "format": f"{lead_str}[ 󰁹 $percentage ](fg:{fg} bg:{bg}){trail_str}",
                 }
             elif mod_name == "sudo":
-                if bg:
+                pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
+                if is_first and (curr.get("trailing") in ("\ue0c4", "\ue0c5", "\ue0c6") or pwr_sym == "\ue0c4"):
+                    self.modules["sudo"] = {
+                        "disabled": False,
+                        "style": f"fg:{fg} bg:{bg}",
+                        "format": f"[](fg:{bg})[ ⚡ ](fg:{fg} bg:{bg})[](fg:{bg}) ",
+                    }
+                elif bg:
                     lead_str = format_dia_lead(curr, lead_chevron)
                     trail_str = format_dia_trail(curr, connects=connects_to_next)
                     self.modules["sudo"] = {
                         "style": f"fg:{fg} bg:{bg}",
-                        "format": f"{lead_str}[ {icon}]($style){trail_str}",
+                        "format": f"{lead_str}[ ⚡ ]($style){trail_str}",
                         "disabled": False,
                     }
                 else:
@@ -1451,6 +1634,9 @@ class OmpTranspiler:
                 if bg:
                     lead_str = format_dia_lead(curr, lead_chevron)
                     trail_str = format_dia_trail(curr, connects=connects_to_next)
+                    pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
+                    host_trail = "" if (pwr_sym in ("\ue0b4", "") and next_mod and next_mod.get("bg")) else trail_str
+                    user_trail = "" if (pwr_sym in ("\ue0b4", "") and next_mod and next_mod.get("bg")) else trail_str
                     if curr.get("has_host"):
                         sep = curr.get("extra_text") or "@"
                         self.modules["username"] = {
@@ -1458,12 +1644,12 @@ class OmpTranspiler:
                             "show_always": True,
                         }
                         self.modules["hostname"] = {
-                            "format": f"[{sep}$hostname ](fg:{fg} bg:{bg}){trail_str}",
+                            "format": f"[{sep}$hostname ](fg:{fg} bg:{bg}){host_trail}",
                             "ssh_only": False,
                         }
                     else:
                         self.modules["username"] = {
-                            "format": f"{lead_str}[ {icon}$user ](fg:{fg} bg:{bg}){trail_str}",
+                            "format": f"{lead_str}[ {icon}$user ](fg:{fg} bg:{bg}){user_trail}",
                             "show_always": True,
                         }
                 else:
@@ -1474,7 +1660,8 @@ class OmpTranspiler:
             elif mod_name == "directory":
                 icon_part = f"{icon}" if icon else ""
                 lead_str = format_dia_lead(curr, lead_chevron)
-                trail_str = format_dia_trail(curr, connects=connects_to_next)
+                pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
+                trail_str = "" if (pwr_sym in ("\ue0b4", "") and next_mod and next_mod.get("bg")) else format_dia_trail(curr, connects=connects_to_next)
                 self.modules["directory"] = {
                     "format": f"{lead_str}[ {icon_part}$path ](fg:{fg} bg:{bg}){trail_str}",
                     "truncation_length": 3,
@@ -1485,8 +1672,17 @@ class OmpTranspiler:
                 dir_mod = next((p for p in l1_mods if p["mod_name"] == "directory"), None)
                 same_bg = bool((prev_mod and prev_mod.get("bg") == bg) or (dir_mod and dir_mod.get("bg") == bg))
                 lead_str = format_dia_lead(curr, lead_chevron)
-                def_close = f"[](fg:{bg})" if next_has_inward else f"[](fg:{bg}) "
-                trail_str = format_dia_trail(curr, connects=connects_to_next, default_close=def_close)
+                pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
+                if pwr_sym in ("", "\ue0b4"):
+                    def_close = ""
+                elif pwr_sym in ("\ue0c4", "\ue0c5"):
+                    def_close = f"[](fg:{bg}) " if not next_has_inward else f"[](fg:{bg})"
+                else:
+                    def_close = f"[](fg:{bg})" if next_has_inward else f"[](fg:{bg}) "
+                if pwr_sym in ("\ue0b4", "") or (not next_mod and is_single_line):
+                    trail_str = ""
+                else:
+                    trail_str = format_dia_trail(curr, connects=connects_to_next, default_close=def_close)
 
                 if same_bg:
                     self.modules["git_branch"] = {
@@ -1852,6 +2048,24 @@ class OmpTranspiler:
         ]
 
         lines.append("format = \"\"\"")
+
+        pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
+        if pwr_sym == "\ue0c4" and "sudo" in self.modules:
+            badge_fmt = self.modules["sudo"].get("format", "").strip()
+            if badge_fmt.startswith("[") or badge_fmt.startswith("[\ue0c7"):
+                del self.modules["sudo"]
+                if "$sudo" in line1_left_mods:
+                    line1_left_mods.remove("$sudo")
+                lines.append(f"{badge_fmt} \\")
+
+        if getattr(self, "has_bracket_frame", False):
+            bracket_fg = getattr(self, "bracket_fg", "#CB4B16")
+            lines.append(f"[┏](fg:{bracket_fg})\\")
+            if "sudo" in self.modules:
+                del self.modules["sudo"]
+            for idx, m in enumerate(line1_left_mods):
+                if m == "$sudo":
+                    line1_left_mods[idx] = rf"[\\[](fg:{bracket_fg})[⚡](fg:#ffffff)[\\]](fg:{bracket_fg})"
 
         # Line 1 Left
         for m in line1_left_mods:

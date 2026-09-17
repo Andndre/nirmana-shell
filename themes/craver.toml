@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: craver
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,45 +8,61 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$time\
+[](fg:#f1184c)[ ⚡ ](fg:#242424 bg:#f1184c)[](fg:#f1184c) \
+$os\
 $directory\
 $git_branch\
 $git_status\
 $dotnet\
 $cmd_duration\
+$status\
 $line_break\
 $character\
 """
 
-[time]
-format = "[  $time ](fg:#FFBB00 bg:#242424)"
+[character]
+success_symbol = "[➔  ](bold #f1184c) "
+error_symbol = "[➔  ](bold #ef5350) "
+
+[os]
 disabled = false
-time_format = "%H:%M:%S"
+style = "fg:#3A86FF bg:#282c34"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
 
 [directory]
-format = "[  $path ](fg:#33DD2D bg:#242424)"
+format = "[](fg:prev_bg bg:#242424)[  $path ](fg:#33DD2D bg:#242424)"
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[  $branch ](fg:#3A86FF bg:#242424)"
+
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#3A86FF bg:#242424))"
-modified = " ✎"
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[git_branch]
-format = "[  $branch](fg:#3A86FF bg:#242424)"
+modified = " ~${count}"
+staged = " +${count}"
+stashed = " *${count}"
+ahead = " ↑${count}"
+behind = " ↓${count}"
+diverged = " ↕↑${ahead_count}↓${behind_count}"
+deleted = " -${count}"
 
 [dotnet]
-format = "[](fg:#242424 bg:#0184bc)[ 󰪮 $version ](fg:#ffffff bg:#0184bc)"
+format = "[](fg:prev_bg bg:#0184bc)[ 󰪮 $version ](fg:#ffffff bg:#0184bc)"
 
 [cmd_duration]
-format = "[](fg:#0184bc bg:#8800dd)[  $duration ](fg:#ffffff bg:#8800dd)[](fg:#8800dd) "
+format = "[](fg:prev_bg bg:#8800dd)[  $duration ](fg:#ffffff bg:#8800dd)"
 min_time = 1
+show_milliseconds = true
 
-[character]
-success_symbol = "[➜ ](bold #f1184c) "
-error_symbol = "[➜ ](bold #ef5350) "
+[status]
+format = "[](fg:prev_bg bg:#33DD2D)[ $symbol ](fg:#242424 bg:#33DD2D)[](fg:#33DD2D) "
+disabled = false
+symbol = "❌"
+success_symbol = ""
