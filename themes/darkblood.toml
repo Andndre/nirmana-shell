@@ -12,7 +12,7 @@ format = """
 $username\
 $git_branch\
 $git_status\
-[\\[](fg:#CB4B16)[⚡](fg:#ffffff)[\\]](fg:#CB4B16)\
+${env_var.ADMIN}\
 $status\
 $line_break\
 $directory\
@@ -34,6 +34,10 @@ format = "[\\[](fg:#CB4B16)[$symbol$branch](fg:#ffffff)[\\]](fg:#CB4B16)"
 
 [git_status]
 disabled = true
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+format = "[\\[](fg:#CB4B16)[⚡](fg:#ffffff)[\\]](fg:#CB4B16)"
 
 [status]
 disabled = false

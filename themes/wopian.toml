@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: wopian
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,11 +8,13 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$os\
 $directory\
 $git_branch\
 $git_status\
 $fill\
 $nodejs\
+$crystal\
 $ruby\
 $python\
 $time\
@@ -23,33 +25,51 @@ $character\
 [fill]
 symbol = " "
 
+[character]
+success_symbol = "[➔  ](bold #A5D6A7) "
+error_symbol = "[➔  ](bold #ef5350) "
+
+[os]
+disabled = false
+style = "bold #18FFFF"
+format = "[ $symbol ]($style) "
+
+[os.symbols]
+Windows = ""
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [directory]
-format = "[ $path](fg:#18FFFF) "
+format = "[$path ](fg:#18FFFF) "
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[ $branch](bold #FFF59D)"
+
 [git_status]
-format = "([$all_status$ahead_behind](red) )"
+format = "([$all_status$ahead_behind](bold #FFF59D)) "
 modified = " ✎"
 staged = " "
-
-[git_branch]
-format = "[ $branch](#FFF59D) "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [nodejs]
-format = "[ 󰎙 $version ](fg:#68a063)"
+format = "[ 󰎙 $version ](bold #68a063)"
+
+[crystal]
+format = "[  $version ](bold #4063D8)"
 
 [ruby]
-format = "[  $version ](fg:#DE3F24)"
+format = "[  $version ](bold #DE3F24)"
 
 [python]
-format = "[ 󰌠 $version ](fg:#FED142)"
+format = "[ 󰌠 $version ](bold #FED142)"
 
 [time]
-format = "[  $time ](fg:#A5D6A7)"
+format = "[ $time ](bold #A5D6A7)"
 disabled = false
 time_format = "%H:%M:%S"
-
-[character]
-success_symbol = "[➜ ](bold #A5D6A7) "
-error_symbol = "[➜ ](bold #ef5350) "

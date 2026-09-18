@@ -87,7 +87,7 @@ The `nirmana-shell` command (alias: `nirmana`) is registered globally:
 
 ### Available Themes and Presets
 
-Supports 18 curated custom themes, 108 ported Oh My Posh community themes, and 10 official Starship presets (total: 136 themes). All themes are fully integrated with the interactive FZF switcher (`nirmana theme`).
+Supports 17 curated custom themes, 109 ported Oh My Posh community themes, and 10 official Starship presets (total: 136 themes). All themes are fully integrated with the interactive FZF switcher (`nirmana theme`).
 
 <details open>
 <summary><b>Custom Themes Gallery (18 Curated Themes)</b></summary>
@@ -116,7 +116,7 @@ Supports 18 curated custom themes, 108 ported Oh My Posh community themes, and 1
 </details>
 
 <details>
-<summary><b>Ported Oh My Posh Themes (108 Themes - Click to Expand)</b></summary>
+<summary><b>Ported Oh My Posh Themes (109 Themes - Click to Expand)</b></summary>
 
 | Theme | Preview | Command |
 | :---- | :------ | :------ |
@@ -292,6 +292,12 @@ Alternatively, run the transpiler script directly via `uv`:
 
 ```powershell
 uv run python scripts/convert-omp.py quick-term --output themes/quick-term.toml
+```
+
+Regenerate the maintained Oh My Posh collection directly from the upstream repository. This rewrites only the themes listed in [`scripts/omp-themes.txt`](scripts/omp-themes.txt); curated Nirmana themes remain unchanged.
+
+```powershell
+uv run --with rich --with resvg-py python scripts/convert-omp.py --upstream --output themes
 ```
 
 ---

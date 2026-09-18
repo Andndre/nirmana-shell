@@ -9,7 +9,7 @@ add_newline = true
 
 format = """
 $os\
-$sudo\
+${env_var.ADMIN}\
 $directory\
 $git_branch\
 $git_status\
@@ -49,7 +49,7 @@ format = "[╰─](fg:#21c7a8)$symbol"
 [os]
 disabled = false
 style = "fg:#011627 bg:#21c7a8"
-format = "[╭─](fg:#21c7a8)[ $symbol ]($style)"
+format = "[╭─](fg:#21c7a8)[ $symbol ]($style)[](fg:#21c7a8)"
 
 [os.symbols]
 Windows = "󰕮"
@@ -57,18 +57,18 @@ Ubuntu = ""
 Macos = ""
 Linux = ""
 
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "fg:#ffeb95 bg:#ef5350"
-format = "[](fg:prev_bg bg:#ef5350)[  ]($style)"
-disabled = false
+format = "[](fg:#ef5350 inverted)[ ⚡ ]($style)"
 
 [directory]
-format = "[](fg:prev_bg bg:#82AAFF)[ $path ](fg:#011627 bg:#82AAFF)"
+format = "[](fg:prev_bg bg:#82AAFF)[ $path ](fg:#011627 bg:#82AAFF)"
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[](fg:prev_bg bg:#addb67)[  $branch ](fg:#011627 bg:#addb67)"
+format = "[](fg:prev_bg bg:#addb67)[  $branch ](fg:#011627 bg:#addb67)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#011627 bg:#addb67))"

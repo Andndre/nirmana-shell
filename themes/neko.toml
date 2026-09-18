@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: neko
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -11,32 +11,21 @@ format = """
 $directory\
 $git_branch\
 $git_status\
-$character\
-$fill\
-$directory\
-$git_branch\
 $time\
+$character\
 """
 
-[fill]
-symbol = " "
+[character]
+success_symbol = "[😀💬 ~ ](bold #FF8000) "
+error_symbol = "[😀💬 ~ ](bold #ef5350) "
 
 [directory]
-format = "[  $path ](fg:#56B6C2)"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
+format = "[ $path ](bold #56B6C2)"
 
 [git_branch]
-format = "[  $branch ](fg:#D0666F)"
+format = "[  $branch ](bold #D0666F)"
 
 [time]
-format = "[  $time ](fg:#1a415d)"
+format = "[ $time ](bold #1a415d)"
 disabled = false
 time_format = "%H:%M"
-
-[character]
-success_symbol = ""
-error_symbol = ""

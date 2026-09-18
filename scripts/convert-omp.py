@@ -14,6 +14,7 @@ import os
 import re
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 from collections import Counter
 from pathlib import Path
@@ -119,6 +120,9 @@ STANDARD_DEVELOPER_RUNTIMES = [
     ("package", "$package", "󰏗 ", "#AEA4BF"),
 ]
 
+OMP_UPSTREAM_REPOSITORY = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh"
+DEFAULT_OMP_MANIFEST = Path(__file__).with_name("omp-themes.txt")
+
 
 def convert_go_date_format(go_fmt: str) -> str:
     """Convert Go time reference format to strftime format."""
@@ -158,7 +162,7 @@ def parse_omp_markup(text: Optional[str], default_fg: Optional[str] = None) -> s
     return "".join(spans)
 
 
-def parse_omp_json(source: str) -> Tuple[Dict[str, Any], str]:
+def parse_omp_json(source: str, upstream_ref: str = "main") -> Tuple[Dict[str, Any], str]:
     """Load JSON from local file, remote URL, or Oh My Posh official theme name."""
     theme_name = ""
     url = source
@@ -166,7 +170,9 @@ def parse_omp_json(source: str) -> Tuple[Dict[str, Any], str]:
         path = Path(source)
         if not path.exists():
             candidate_name = source.replace(".omp.json", "").replace(".json", "")
-            url = f"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/{candidate_name}.omp.json"
+            encoded_ref = urllib.parse.quote(upstream_ref, safe="")
+            encoded_name = urllib.parse.quote(candidate_name, safe="._-")
+            url = f"{OMP_UPSTREAM_REPOSITORY}/{encoded_ref}/themes/{encoded_name}.omp.json"
             theme_name = candidate_name
         else:
             data = path.read_text(encoding="utf-8")
@@ -187,6 +193,27 @@ def parse_omp_json(source: str) -> Tuple[Dict[str, Any], str]:
         except Exception as e:
             print(f"Error fetching Oh My Posh theme '{source}': {e}", file=sys.stderr)
             sys.exit(1)
+
+
+def load_theme_manifest(manifest_path: Path) -> List[str]:
+    """Read the maintained list of upstream Oh My Posh themes to transpile."""
+    if not manifest_path.is_file():
+        raise FileNotFoundError(f"Theme manifest not found: {manifest_path}")
+
+    themes: List[str] = []
+    for line_number, raw_line in enumerate(manifest_path.read_text(encoding="utf-8").splitlines(), start=1):
+        theme_name = raw_line.strip()
+        if not theme_name or theme_name.startswith("#"):
+            continue
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", theme_name):
+            raise ValueError(f"Invalid theme name at {manifest_path}:{line_number}: {theme_name}")
+        themes.append(theme_name)
+
+    if not themes:
+        raise ValueError(f"Theme manifest is empty: {manifest_path}")
+    if len(themes) != len(set(themes)):
+        raise ValueError(f"Theme manifest contains duplicate entries: {manifest_path}")
+    return themes
 
 
 class OmpTranspiler:
@@ -443,6 +470,7 @@ class OmpTranspiler:
                 prompt_lines[0]["right"] = [s for s in prompt_lines[0]["right"] if s.get("type") not in nav_types]
 
         is_single_line = len(prompt_lines) <= 1
+        self.is_single_line = is_single_line
 
         # Dedup modules between lines in multi-line prompts (e.g. cloud-context)
         if len(prompt_lines) > 1:
@@ -948,7 +976,7 @@ class OmpTranspiler:
             elif "\u26a1" in tmpl or "⚡" in tmpl or "" in tmpl:
                 sym = " "
             return {
-                "mod_name": "sudo", "var_name": "$sudo",
+                "mod_name": "env_var.ADMIN", "var_name": "${env_var.ADMIN}",
                 "fg": fg or "#ffeb95", "bg": bg,
                 "leading": lead, "trailing": trail,
                 "icon": sym, "raw_tmpl": "",
@@ -1170,9 +1198,9 @@ class OmpTranspiler:
                 self.modules["git_status"] = {
                     "disabled": True,
                 }
-            elif mod_name == "sudo":
-                self.modules["sudo"] = {
-                    "disabled": False,
+            elif mod_name in ("sudo", "env_var.ADMIN"):
+                self.modules["env_var.ADMIN"] = {
+                    "variable": "STARSHIP_IS_ADMIN",
                     "style": f"fg:{fg}",
                     "format": f"[\\[](fg:{b_fg})[⚡](fg:{fg})[\\]](fg:{b_fg})",
                 }
@@ -1251,6 +1279,11 @@ class OmpTranspiler:
                         "format": f"{left_b}{icon_str}[$duration](bold {fg}){right_b}",
                         "min_time": 0,
                         "show_milliseconds": True,
+                    }
+                elif mod_name in ("sudo", "env_var.ADMIN"):
+                    self.modules["env_var.ADMIN"] = {
+                        "variable": "STARSHIP_IS_ADMIN",
+                        "format": f"{left_b}[ {icon}](bold {fg}){right_b}",
                     }
                 elif mod_name == "memory_usage":
                     icon_str = f"[ {icon}](bold #ffffff)" if icon else ""
@@ -1353,13 +1386,12 @@ class OmpTranspiler:
                     "Macos": "",
                     "Linux": "",
                 }
-            elif mod_name == "sudo":
+            elif mod_name in ("sudo", "env_var.ADMIN"):
                 fg_col = fg or "#FEF5ED"
-                self.modules["sudo"] = {
+                self.modules["env_var.ADMIN"] = {
+                    "variable": "STARSHIP_IS_ADMIN",
                     "style": f"bold {fg_col}",
                     "format": f"[# ](fg:{fg_col}) " if ("#" in curr.get("template", "") or "\uf292" in curr.get("template", "")) else f"[ {icon}]($style) ",
-                    "allow_windows": True,
-                    "disabled": False,
                 }
             elif mod_name == "status":
                 sym = curr.get("icon") or "❌"
@@ -1405,11 +1437,11 @@ class OmpTranspiler:
                     "Macos": "",
                     "Linux": "",
                 }
-            elif mod_name == "sudo":
-                self.modules["sudo"] = {
+            elif mod_name in ("sudo", "env_var.ADMIN"):
+                self.modules["env_var.ADMIN"] = {
+                    "variable": "STARSHIP_IS_ADMIN",
                     "style": f"fg:{fg} bg:{bg}",
                     "format": f"[](fg:{bg})[ {icon}]($style)[](fg:{bg}) ",
-                    "disabled": False,
                 }
             elif mod_name == "directory":
                 icon_str = f" {icon}" if icon else " "
@@ -1609,26 +1641,26 @@ class OmpTranspiler:
                     "disabled": False,
                     "format": f"{lead_str}[ 󰁹 $percentage ](fg:{fg} bg:{bg}){trail_str}",
                 }
-            elif mod_name == "sudo":
+            elif mod_name in ("sudo", "env_var.ADMIN"):
                 pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
                 if is_first and (curr.get("trailing") in ("\ue0c4", "\ue0c5", "\ue0c6") or pwr_sym == "\ue0c4"):
-                    self.modules["sudo"] = {
-                        "disabled": False,
+                    self.modules["env_var.ADMIN"] = {
+                        "variable": "STARSHIP_IS_ADMIN",
                         "style": f"fg:{fg} bg:{bg}",
                         "format": f"[](fg:{bg})[ ⚡ ](fg:{fg} bg:{bg})[](fg:{bg}) ",
                     }
                 elif bg:
                     lead_str = format_dia_lead(curr, lead_chevron)
                     trail_str = format_dia_trail(curr, connects=connects_to_next)
-                    self.modules["sudo"] = {
+                    self.modules["env_var.ADMIN"] = {
+                        "variable": "STARSHIP_IS_ADMIN",
                         "style": f"fg:{fg} bg:{bg}",
                         "format": f"{lead_str}[ ⚡ ]($style){trail_str}",
-                        "disabled": False,
                     }
                 else:
-                    self.modules["sudo"] = {
+                    self.modules["env_var.ADMIN"] = {
+                        "variable": "STARSHIP_IS_ADMIN",
                         "format": f"[# ](fg:{fg}) " if "#" in curr.get("template", "") else f"[ {icon}](fg:{fg}) ",
-                        "disabled": False,
                     }
             elif mod_name == "username":
                 if bg:
@@ -1679,7 +1711,7 @@ class OmpTranspiler:
                     def_close = f"[](fg:{bg}) " if not next_has_inward else f"[](fg:{bg})"
                 else:
                     def_close = f"[](fg:{bg})" if next_has_inward else f"[](fg:{bg}) "
-                if pwr_sym in ("\ue0b4", "") or (not next_mod and is_single_line):
+                if pwr_sym in ("\ue0b4", "") or (not next_mod and getattr(self, "is_single_line", False)):
                     trail_str = ""
                 else:
                     trail_str = format_dia_trail(curr, connects=connects_to_next, default_close=def_close)
@@ -1856,6 +1888,11 @@ class OmpTranspiler:
                     "disabled": False,
                     "format": f"{lead_str}[ {icon}{raw_tmpl} ](fg:{fg} bg:{bg}){trail_str}",
                 }
+            elif mod_name == "env_var.ADMIN":
+                self.modules["env_var.ADMIN"] = {
+                    "variable": "STARSHIP_IS_ADMIN",
+                    "format": f"{lead_str}[ {icon}{raw_tmpl} ](fg:{fg} bg:{bg}){trail_str}",
+                }
             else:
                 self.modules[mod_name] = {
                     "format": f"{lead_str}[ {icon}{raw_tmpl} ](fg:{fg} bg:{bg}){trail_str}",
@@ -1896,6 +1933,8 @@ class OmpTranspiler:
                 res["format"] = f"[{icon_s}{raw_tmpl} ](bold {fg})"
             elif prefix:
                 res["format"] = f"{prefix}[ {icon_s}{raw_tmpl} ](bold {fg})"
+            if mod_name == "env_var.ADMIN":
+                res["variable"] = "STARSHIP_IS_ADMIN"
             self.modules[mod_name] = res
 
         # Case 2: Powerline style with Starship PR #6017 prev_bg
@@ -1955,6 +1994,8 @@ class OmpTranspiler:
                 res["symbol"] = ""
             elif mod_name == "battery":
                 res["disabled"] = False
+            elif mod_name == "env_var.ADMIN":
+                res["variable"] = "STARSHIP_IS_ADMIN"
             self.modules[mod_name] = res
 
         # Case 3: Unified Surface Ribbon (Capsule Themes)
@@ -1989,6 +2030,8 @@ class OmpTranspiler:
                 res["symbol"] = ""
             elif mod_name == "battery":
                 res["disabled"] = False
+            elif mod_name == "env_var.ADMIN":
+                res["variable"] = "STARSHIP_IS_ADMIN"
             self.modules[mod_name] = res
 
         # Case 4: Floating Pills
@@ -2023,6 +2066,8 @@ class OmpTranspiler:
                 res["symbol"] = ""
             elif mod_name == "battery":
                 res["disabled"] = False
+            elif mod_name == "env_var.ADMIN":
+                res["variable"] = "STARSHIP_IS_ADMIN"
             self.modules[mod_name] = res
 
     def render_toml(
@@ -2049,23 +2094,18 @@ class OmpTranspiler:
 
         lines.append("format = \"\"\"")
 
-        pwr_sym = getattr(self, "powerline_symbol", "\ue0b0")
-        if pwr_sym == "\ue0c4" and "sudo" in self.modules:
-            badge_fmt = self.modules["sudo"].get("format", "").strip()
-            if badge_fmt.startswith("[") or badge_fmt.startswith("[\ue0c7"):
-                del self.modules["sudo"]
-                if "$sudo" in line1_left_mods:
-                    line1_left_mods.remove("$sudo")
-                lines.append(f"{badge_fmt} \\")
-
         if getattr(self, "has_bracket_frame", False):
             bracket_fg = getattr(self, "bracket_fg", "#CB4B16")
             lines.append(f"[┏](fg:{bracket_fg})\\")
-            if "sudo" in self.modules:
-                del self.modules["sudo"]
+            if "env_var.ADMIN" in self.modules or "sudo" in self.modules:
+                self.modules.pop("sudo", None)
+                self.modules["env_var.ADMIN"] = {
+                    "variable": "STARSHIP_IS_ADMIN",
+                    "format": f"[\\[](fg:{bracket_fg})[⚡](fg:#ffffff)[\\]](fg:{bracket_fg})",
+                }
             for idx, m in enumerate(line1_left_mods):
-                if m == "$sudo":
-                    line1_left_mods[idx] = rf"[\\[](fg:{bracket_fg})[⚡](fg:#ffffff)[\\]](fg:{bracket_fg})"
+                if m in ("$sudo", "${env_var.ADMIN}"):
+                    line1_left_mods[idx] = "${env_var.ADMIN}"
 
         # Line 1 Left
         for m in line1_left_mods:
@@ -2106,6 +2146,8 @@ class OmpTranspiler:
         for mod_name, mod_data in self.modules.items():
             lines.append(f"[{mod_name}]")
             for k, v in mod_data.items():
+                if mod_name == "battery" and k == "style":
+                    continue
                 if isinstance(v, bool):
                     lines.append(f"{k} = {str(v).lower()}")
                 elif isinstance(v, (int, float)):
@@ -2191,6 +2233,7 @@ def generate_theme_preview(toml_path: Path, theme_name: str, repo_root: Path) ->
         env = os.environ.copy()
         env["STARSHIP_CONFIG"] = str(toml_path.resolve())
         env["AZURE_CONFIG_DIR"] = str(azure_dir)
+        env["STARSHIP_IS_ADMIN"] = "1"
         proc = subprocess.run(
             ["starship", "prompt", "--path", str(mock_dir), "--status", "0", "--cmd-duration", "2500", "--terminal-width", "88"],
             env=env,
@@ -2241,7 +2284,7 @@ def main():
     parser = argparse.ArgumentParser(
         description="Transpile Oh My Posh theme JSON to clean Starship TOML for Nirmana-Shell."
     )
-    parser.add_argument("input", help="Path to .omp.json file, HTTP/HTTPS URL, or OMP theme name")
+    parser.add_argument("input", nargs="?", help="Path to .omp.json file, HTTP/HTTPS URL, or OMP theme name")
     parser.add_argument("-o", "--output", help="Output path for .toml file or directory (if batch)")
     parser.add_argument("-n", "--name", help="Theme name identifier override")
     parser.add_argument("--style", choices=["capsule", "powerline", "flat"], help="Visual style override")
@@ -2252,9 +2295,55 @@ def main():
     parser.add_argument("--add-runtimes", action="store_true", help="Force injection of developer runtime modules even on flat themes")
     parser.add_argument("--no-preview", action="store_true", help="Skip generating ANSI and PNG preview cards")
     parser.add_argument("--batch", action="store_true", help="Treat input as a directory of .omp.json files")
+    parser.add_argument("--upstream", action="store_true", help="Regenerate every theme in the manifest from the official Oh My Posh repository")
+    parser.add_argument("--manifest", type=Path, default=DEFAULT_OMP_MANIFEST, help="Theme manifest used with --upstream")
+    parser.add_argument("--upstream-ref", default="main", help="Oh My Posh git ref used with --upstream (default: main)")
 
     args = parser.parse_args()
     repo_root = Path(__file__).resolve().parent.parent
+
+    if args.upstream:
+        if args.batch or args.input:
+            parser.error("--upstream cannot be combined with input or --batch")
+        try:
+            theme_names = load_theme_manifest(args.manifest)
+        except (FileNotFoundError, ValueError) as error:
+            parser.error(str(error))
+
+        out_dir = Path(args.output) if args.output else repo_root / "themes"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        failures = []
+        print(f"Regenerating {len(theme_names)} OMP themes from {args.upstream_ref}...")
+        for theme_name in theme_names:
+            try:
+                data, parsed_name = parse_omp_json(theme_name, args.upstream_ref)
+                transpiler = OmpTranspiler(
+                    data,
+                    theme_name=parsed_name,
+                    use_fill=not args.no_fill,
+                    left_style_override=args.style,
+                    use_pills=args.pills,
+                    ribbon_bg_override=args.ribbon_bg,
+                    add_runtimes=not args.no_runtimes,
+                    force_runtimes=args.add_runtimes,
+                )
+                out_file = out_dir / f"{parsed_name}.toml"
+                out_file.write_text(transpiler.transpile(), encoding="utf-8")
+                print(f"  [OK] {parsed_name} -> {out_file}")
+                if not args.no_preview:
+                    generate_theme_preview(out_file, parsed_name, repo_root)
+            except Exception as error:
+                failures.append(theme_name)
+                print(f"  [ERROR] {theme_name}: {error}", file=sys.stderr)
+
+        if failures:
+            print(f"Upstream regeneration failed for {len(failures)} theme(s): {', '.join(failures)}", file=sys.stderr)
+            sys.exit(1)
+        print("Upstream regeneration complete.")
+        return
+
+    if not args.input:
+        parser.error("input is required unless --upstream is specified")
 
     if args.batch:
         input_dir = Path(args.input)

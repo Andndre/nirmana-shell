@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: mojada
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,31 +8,55 @@ command_timeout = 1000
 add_newline = false
 
 format = """
+$os\
 $username\
+$hostname\
+${env_var.ADMIN}\
 $directory\
 $git_branch\
 $git_status\
 $character\
-$fill\
-$cmd_duration\
-$battery\
-$time\
 """
 
-[fill]
-symbol = " "
+[character]
+format = "$symbol"
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
+
+[os]
+disabled = false
+style = "fg:#0077c2 bg:#fbfbfb"
+format = "[](fg:#fbfbfb)[ $symbol ]($style)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
 
 [username]
-format = "[](fg:#fbfbfb)[$user ](fg:#0077c2 bg:#fbfbfb)"
+format = "[ ](fg:#0077c2 bg:#fbfbfb)[ $user](fg:#0077c2 bg:#fbfbfb)"
 show_always = true
 
+[hostname]
+format = "[<#000000>@</><#e06c75>$hostname ](fg:#0077c2 bg:#fbfbfb)"
+ssh_only = false
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#ffffff bg:#e06c75"
+format = "[](fg:prev_bg bg:#e06c75)[ ⚡ ]($style)"
+
 [directory]
-format = "[](fg:#fbfbfb bg:#0077c2)[  $path ](fg:#ffffff bg:#0077c2)"
+format = "[](fg:prev_bg bg:#0077c2)[ $path ](fg:#ffffff bg:#0077c2)"
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[](fg:prev_bg bg:#fffb38)[  $branch ](fg:#193549 bg:#fffb38)"
+
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#193549 bg:#fffb38))[](fg:#fffb38) "
+format = "([$all_status$ahead_behind ](fg:#193549 bg:#fffb38))"
 modified = " ✎"
 staged = " "
 stashed = " "
@@ -40,21 +64,22 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#0077c2 bg:#fffb38)[  $branch](fg:#193549 bg:#fffb38)"
+[status]
+format = "[](fg:#0b2942 bg:prev_bg)[ $status ](fg:#ffffff bg:#0b2942)"
 
 [cmd_duration]
-format = "[  $duration ](fg:#ffffff)"
+format = "[](fg:#0b2942 bg:prev_bg)[ $duration ](fg:#ffffff bg:#0b2942)"
+min_time = 2000
 
 [battery]
-format = "[ 󰁹 $percentage ](fg:#ffffff bg:#f36943)"
+format = "[](fg:#f36943 bg:prev_bg)[ 󰁹 $percentage ](fg:#ffffff bg:#f36943)"
 disabled = false
+
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"
 
 [time]
-format = "[](fg:#61afef bg:#f36943)[  $time ](fg:#ffffff bg:#61afef)"
+format = "[](fg:#61afef bg:prev_bg)[ $time ](fg:#ffffff bg:#61afef)[](fg:#61afef)"
 disabled = false
 time_format = "%H:%M (%a)"
-
-[character]
-success_symbol = ""
-error_symbol = ""

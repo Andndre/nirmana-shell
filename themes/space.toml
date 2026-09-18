@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: space
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,54 +8,70 @@ command_timeout = 1000
 add_newline = false
 
 format = """
+$os\
 $username\
 $directory\
 $git_branch\
 $git_status\
-$python\
 $golang\
 $nodejs\
+$julia\
+$python\
 $ruby\
 $java\
-$julia\
 $character\
 """
 
+[character]
+success_symbol = "[❯ ](bold #FFD54F) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[os]
+disabled = false
+style = "bold #26C6DA"
+format = "[ $symbol ]($style) "
+
+[os.symbols]
+Windows = ""
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [username]
-format = "[$user](fg:#26C6DA) "
+format = "[$user ](bold #26C6DA)"
 show_always = true
 
 [directory]
-format = "[ $path](fg:#A5D6A7) "
+format = "[$path ](fg:#A5D6A7) "
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[on ](fg:#ffffff)[ $branch](bold #addb67)"
+
 [git_status]
-format = "([$all_status$ahead_behind](red) )"
+format = "([$all_status$ahead_behind](bold #addb67)) "
 modified = " ✎"
 staged = " "
-
-[git_branch]
-format = "[ $branch](white) "
-
-[python]
-format = "[󰌠 $version](fg:#906cff) "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [golang]
-format = "[ $version](fg:#7FD5EA) "
+format = "[ $version ](bold #7FD5EA) "
 
 [nodejs]
-format = "[󰎙 $version](fg:#76b367) "
-
-[ruby]
-format = "[ $version](fg:#f44336) "
-
-[java]
-format = "[ $version](fg:#ea2d2e) "
+format = "[ $version ](bold #76b367) "
 
 [julia]
-format = "[ $version](fg:#4063D8) "
+format = "[ $version ](bold #4063D8) "
 
-[character]
-success_symbol = ""
-error_symbol = ""
+[python]
+format = "[ 󰌠 $version ](bold #906cff)"
+
+[ruby]
+format = "[  $version ](bold #f44336)"
+
+[java]
+format = "[  $version ](bold #ea2d2e)"

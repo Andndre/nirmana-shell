@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: chips
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -12,20 +12,40 @@ $directory\
 $git_branch\
 $git_status\
 $fill\
+$nodejs\
+$python\
+$golang\
+$rust\
+$php\
+$package\
 $cmd_duration\
 $time\
 $battery\
 $line_break\
+$username\
+$crystal\
+$dart\
+$lua\
+$nodejs\
+$rust\
+$python\
 $character\
 """
 
 [fill]
 symbol = " "
 
+[character]
+success_symbol = "[❯ ](bold #FAFAFA) "
+error_symbol = "[❯ ](bold #ef5350) "
+
 [directory]
-format = "[](fg:#FFD770)[  $path ](fg:#212121 bg:#FFD770)"
+format = "[](fg:#FFD770)[ $path ](fg:#212121 bg:#FFD770)[](fg:#FFD770) "
 truncation_length = 3
 truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:#66FFA6)[  $branch ](fg:#212121 bg:#66FFA6)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#212121 bg:#66FFA6))[](fg:#66FFA6) "
@@ -36,21 +56,50 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#FFD770 bg:#66FFA6)[  $branch](fg:#212121 bg:#66FFA6)"
+[nodejs]
+format = "[](fg:#FF867F)[  $version ](fg:#212121 bg:#FF867F)[](fg:#FF867F) "
+
+[python]
+format = "[](fg:#FF867F)[ 󰌠 $version ](fg:#212121 bg:#FF867F)[](fg:#FF867F) "
+
+[golang]
+format = "[](fg:#0b2942)[  $version ](fg:#06AAD5 bg:#0b2942)[](fg:#0b2942) "
+
+[rust]
+format = "[](fg:#FF867F)[  $version ](fg:#212121 bg:#FF867F)[](fg:#FF867F) "
+
+[php]
+format = "[](fg:#0b2942)[  $version ](fg:#787CB5 bg:#0b2942)[](fg:#0b2942) "
+
+[package]
+format = "[](fg:#0b2942)[ 󰏗 $version ](fg:#AEA4BF bg:#0b2942)[](fg:#0b2942) "
 
 [cmd_duration]
-format = "[](fg:#C6FF00)[  $duration ](fg:#212121 bg:#C6FF00)"
+format = "[](fg:#C6FF00)[ $duration ](fg:#212121 bg:#C6FF00)[](fg:#C6FF00) "
+min_time = 2000
 
 [time]
-format = "[](fg:#FFFF8D bg:#C6FF00)[  $time ](fg:#212121 bg:#FFFF8D)"
+format = "[](fg:#FFFF8D)[ $time ](fg:#212121 bg:#FFFF8D)[](fg:#FFFF8D) "
 disabled = false
 time_format = "%H:%M (%m/%d)"
 
 [battery]
-format = "[](fg:#FF867F bg:#FFFF8D)[ 󰁹 $percentage ](fg:#212121 bg:#FF867F)"
+format = "[](fg:#FF867F)[ 󰁹 $percentage ](fg:#212121 bg:#FF867F)[](fg:#FF867F) "
 disabled = false
 
-[character]
-success_symbol = "[❯ ](bold #FAFAFA) "
-error_symbol = "[❯ ](bold #ef5350) "
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"
+
+[username]
+format = "[$user ](bold #43CCEA)"
+show_always = true
+
+[crystal]
+format = "[](fg:#FF867F)[  $version ](fg:#212121 bg:#FF867F)[](fg:#FF867F) "
+
+[dart]
+format = "[](fg:#FF867F)[  $version ](fg:#212121 bg:#FF867F)[](fg:#FF867F) "
+
+[lua]
+format = "[](fg:#FF867F)[  $version ](fg:#212121 bg:#FF867F)[](fg:#FF867F) "

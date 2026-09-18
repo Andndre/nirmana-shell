@@ -14,7 +14,7 @@ $git_branch\
 $git_status\
 $fill\
 $cmd_duration\
-$sudo\
+${env_var.ADMIN}\
 $memory_usage\
 $line_break\
 $directory\
@@ -29,7 +29,7 @@ success_symbol = "[ ](bold #A9FFB4) "
 error_symbol = "[ ](bold #ef5350) "
 
 [username]
-format = "[  ](bold #ff70a6)[$user ](bold #ffbebc) [on](bold #ffffff)"
+format = "[  ](bold #ff70a6)[$user ](bold #ffbebc)"
 show_always = true
 
 [time]
@@ -53,8 +53,9 @@ diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 format = "[  $duration ](bold #a9ffb4)"
 min_time = 2000
 
-[sudo]
+[env_var.ADMIN]
 format = "[   ](bold #ffeb95)"
+variable = "STARSHIP_IS_ADMIN"
 
 [memory_usage]
 format = "[MEM:](fg:#ffffff)[$ram_pct ($ram) ]($style)"

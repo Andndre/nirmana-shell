@@ -17,8 +17,7 @@ $git_branch\
 $git_status\
 $line_break\
 [╭─](fg:#FEF5ED) \
-$time\
-$sudo\
+${env_var.ADMIN}\
 $directory\
 $line_break\
 $character\
@@ -35,7 +34,7 @@ error_symbol = "[x ](bold #ef5350)"
 [os]
 disabled = false
 style = "fg:#011627 bg:#FEF5ED"
-format = "[](fg:#FEF5ED)[ $symbol ]($style)[](fg:#FEF5ED inverted) "
+format = "[](fg:#FEF5ED)[ $symbol ]($style)"
 
 [os.symbols]
 Windows = "󰕮"
@@ -78,16 +77,10 @@ staged = " +${count} "
 stashed = " ${count} "
 untracked = " ${count} "
 
-[time]
-format = "[♡ $time |](fg:#FEF5ED) "
-disabled = false
-time_format = "%H:%M"
-
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "bold #ffeb95"
 format = "[# ](fg:#ffeb95) "
-allow_windows = true
-disabled = false
 
 [directory]
 format = "[$path ](fg:#FEF5ED) "

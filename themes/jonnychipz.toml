@@ -14,7 +14,7 @@ $azure\
 $status\
 $line_break\
 $os\
-$sudo\
+${env_var.ADMIN}\
 $directory\
 $git_branch\
 $git_status\
@@ -31,18 +31,18 @@ format = "[](fg:#4707a8)[ $user](fg:#ffffff bg:#4707a8)"
 show_always = true
 
 [hostname]
-format = "[@$hostname ](fg:#ffffff bg:#4707a8)"
+format = "[@$hostname ](fg:#ffffff bg:#4707a8)[](fg:#4707a8)"
 ssh_only = false
 
 [azure]
-format = "[](fg:prev_bg bg:#1a1af5)[ 󰠅 $subscription ](fg:#ffffff bg:#1a1af5)"
+format = "[](fg:#1a1af5 inverted)[  $subscription ](fg:#ffffff bg:#1a1af5)[](fg:#1a1af5)"
 disabled = false
 
 [status]
-format = "[](fg:prev_bg bg:#4707a8)[ $symbol ](fg:#ffffff bg:#4707a8)[](fg:#4707a8) "
+format = "[](fg:#4707a8 inverted)[ $symbol ](fg:#ffffff bg:#4707a8)[](fg:#4707a8) "
 disabled = false
 symbol = "❌"
-success_symbol = "󰄬"
+success_symbol = ""
 
 [os]
 disabled = false
@@ -55,23 +55,23 @@ Ubuntu = ""
 Macos = ""
 Linux = ""
 
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "fg:#ffffff bg:#000000"
-format = "[](fg:prev_bg bg:#000000)[  ]($style)"
-disabled = true
+format = "[](fg:prev_bg bg:#000000)[ ⚡ ]($style)"
 
 [directory]
-format = "[  $path ](fg:#000000 bg:#ffffff)"
+format = "[](fg:prev_bg bg:#ffffff)[  $path ](fg:#000000 bg:#ffffff)"
 truncation_length = 3
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[  $branch ](fg:#ffea00 bg:#ffffff)"
+format = "[  $branch ](fg:#000000 bg:#ffffff)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#000000 bg:#ffffff))"
-modified = "[  ${count}](fg:#e84855 bg:#ffffff)"
-staged = "[  ${count}](fg:#2fda4e bg:#ffffff)"
+modified = " ~${count}"
+staged = " +${count}"
 stashed = " *${count}"
 ahead = " ↑${count}"
 behind = " ↓${count}"

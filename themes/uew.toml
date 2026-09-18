@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: uew
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,7 +8,6 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$directory\
 $username\
 $git_branch\
 $git_status\
@@ -16,45 +15,53 @@ $shell\
 $fill\
 $cmd_duration\
 $time\
+${env_var.ADMIN}\
 $nodejs\
 $line_break\
+$directory\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[username]
-format = "[$user](fg:#BBC4B9) "
-show_always = true
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](#BFA8BF) "
-
-[shell]
-format = "[ $version](fg:#BFA8BF) "
-
-[cmd_duration]
-format = "[  $duration ](fg:#ffffff)"
-
-[time]
-format = "[  $time ](fg:#BBC4B9)"
-disabled = false
-time_format = "%A at %I:%M %p"
-
-[nodejs]
-format = "[ 󰎙 $version ](fg:#BBC4B9)"
-
 [character]
 success_symbol = "[~ ](bold #BFA8BF) "
 error_symbol = "[~ ](bold #fff) "
+
+[username]
+format = "[~](bold #BFA8BF)[ ](bold #BBC4B9)[$user ](bold #BBC4B9)"
+show_always = true
+
+[git_branch]
+format = "[on ](fg:#ffffff)[ $branch](bold #BFA8BF)"
+
+[git_status]
+format = "([$all_status$ahead_behind](bold #BFA8BF)) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[cmd_duration]
+format = "[ $duration ](bold #ffffff)"
+min_time = 2000
+
+[time]
+format = "[ $time ](bold #BBC4B9)"
+disabled = false
+time_format = "%A at %I:%M %p"
+
+[env_var.ADMIN]
+format = "[   ](bold #ffeb95)"
+variable = "STARSHIP_IS_ADMIN"
+
+[nodejs]
+format = "[  $version ](bold #BBC4B9)"
+
+[directory]
+format = "[~](bold #BFA8BF)[ $path ](fg:#B6D6F2) "
+truncation_length = 3
+truncation_symbol = "…/"

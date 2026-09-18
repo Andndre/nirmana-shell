@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: nu4a
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -14,21 +14,24 @@ $git_branch\
 $git_status\
 $python\
 $character\
-$fill\
-$cmd_duration\
 """
 
-[fill]
-symbol = " "
+[character]
+format = "$symbol"
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
 
 [username]
-format = "[$user ](fg:#100e23 bg:#cfcfc4)"
+format = "[ $user ](fg:#100e23 bg:#cfcfc4)"
 show_always = true
 
 [directory]
-format = "[](fg:#cfcfc4 bg:#ec9706)[  $path ](fg:#100e23 bg:#ec9706)"
+format = "[](fg:prev_bg bg:#ec9706)[ $path ](fg:#100e23 bg:#ec9706)"
 truncation_length = 3
 truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:prev_bg bg:#3feb56)[  $branch ](fg:#193549 bg:#3feb56)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#193549 bg:#3feb56))"
@@ -39,15 +42,13 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#ec9706 bg:#3feb56)[  $branch](fg:#193549 bg:#3feb56)"
-
 [python]
-format = "[](fg:#3feb56 bg:#906cff)[ 󰌠 $version ](fg:#100e23 bg:#906cff)[](fg:#906cff) "
+format = "[](fg:prev_bg bg:#906cff)[ 󰌠 ${virtualenv} $version ](fg:#100e23 bg:#906cff)[](fg:#906cff) "
+version_format = "${raw}"
+
+[status]
+format = "[](fg:#ff4040 bg:prev_bg)[ $status ](fg:#ffffff bg:#ff4040)"
 
 [cmd_duration]
-format = "[](fg:#2f2f2f)[  $duration ](fg:#fafafa bg:#2f2f2f)"
-
-[character]
-success_symbol = ""
-error_symbol = ""
+format = "[](fg:#2f2f2f bg:prev_bg)[ $duration ](fg:#fafafa bg:#2f2f2f)"
+min_time = 2000

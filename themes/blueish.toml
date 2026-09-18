@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: blueish
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,27 +8,58 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$os\
 $username\
+$hostname\
 $battery\
 $directory\
 $git_branch\
 $git_status\
 $nodejs\
+${env_var.ADMIN}\
+$status\
 $line_break\
 $character\
 """
 
+[character]
+success_symbol = "[➔  ](bold #007ACC) "
+error_symbol = "[➔  ](bold #ef5350) "
+
+[os]
+disabled = false
+style = "fg:#26C6DA bg:#546E7A"
+format = "[](fg:#546E7A)[ $symbol ]($style)[ ](fg:#26C6DA bg:#546E7A)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [username]
-format = "[](fg:#546E7A)[$user ](fg:#26C6DA bg:#546E7A)"
+format = "[](fg:#546E7A inverted)[ $user](fg:#26C6DA bg:#546E7A)"
 show_always = true
 
+[hostname]
+format = "[@$hostname ](fg:#26C6DA bg:#546E7A)"
+ssh_only = false
+
 [battery]
-format = "[](fg:#546E7A bg:#a2beef)[ 󰁹 $percentage ](fg:#193549 bg:#a2beef)"
+disabled = false
+format = "[](fg:prev_bg bg:#a2beef)[ 󰁹 $percentage ](fg:#193549 bg:#a2beef)"
+
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"
 
 [directory]
-format = "[](fg:#a2beef bg:#14c2dd)[  $path ](fg:#193549 bg:#14c2dd)"
+format = "[](fg:prev_bg bg:#14c2dd)[  $path ](fg:#193549 bg:#14c2dd)"
 truncation_length = 3
 truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:prev_bg bg:#a2c4e0)[  $branch ](fg:#193549 bg:#a2c4e0)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#193549 bg:#a2c4e0))"
@@ -39,12 +70,16 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#14c2dd bg:#a2c4e0)[  $branch](fg:#193549 bg:#a2c4e0)"
-
 [nodejs]
-format = "[](fg:#a2c4e0 bg:#6CA35E)[ 󰎙 $version ](fg:#ffffff bg:#6CA35E)[](fg:#6CA35E) "
+format = "[](fg:prev_bg bg:#6CA35E)[  $version ](fg:#ffffff bg:#6CA35E)"
 
-[character]
-success_symbol = "[➜ ](bold #007ACC) "
-error_symbol = "[➜ ](bold #ef5350) "
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#193549 bg:#ffff66"
+format = "[](fg:prev_bg bg:#ffff66)[ ⚡ ]($style)[](fg:#ffff66)"
+
+[status]
+format = "[](fg:#007800 inverted)[ $symbol ](fg:#ffffff bg:#007800)[](fg:#007800) "
+disabled = false
+symbol = "❌"
+success_symbol = ""

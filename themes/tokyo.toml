@@ -23,7 +23,7 @@ $git_status\
 $azure\
 $aws\
 $line_break\
-$sudo\
+${env_var.ADMIN}\
 $status\
 $character\
 """
@@ -56,7 +56,6 @@ style = "bold #be9ddf"
 [battery]
 format = "[\\[](bold #f36943)[󰁹 $percentage](bold #f36943)[\\]](bold #f36943)"
 disabled = false
-style = "bold #f36943"
 
 [[battery.display]]
 threshold = 100
@@ -90,8 +89,7 @@ format = "[ $version ](bold #7eb8da) "
 [aws]
 format = "[ $version ](bold #7eb8da) "
 
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "bold #ffeb95"
 format = "[# ](fg:#ffeb95) "
-allow_windows = true
-disabled = false

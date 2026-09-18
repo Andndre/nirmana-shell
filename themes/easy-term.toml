@@ -50,7 +50,7 @@ truncation_symbol = "…/"
 format = "[](fg:prev_bg bg:#191f48)[  $branch ](fg:#43CCEA bg:#191f48)"
 
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#43CCEA bg:#191f48))"
+format = "([$all_status$ahead_behind ](fg:#43CCEA bg:#191f48))[](fg:#191f48) "
 modified = " ✎"
 staged = " "
 stashed = " "

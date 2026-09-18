@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: atomicBit
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -9,9 +9,9 @@ add_newline = true
 
 format = """
 $username\
+$hostname\
 $directory\
-$git_branch\
-$git_status\
+${env_var.ADMIN}\
 $fill\
 $nodejs\
 $python\
@@ -22,68 +22,91 @@ $rust\
 $dart\
 $julia\
 $ruby\
+$aws\
+$os\
 $battery\
 $time\
 $line_break\
+$git_branch\
+$git_status\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[username]
-format = "[$user](fg:white) "
-show_always = true
-
-[directory]
-format = "[ $path](fg:#ff5555) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](purple) "
-
-[nodejs]
-format = "[ 󰎙 $version ](fg:#3C873A)"
-
-[python]
-format = "[ 󰌠 $version ](fg:#FFE873)"
-
-[java]
-format = "[  $version ](fg:#ec2729)"
-
-[dotnet]
-format = "[ 󰪮 $version ](fg:#0d6da8)"
-
-[golang]
-format = "[  $version ](fg:#06aad5)"
-
-[rust]
-format = "[  $version ](fg:#925837)"
-
-[dart]
-format = "[  $version ](fg:#055b9c)"
-
-[julia]
-format = "[  $version ](fg:#359a25)"
-
-[ruby]
-format = "[  $version ](fg:#9c1006)"
-
-[battery]
-format = "[ 󰁹 $percentage ](fg:#ffffff)"
-disabled = false
-
-[time]
-format = "[  $time ](fg:#55ffff)"
-disabled = false
-time_format = "_2,%H:%M"
-
 [character]
 success_symbol = "[ ](bold #ecf7fa) "
 error_symbol = "[ ](bold #ef5350) "
+format = "[╰─](fg:#FEF5ED)$symbol"
+
+[username]
+format = "[$user ](bold #43CCEA)"
+show_always = true
+
+[hostname]
+format = "[@$hostname ](bold #43CCEA) "
+ssh_only = true
+
+[directory]
+format = "[┗\\[](fg:#ffffff)[$path](fg:#ff5555)[\\]](fg:#ffffff)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "bold #FF9248"
+format = "[# ](fg:#FF9248) "
+
+[nodejs]
+format = "[ 󰎙 $version ](bold #3C873A)"
+
+[python]
+format = "[ 󰌠 $version ](bold #FFE873)"
+
+[java]
+format = "[  $version ](bold #ec2729)"
+
+[dotnet]
+format = "[ 󰪮 $version ](bold #0d6da8)"
+
+[golang]
+format = "[  $version ](bold #06aad5)"
+
+[rust]
+format = "[  $version ](bold #925837)"
+
+[dart]
+format = "[  $version ](bold #055b9c)"
+
+[julia]
+format = "[  $version ](bold #359a25)"
+
+[ruby]
+format = "[  $version ](bold #9c1006)"
+
+[aws]
+format = "[  $version ](bold #faa029)"
+
+[os]
+format = "[ <#ffffff></> $symbol ](bold #ffffff)"
+
+[battery]
+format = "[󰁹 $percentage ](bold #ffffff)"
+disabled = false
+
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"
+
+[time]
+format = "[  $time ](bold #55ffff)"
+disabled = false
+time_format = "_2,%H:%M"
+
+[git_branch]
+symbol = ""
+format = "[\\[](fg:#ffffff)[$symbol$branch](fg:#e0f8ff)[\\]](fg:#ffffff)"
+
+[git_status]
+disabled = true

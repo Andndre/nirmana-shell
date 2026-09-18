@@ -18,15 +18,15 @@ $julia\
 $python\
 $ruby\
 $aws\
-$sudo\
+${env_var.ADMIN}\
 $cmd_duration\
 $character\
 """
 
 [character]
-format = "[](fg:prev_bg) "
-success_symbol = ""
-error_symbol = ""
+format = "$symbol"
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
 
 [username]
 format = "[](fg:#c386f1)[ $user ](fg:#ffffff bg:#c386f1)[](fg:#c386f1)"
@@ -68,10 +68,10 @@ format = "[](fg:prev_bg bg:#AE1401)[  $version ](fg:#ffffff bg:#AE1401)"
 [aws]
 format = "[](fg:prev_bg bg:#FFA400)[  $version ](fg:#ffffff bg:#FFA400)"
 
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "fg:#111111 bg:#ffff66"
 format = "[](fg:prev_bg bg:#ffff66)[ ⚡ ]($style)[](fg:#ffff66)"
-disabled = false
 
 [cmd_duration]
 format = "[](fg:#83769c inverted)[  $duration ](fg:#ffffff bg:#83769c)"

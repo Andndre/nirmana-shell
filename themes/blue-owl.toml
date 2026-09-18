@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: blue-owl
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,12 +8,16 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+${env_var.ADMIN}\
+$os\
 $directory\
 $git_branch\
 $git_status\
 $cmd_duration\
+$status\
 $fill\
 $username\
+$hostname\
 $time\
 $line_break\
 $character\
@@ -22,13 +26,36 @@ $character\
 [fill]
 symbol = " "
 
+[character]
+success_symbol = "[❯ ](bold #ffffff) "
+error_symbol = "[❯ ](bold #ff0000) "
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#FFEB3B bg:#a313a8"
+format = "[ ⚡ ]($style)"
+
+[os]
+disabled = false
+style = "bold #ffffff"
+format = "[ $symbol ]($style) "
+
+[os.symbols]
+Windows = ""
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [directory]
-format = "[](fg:#01579B)[  $path ](fg:#ffffff bg:#01579B)"
+format = "[](fg:#01579B inverted)[ $path ](fg:#ffffff bg:#01579B)[](fg:#01579B)"
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[](fg:#00C853 inverted)[  $branch ](fg:#000000 bg:#00C853)"
+
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#000000 bg:#00C853))"
+format = "([$all_status$ahead_behind ](fg:#000000 bg:#00C853))[](fg:#00C853)"
 modified = " ✎"
 staged = " "
 stashed = " "
@@ -36,21 +63,29 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#01579B bg:#00C853)[  $branch](fg:#000000 bg:#00C853)"
-
 [cmd_duration]
-format = "[](fg:#00C853 bg:#49404f)[  $duration ](fg:#ffffff bg:#49404f)[](fg:#49404f) "
-min_time = 1
+format = "[](fg:#49404f inverted)[ $duration ](fg:#ffffff bg:#49404f)[](fg:#49404f)"
+min_time = 0
+show_milliseconds = true
+
+[status]
+format = "[](fg:#910000 inverted)[ $symbol ](fg:#ffffff bg:#910000)[](fg:#910000) "
+disabled = false
+symbol = "❌"
+success_symbol = ""
 
 [username]
-format = "[](fg:#29315A)[ $user ](fg:#43CCEA bg:#29315A)"
+style_user = "fg:#43CCEA bg:#29315A"
+style_root = "fg:#FFEB3B bg:#29315A"
+format = "[](fg:#29315A)[ $user ]($style)"
+show_always = true
+
+[hostname]
+style = "fg:#43CCEA bg:#29315A"
+format = "[/ $hostname ]($style)[](fg:#29315A) "
+ssh_only = false
 
 [time]
-format = "[  $time ](fg:#3EC669 bg:#29315A)"
+format = "[](fg:#29315A)[ $time ](fg:#3EC669 bg:#29315A)[](fg:#29315A) "
 disabled = false
 time_format = "%H:%M:%S"
-
-[character]
-success_symbol = "[❯ ](bold #ffffff) "
-error_symbol = "[❯ ](bold #ff0000) "

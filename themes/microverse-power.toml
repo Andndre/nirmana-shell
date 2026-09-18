@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: microverse-power
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,41 +8,61 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$os\
 $username\
-$time\
+${env_var.ADMIN}\
 $directory\
 $git_branch\
 $git_status\
+$status\
 $line_break\
 $character\
 """
 
+[character]
+success_symbol = "[➔  ](bold #f1184c) "
+error_symbol = "[➔  ](bold #ef5350) "
+
+[os]
+disabled = false
+style = "bold #3A86FF"
+format = "[ $symbol ]($style) "
+
+[os.symbols]
+Windows = ""
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [username]
-format = "[$user ](fg:#f1184c bg:#242424)"
+format = "[](fg:prev_bg bg:#242424)[ $user ](fg:#f1184c bg:#242424)"
 show_always = true
 
-[time]
-format = "[  $time ](fg:#FFBB00 bg:#242424)"
-disabled = false
-time_format = "%Y-%m-%d %H:%M:%S"
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#f1184c bg:#242424"
+format = "[ ](fg:#f1184c bg:#242424)[ ⚡ ]($style)"
 
 [directory]
-format = "[  $path ](fg:#33DD2D bg:#242424)"
+format = "[ ](fg:#33DD2D bg:#242424)[  $path ](fg:#33DD2D bg:#242424)"
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_status]
-format = "([$all_status$ahead_behind ](fg:#3A86FF bg:#242424))[](fg:#242424) "
-modified = " ✎"
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
 [git_branch]
-format = "[  $branch](fg:#3A86FF bg:#242424)"
+format = "[  $branch ](fg:#3A86FF bg:#242424)"
 
-[character]
-success_symbol = "[➜ ](bold #f1184c) "
-error_symbol = "[➜ ](bold #ef5350) "
+[git_status]
+format = "([$all_status$ahead_behind ](fg:#3A86FF bg:#242424))"
+modified = " ~${count}"
+staged = " +${count}"
+stashed = " *${count}"
+ahead = " ↑${count}"
+behind = " ↓${count}"
+diverged = " ↕↑${ahead_count}↓${behind_count}"
+deleted = " -${count}"
+
+[status]
+format = "[](fg:prev_bg bg:#33DD2D)[ $symbol ](fg:#242424 bg:#33DD2D)[](fg:#33DD2D) "
+disabled = false
+symbol = "❌"
+success_symbol = ""

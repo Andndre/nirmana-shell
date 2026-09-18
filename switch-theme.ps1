@@ -50,6 +50,8 @@ function Ensure-Previews ([switch]$Force) {
         $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
         $esc = [char]27
         $origConfig = $env:STARSHIP_CONFIG
+        $origAdmin = $env:STARSHIP_IS_ADMIN
+        $env:STARSHIP_IS_ADMIN = "1"
 
         $mockBase = Join-Path $env:TEMP "nirmana-preview-mock"
         $mockDir = Join-Path $mockBase "nirmana-shell"
@@ -163,6 +165,11 @@ $indented$esc[1;32mgit status$esc[0m
                 $env:STARSHIP_CONFIG = $origConfig
             } else {
                 Remove-Item Env:\STARSHIP_CONFIG -ErrorAction SilentlyContinue
+            }
+            if ($null -ne $origAdmin) {
+                $env:STARSHIP_IS_ADMIN = $origAdmin
+            } else {
+                Remove-Item Env:\STARSHIP_IS_ADMIN -ErrorAction SilentlyContinue
             }
         }
     }

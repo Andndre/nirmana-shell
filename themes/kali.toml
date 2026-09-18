@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: kali
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,43 +8,40 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+[┏](fg:#CB4B16)\
 $username\
+$hostname\
 $python\
 $directory\
 $git_branch\
 $git_status\
-$fill\
-$cmd_duration\
 $line_break\
 $character\
 """
 
-[fill]
-symbol = " "
-
-[username]
-format = "[$user](fg:#80D8FF) "
-show_always = true
-
-[python]
-format = "[󰌠 $version](fg:#FFD740) "
-
-[directory]
-format = "[ $path](fg:#FFFFFF) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](#FFFFFF) "
-
-[cmd_duration]
-format = "[  $duration ](fg:#FFFFFF)"
-
 [character]
 success_symbol = "[└─#\\$ ](bold #80D8FF) "
 error_symbol = "[└─#\\$ ](bold #ef5350) "
+
+[username]
+show_always = true
+format = "[\\[](fg:#CB4B16)[$user](fg:#80D8FF)[\\]](fg:#CB4B16)"
+
+[directory]
+format = "[┗\\[](fg:#CB4B16)[$path](fg:#FFFFFF)[\\]](fg:#CB4B16)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = ""
+format = "[\\[](fg:#CB4B16)[$symbol$branch](fg:#FFFFFF)[\\]](fg:#CB4B16)"
+
+[git_status]
+disabled = true
+
+[cmd_duration]
+format = "[ $duration ](fg:#FFFFFF bg:#0b2942)"
+min_time = 2000
+
+[status]
+format = "[ $status ](fg:#69F0AE bg:#0b2942)"

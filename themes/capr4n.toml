@@ -17,8 +17,8 @@ $character\
 
 [character]
 format = "$symbol"
-success_symbol = ""
-error_symbol = ""
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
 
 [username]
 format = "[ $user ](fg:#ffffff bg:#61AFEF)[](fg:#61AFEF)"
@@ -33,7 +33,7 @@ truncation_symbol = "…/"
 format = "[](fg:prev_bg bg:#95ffa4)[  $branch ](fg:#193549 bg:#95ffa4)"
 
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#193549 bg:#95ffa4))[](fg:#95ffa4) "
+format = "([$all_status$ahead_behind ](fg:#193549 bg:#95ffa4))"
 modified = " ✎"
 staged = " "
 stashed = " "

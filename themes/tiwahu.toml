@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: tiwahu
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,32 +8,145 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$azure\
+$line_break\
+$cmd_duration\
+$status\
+${env_var.ADMIN}\
+$os\
+$username\
+$hostname\
 $directory\
+$docker_context\
+$crystal\
+$dart\
+$dotnet\
+$elixir\
+$golang\
+$haskell\
+$java\
+$julia\
+$kotlin\
+$lua\
+$nim\
+$nodejs\
+$php\
+$python\
+$ruby\
+$rust\
+$zig\
+$line_break\
 $git_branch\
 $git_status\
 $line_break\
-$sudo\
+$shell\
 $character\
 """
 
+[character]
+success_symbol = "[❯ ](bold #22da6e) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[azure]
+format = "[](fg:#0078D4)[  $version ](fg:#ffffff bg:#0078D4)[](fg:#0078D4) "
+
+[cmd_duration]
+format = "[](fg:#007ACC)[ $duration ](fg:#222222 bg:#007ACC)[](fg:#007ACC) "
+min_time = 321
+
+[status]
+format = "[](fg:#880000)[ $status ](fg:#ff8888 bg:#880000)[](fg:#880000) "
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#2b2b2b bg:#ffcc88"
+format = "[](fg:#ffcc88)[  ]($style)[](fg:#ffcc88) "
+
+[os]
+disabled = false
+style = "fg:#888888 bg:#2b2b2b"
+format = "[](fg:#2b2b2b)[ $symbol ]($style)[](fg:#2b2b2b) "
+
+[os.symbols]
+Windows = ""
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
+[username]
+format = "[](fg:#2b2b2b)[ $user ](fg:#888888 bg:#2b2b2b)[](fg:#2b2b2b) "
+show_always = true
+
 [directory]
-format = "[ $path](fg:cyan) "
+format = "[](fg:#444444)[ $path ](fg:#cccccc bg:#444444)[](fg:#444444) "
 truncation_length = 3
 truncation_symbol = "…/"
 
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
+[docker_context]
+format = "[](fg:#1d63ed)[  $version ](fg:#ffffff bg:#1d63ed)[](fg:#1d63ed) "
+
+[crystal]
+format = "[](fg:#000000)[  $version ](fg:#ffffff bg:#000000)[](fg:#000000) "
+
+[dart]
+format = "[](fg:#0175C2)[  $version ](fg:#ffffff bg:#0175C2)[](fg:#0175C2) "
+
+[dotnet]
+format = "[](fg:#512bd4)[ 󰪮 $version ](fg:#ffffff bg:#512bd4)[](fg:#512bd4) "
+
+[elixir]
+format = "[](fg:#4B275F)[  $version ](fg:#ffffff bg:#4B275F)[](fg:#4B275F) "
+
+[golang]
+format = "[](fg:#00add8)[  $version ](fg:#ffffff bg:#00add8)[](fg:#00add8) "
+
+[haskell]
+format = "[](fg:#5e5086)[  $version ](fg:#ffffff bg:#5e5086)[](fg:#5e5086) "
+
+[java]
+format = "[](fg:#ED8B00)[  $version ](fg:#ffffff bg:#ED8B00)[](fg:#ED8B00) "
+
+[julia]
+format = "[](fg:#9558B2)[  $version ](fg:#ffffff bg:#9558B2)[](fg:#9558B2) "
+
+[kotlin]
+format = "[](fg:#7F52FF)[  $version ](fg:#ffffff bg:#7F52FF)[](fg:#7F52FF) "
+
+[lua]
+format = "[](fg:#000080)[  $version ](fg:#ffffff bg:#000080)[](fg:#000080) "
+
+[nim]
+format = "[](fg:#FFE953)[ 󰆥 $version ](fg:#1a1a2e bg:#FFE953)[](fg:#FFE953) "
+
+[nodejs]
+format = "[](fg:#339933)[  $version ](fg:#ffffff bg:#339933)[](fg:#339933) "
+
+[php]
+format = "[](fg:#777BB4)[  $version ](fg:#ffffff bg:#777BB4)[](fg:#777BB4) "
+
+[python]
+format = "[](fg:#306998)[ 󰌠 $version ](fg:#ffd43b bg:#306998)[](fg:#306998) "
+
+[ruby]
+format = "[](fg:#CC342D)[  $version ](fg:#ffffff bg:#CC342D)[](fg:#CC342D) "
+
+[rust]
+format = "[](fg:#1e2650)[  $version ](fg:#d34516 bg:#1e2650)[](fg:#1e2650) "
+
+[zig]
+format = "[](fg:#F7A41D)[  $version ](fg:#1a1a2e bg:#F7A41D)[](fg:#F7A41D) "
 
 [git_branch]
-format = "[ $branch](purple) "
+format = "[](fg:#983e18)[  $branch ](fg:#f7e7d3 bg:#983e18)"
 
-[sudo]
-disabled = false
-symbol = " "
-format = "[ ](#2b2b2b) "
+[git_status]
+format = "([$all_status$ahead_behind ](fg:#f7e7d3 bg:#983e18))[](fg:#983e18) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[character]
-success_symbol = "[❯ ](bold #ff8888) "
-error_symbol = "[❯ ](bold #ef5350) "
+[shell]
+format = "[](fg:#FEF5ED)[  $indicator ](fg:#007ACC bg:#FEF5ED)[](fg:#FEF5ED) "

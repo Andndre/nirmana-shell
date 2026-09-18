@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: M365Princess
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -13,18 +13,25 @@ $directory\
 $git_branch\
 $git_status\
 $nodejs\
-$time\
 $character\
 """
 
+[character]
+format = "$symbol"
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
+
 [username]
-format = "[](fg:#9A348E)[$user ](fg:#FFFFFF bg:#9A348E)"
+format = "[](fg:#9A348E)[ $user ](fg:#FFFFFF bg:#9A348E)"
 show_always = true
 
 [directory]
-format = "[](fg:#9A348E bg:#DA627D)[  $path ](fg:#FFFFFF bg:#DA627D)"
+format = "[](fg:prev_bg bg:#DA627D)[ $path ](fg:#FFFFFF bg:#DA627D)"
 truncation_length = 3
 truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:prev_bg bg:#FCA17D)[  $branch ](fg:#FFFFFF bg:#FCA17D)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#FFFFFF bg:#FCA17D))"
@@ -35,17 +42,5 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#DA627D bg:#FCA17D)[  $branch](fg:#FFFFFF bg:#FCA17D)"
-
 [nodejs]
-format = "[](fg:#FCA17D bg:#86BBD8)[ 󰎙 $version ](fg:#FFFFFF bg:#86BBD8)"
-
-[time]
-format = "[](fg:#86BBD8 bg:#33658A)[  $time ](fg:#FFFFFF bg:#33658A)[](fg:#33658A) "
-disabled = false
-time_format = "%H:%M"
-
-[character]
-success_symbol = ""
-error_symbol = ""
+format = "[](fg:prev_bg bg:#86BBD8)[  $version ](fg:#FFFFFF bg:#86BBD8)[](fg:#86BBD8) "

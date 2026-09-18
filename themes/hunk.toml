@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: hunk
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,6 +8,7 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$os\
 $directory\
 $nodejs\
 $python\
@@ -15,26 +16,46 @@ $git_branch\
 $git_status\
 $fill\
 $cmd_duration\
+${env_var.ADMIN}\
 $username\
 $shell\
 $line_break\
-$sudo\
+${env_var.ADMIN}\
 $character\
 """
 
 [fill]
 symbol = " "
 
+[character]
+success_symbol = "[❯ ](bold #ffffff) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[os]
+disabled = false
+style = "fg:#ffffff bg:#c44569"
+format = "[](fg:#c44569)[ $symbol ]($style)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [directory]
-format = "[](fg:#c44569)[  $path ](fg:#ffffff bg:#c44569)"
+format = "[ ](fg:#ffffff bg:#c44569)[ $path ](fg:#ffffff bg:#c44569)"
 truncation_length = 3
 truncation_symbol = "…/"
 
 [nodejs]
-format = "[](fg:#c44569 bg:#f78fb3)[ 󰎙 $version ](fg:#ffffff bg:#f78fb3)"
+format = "[](fg:prev_bg bg:#f78fb3)[  $version ](fg:#ffffff bg:#f78fb3)"
 
 [python]
-format = "[ 󰌠 $version ](fg:#ffffff bg:#f78fb3)"
+format = "[ ](fg:#ffffff bg:#f78fb3)[ 󰌠 ${virtualenv} $version ](fg:#ffffff bg:#f78fb3)"
+version_format = "${raw}"
+
+[git_branch]
+format = "[](fg:prev_bg bg:#caffbf)[  $branch ](fg:#333333 bg:#caffbf)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#333333 bg:#caffbf))[](fg:#caffbf) "
@@ -45,23 +66,18 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#f78fb3 bg:#caffbf)[  $branch](fg:#333333 bg:#caffbf)"
-
 [cmd_duration]
-format = "[](fg:#83769c)[  $duration ](fg:#ffffff bg:#83769c)"
+format = "[](fg:#83769c bg:prev_bg)[ $duration ](fg:#ffffff bg:#83769c)"
+min_time = 2000
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "bold #ffeb95"
+format = "[  ]($style) "
 
 [username]
-format = "[](fg:#86BBD8 bg:#83769c)[ $user ](fg:#ffffff bg:#86BBD8)"
+format = "[](fg:#86BBD8 bg:prev_bg)[ $user ](fg:#ffffff bg:#86BBD8)"
+show_always = true
 
 [shell]
-format = "[](fg:#33658A bg:#86BBD8)[  $version ](fg:#ffffff bg:#33658A)"
-
-[sudo]
-disabled = false
-symbol = " "
-format = "[ ](yellow) "
-
-[character]
-success_symbol = "[❯ ](bold #ffffff) "
-error_symbol = "[❯ ](bold #ef5350) "
+format = "[](fg:#33658A bg:prev_bg)[  $indicator ](fg:#ffffff bg:#33658A)"

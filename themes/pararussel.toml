@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: pararussel
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -11,23 +11,33 @@ format = """
 $directory\
 $git_branch\
 $git_status\
+$status\
 $line_break\
 $character\
 """
 
-[directory]
-format = "[ $path](fg:#56B6C2) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](#D0666F) "
-
 [character]
 success_symbol = "[ ](bold #ffffff) "
 error_symbol = "[ ](bold #ef5350) "
+
+[directory]
+format = "[$path ](fg:#56B6C2) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[ $branch](bold #D0666F)"
+
+[git_status]
+format = "([$all_status$ahead_behind](bold #D0666F)) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[status]
+format = "[$symbol ](fg:#DCB977)"
+symbol = "❌"
+disabled = false

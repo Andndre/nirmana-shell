@@ -1,11 +1,11 @@
 
-  [1;35mCategory:[0m   [1;37m[Oh-My-Posh][0m
+  [1;36m Category:[0m   [1;37m[Custom][0m
   [1;36mTheme:[0m      [1;37mrobbyrussell[0m
-  [1;36mDetails:[0m    [0;37mCommunity theme ported from Oh My Posh[0m
+  [1;36mDetails:[0m    [0;37mLegendary minimal arrow prompt with colored git & runtime status[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 
-  [38;2;86;182;194m…\nirmana-shell [0m [1;38;2;208;102;111m main ✎[0m [1;38;2;152;195;121m➜ [0m  [1;32mgit status[0m
+  [1;32m➜[0m  [1;36m…\nirmana-shell[0m [1;31mgit:main[0m [1;31m*[0m [1;32mnode:v24.20.0[0m [1;33mpy:v3.13.14[0m [1;38;2;126;70;182mpkg:v1.0.0[0m took [1;33m2s[0m[1;32mgit status[0m
 
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m

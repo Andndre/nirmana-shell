@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: kushal
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,15 +8,20 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$directory\
+$os\
 $shell\
+${env_var.ADMIN}\
 $python\
 $golang\
 $rust\
 $git_branch\
 $git_status\
 $fill\
+$status\
 $cmd_duration\
+$line_break\
+[╭─](fg:#D6DEEB) \
+$directory\
 $line_break\
 $character\
 """
@@ -24,22 +29,47 @@ $character\
 [fill]
 symbol = " "
 
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
+[character]
+success_symbol = "[❯ ](bold #D6DEEB) "
+error_symbol = "[❯ ](bold #ef5350) "
+format = "[╰─](fg:#D6DEEB)$symbol"
+
+[os]
+disabled = false
+style = "fg:#D6DEEB bg:#575656"
+format = "[](fg:#575656)[ $symbol ]($style)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
 
 [shell]
-format = "[](fg:#00C7FC)[  $version ](fg:#011627 bg:#00C7FC)"
+disabled = false
+powershell_indicator = "pwsh"
+bash_indicator = "bash"
+zsh_indicator = "zsh"
+style = "fg:#011627 bg:#00C7FC"
+format = "[](fg:prev_bg bg:#00C7FC)[  $indicator ]($style)"
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#D6DEEB bg:#EF541C"
+format = "[](fg:prev_bg bg:#EF541C)[ ⚡ ]($style)"
 
 [python]
-format = "[](fg:#00C7FC bg:#FFDE57)[ 󰌠 $version ](fg:#011627 bg:#FFDE57)"
+format = "[](fg:prev_bg bg:#FFDE57)[ 󰌠 ${virtualenv} $version ](fg:#011627 bg:#FFDE57)"
+version_format = "${raw}"
 
 [golang]
-format = "[](fg:#FFDE57 bg:#7FD5EA)[  $version ](fg:#ffffff bg:#7FD5EA)"
+format = "[](fg:prev_bg bg:#7FD5EA)[  $version ](fg:#ffffff bg:#7FD5EA)"
 
 [rust]
-format = "[](fg:#7FD5EA bg:#99908A)[  $version ](fg:#193549 bg:#99908A)"
+format = "[](fg:prev_bg bg:#99908A)[  $version ](fg:#193549 bg:#99908A)"
+
+[git_branch]
+format = "[](fg:prev_bg bg:#1BD4CD)[  $branch ](fg:#011627 bg:#1BD4CD)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#011627 bg:#1BD4CD))[](fg:#1BD4CD) "
@@ -50,12 +80,14 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#99908A bg:#1BD4CD)[  $branch](fg:#011627 bg:#1BD4CD)"
+[status]
+format = "[](fg:#03DED3 bg:prev_bg)[ $status ](fg:#414141 bg:#03DED3)"
 
 [cmd_duration]
-format = "[](fg:#575656)[  $duration ](fg:#D6DEEB bg:#575656)"
+format = "[](fg:#575656 bg:prev_bg)[  $duration ](fg:#D6DEEB bg:#575656)"
+min_time = 2000
 
-[character]
-success_symbol = "[❯ ](bold #D6DEEB) "
-error_symbol = "[❯ ](bold #ef5350) "
+[directory]
+format = "[  ](bold #00C7FC)[ in ](bold #B6D6F2)[$path ](fg:#B6D6F2) "
+truncation_length = 3
+truncation_symbol = "…/"

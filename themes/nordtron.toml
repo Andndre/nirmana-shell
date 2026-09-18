@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: nordtron
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,31 +8,45 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$directory\
+[┏](fg:#5e81ac)\
 $username\
 $git_branch\
 $git_status\
+$aws\
+${env_var.ADMIN}\
+$status\
+$line_break\
+$directory\
 $line_break\
 $character\
 """
 
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[username]
-format = "[$user](fg:#88c0d0) "
-show_always = true
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](#b48ead) "
-
 [character]
 success_symbol = "[ ](bold #5e81ac) "
 error_symbol = "[ ](bold #ef5350) "
+
+[username]
+show_always = true
+format = "[\\[](fg:#5e81ac)[$user](fg:#88c0d0)[\\]](fg:#5e81ac)"
+
+[git_branch]
+symbol = ""
+format = "[\\[](fg:#5e81ac)[$symbol$branch](fg:#b48ead)[\\]](fg:#5e81ac)"
+
+[git_status]
+disabled = true
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+format = "[\\[](fg:#5e81ac)[⚡](fg:#ffffff)[\\]](fg:#5e81ac)"
+
+[status]
+disabled = false
+format = "[\\[x](fg:#5e81ac)[$symbol](fg:#d8dee9)[\\]](fg:#5e81ac)"
+success_symbol = "0"
+symbol = "$status"
+
+[directory]
+format = "[┗\\[](fg:#5e81ac)[$path](fg:#88c0d0)[\\]](fg:#5e81ac)"
+truncation_length = 3
+truncation_symbol = "…/"

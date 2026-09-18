@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: stelbent-compact.minimal
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,41 +8,41 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+[┏](fg:#CB4B16)\
 $username\
+$hostname\
 $directory\
 $git_branch\
 $git_status\
+$terraform\
+$status\
 $time\
 $line_break\
 $character\
 """
 
-[username]
-format = "[$user](fg:#757575) "
-show_always = true
-
-[directory]
-format = "[  $path ](fg:#100e23 bg:#91ddff)"
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind ](fg:#100e23 bg:#95ffa4))[](fg:#95ffa4) "
-modified = " ✎"
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[git_branch]
-format = "[](fg:#91ddff bg:#95ffa4)[  $branch](fg:#100e23 bg:#95ffa4)"
-
-[time]
-format = "[ $time](fg:#689f38) "
-disabled = false
-time_format = "%H:%M:%S"
-
 [character]
 success_symbol = "[\\$ ](bold #ffffff) "
 error_symbol = "[\\$ ](bold #ef5350) "
+
+[username]
+show_always = true
+format = "[\\[](fg:#CB4B16)[$user](fg:#757575)[\\]](fg:#CB4B16)"
+
+[directory]
+format = "[┗\\[](fg:#CB4B16)[$path](fg:#100e23)[\\]](fg:#CB4B16)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = ""
+format = "[\\[](fg:#CB4B16)[$symbol$branch](fg:#100e23)[\\]](fg:#CB4B16)"
+
+[git_status]
+disabled = true
+
+[status]
+disabled = false
+format = "[\\[x](fg:#CB4B16)[$symbol](fg:#ffffff)[\\]](fg:#CB4B16)"
+success_symbol = "0"
+symbol = "$status"

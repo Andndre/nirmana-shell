@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: peru
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,57 +8,83 @@ command_timeout = 1000
 add_newline = true
 
 format = """
-$directory\
+$os\
 $username\
+$hostname\
 $python\
 $git_branch\
 $git_status\
 $fill\
 $nodejs\
 $java\
+$status\
 $cmd_duration\
 $time\
 $line_break\
+$directory\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[username]
-format = "[$user](fg:#26C6DA) "
-show_always = true
-
-[python]
-format = "[󰌠 $version](fg:#0fc469) "
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](#FFE700) "
-
-[nodejs]
-format = "[](fg:#6CA35E)[ 󰎙 $version ](fg:#ffffff bg:#6CA35E)"
-
-[java]
-format = "[](fg:#4c1f5e bg:#6CA35E)[  $version ](fg:#ffffff bg:#4c1f5e)"
-
-[cmd_duration]
-format = "[  $duration ](fg:#bab02a)"
-
-[time]
-format = "[  $time ](fg:#00C5C7)"
-disabled = false
-time_format = "%H:%M:%S"
-
 [character]
 success_symbol = "[❯ ](bold #43D426) "
 error_symbol = "[❯ ](bold #ef5350) "
+
+[os]
+disabled = false
+style = "bold #26C6DA"
+format = "[ $symbol ]($style) "
+
+[os.symbols]
+Windows = ""
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
+[username]
+format = "[$user ](bold #26C6DA)"
+show_always = true
+
+[hostname]
+format = "[@$hostname ](bold #26C6DA) "
+ssh_only = true
+
+[python]
+format = "[󰌠 $version ](bold #0fc469) "
+
+[git_branch]
+format = "[on ](fg:#ffffff)[ $branch](bold #FFE700)"
+
+[git_status]
+format = "([$all_status$ahead_behind](bold #FFE700)) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[nodejs]
+format = "[](fg:#6CA35E)[  $version ](fg:#ffffff bg:#6CA35E)[](fg:#6CA35E) "
+
+[java]
+format = "[](fg:#4c1f5e)[  $version ](fg:#ffffff bg:#4c1f5e)[](fg:#4c1f5e) "
+
+[status]
+format = "[](fg:#303030)[ $status ](fg:#ffffff bg:#303030)[](fg:#303030) "
+
+[cmd_duration]
+format = "[](fg:#303030)[  $duration ](fg:#bab02a bg:#303030)[](fg:#303030) "
+min_time = 2000
+
+[time]
+format = "[](fg:#303030)[  $time ](fg:#00C5C7 bg:#303030)[](fg:#303030) "
+disabled = false
+time_format = "%H:%M:%S"
+
+[directory]
+format = "[$path ](fg:#77E4F7) "
+truncation_length = 3
+truncation_symbol = "…/"

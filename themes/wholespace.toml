@@ -31,7 +31,7 @@ error_symbol = "[ ](bold #ff0000) "
 [os]
 disabled = false
 style = "fg:#011627 bg:#FEF5ED"
-format = "[](fg:#FEF5ED)[ $symbol ]($style)[](fg:#FEF5ED inverted) "
+format = "[](fg:#FEF5ED)[ $symbol ]($style)"
 
 [os.symbols]
 Windows = "󰕮"

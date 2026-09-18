@@ -63,8 +63,10 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [status]
-format = "[](fg:#2e9599 inverted)[ $status ](fg:#ffffff bg:#2e9599)"
+format = "[](fg:#2e9599 inverted)[ $symbol ](fg:#ffffff bg:#2e9599)[](fg:#2e9599) "
 disabled = false
+symbol = "❌"
+success_symbol = ""
 
 [shell]
 format = "[](fg:#0077c2 bg:prev_bg)[  $indicator ](fg:#ffffff bg:#0077c2)"
@@ -101,4 +103,5 @@ disabled = false
 time_format = "%H:%M:%S"
 
 [azure]
-format = "[  $version ](fg:#000000 bg:#9ec3f0)[](fg:#9ec3f0) "
+format = "[  $subscription ](fg:#000000 bg:#9ec3f0)[](fg:#9ec3f0) "
+disabled = false

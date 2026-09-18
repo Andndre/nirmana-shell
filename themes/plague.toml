@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: plague
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -9,22 +9,37 @@ add_newline = false
 
 format = """
 $username\
+$hostname\
 $directory\
 $git_branch\
 $git_status\
 $nodejs\
 $shell\
+${env_var.ADMIN}\
+$status\
 $character\
 """
 
+[character]
+format = "$symbol"
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
+
 [username]
-format = "[](fg:#333333)[$user ](fg:#ff0000 bg:#333333)"
+format = "[](fg:#333333)[ $user](fg:#ff0000 bg:#333333)"
 show_always = true
 
+[hostname]
+format = "[@$hostname ](fg:#ff0000 bg:#333333)[](fg:#333333)"
+ssh_only = false
+
 [directory]
-format = "[](fg:#333333 bg:#ff0000)[  $path ](fg:#000000 bg:#ff0000)"
+format = "[](fg:#ff0000 inverted)[  $path ](fg:#000000 bg:#ff0000)"
 truncation_length = 3
 truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:prev_bg bg:#fffb38)[  $branch ](fg:#193549 bg:#fffb38)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#193549 bg:#fffb38))"
@@ -35,15 +50,24 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#ff0000 bg:#fffb38)[  $branch](fg:#193549 bg:#fffb38)"
-
 [nodejs]
-format = "[](fg:#fffb38 bg:#6CA35E)[ 󰎙 $version ](fg:#ffffff bg:#6CA35E)"
+format = "[](fg:prev_bg bg:#6CA35E)[  $version ](fg:#ffffff bg:#6CA35E)"
 
 [shell]
-format = "[](fg:#6CA35E bg:#203248)[  $version ](fg:#ffffff bg:#203248)[](fg:#203248) "
+disabled = false
+powershell_indicator = "pwsh"
+bash_indicator = "bash"
+zsh_indicator = "zsh"
+style = "fg:#ffffff bg:#203248"
+format = "[](fg:prev_bg bg:#203248)[  $indicator ]($style)"
 
-[character]
-success_symbol = ""
-error_symbol = ""
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#ffffff bg:#ffff66"
+format = "[](fg:prev_bg bg:#ffff66)[ ⚡ ]($style)[](fg:#ffff66)"
+
+[status]
+format = "[](fg:#2e9599 inverted)[ $symbol ](fg:#ffffff bg:#2e9599)"
+disabled = false
+symbol = "❌"
+success_symbol = ""

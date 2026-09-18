@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: grandpa-style
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,12 +8,16 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+${env_var.ADMIN}\
+$os\
 $directory\
 $git_branch\
 $git_status\
 $cmd_duration\
+$status\
 $fill\
 $username\
+$hostname\
 $time\
 $line_break\
 $character\
@@ -22,10 +26,33 @@ $character\
 [fill]
 symbol = " "
 
+[character]
+success_symbol = "[❯ ](bold #ffffff) "
+error_symbol = "[❯ ](bold #ff0000) "
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#dd1e1e bg:#000000"
+format = "[ ⚡ ]($style)"
+
+[os]
+disabled = false
+style = "bold #ffffff"
+format = "[ $symbol ]($style) "
+
+[os.symbols]
+Windows = ""
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [directory]
-format = "[  $path ](fg:#43CCEA bg:#5a3d29)"
+format = "[](fg:prev_bg bg:#5a3d29)[ $path ](fg:#43CCEA bg:#5a3d29)"
 truncation_length = 3
 truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:#00C853)[  $branch ](fg:#000000 bg:#00C853)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#000000 bg:#00C853))"
@@ -36,21 +63,29 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#5a3d29 bg:#00C853)[  $branch](fg:#000000 bg:#00C853)"
-
 [cmd_duration]
-format = "[](fg:#00C853 bg:#2ba1bb)[  $duration ](fg:#5a3d29 bg:#2ba1bb)[](fg:#2ba1bb) "
-min_time = 1
+format = "[](fg:#2ba1bb)[ $duration ](fg:#5a3d29 bg:#2ba1bb)"
+min_time = 0
+show_milliseconds = true
+
+[status]
+format = "[](fg:prev_bg bg:#910000)[ $symbol ](fg:#ffffff bg:#910000)[](fg:#910000) "
+disabled = false
+symbol = "❌"
+success_symbol = ""
 
 [username]
-format = "[](fg:#5a3d29)[ $user ](fg:#43CCEA bg:#5a3d29)"
+style_user = "fg:#43CCEA bg:#5a3d29"
+style_root = "fg:#FFEB3B bg:#5a3d29"
+format = "[](fg:#5a3d29)[ $user ]($style)"
+show_always = true
+
+[hostname]
+style = "fg:#43CCEA bg:#5a3d29"
+format = "[/ $hostname ]($style)"
+ssh_only = false
 
 [time]
-format = "[  $time ](fg:#43CCEA bg:#5a3d29)"
+format = "[](fg:#5a3d29 bg:prev_bg)[ $time ](fg:#43CCEA bg:#5a3d29)"
 disabled = false
 time_format = "%I:%M:%S %p"
-
-[character]
-success_symbol = "[❯ ](bold #ffffff) "
-error_symbol = "[❯ ](bold #ff0000) "

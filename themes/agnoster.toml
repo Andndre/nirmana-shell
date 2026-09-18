@@ -8,28 +8,34 @@ command_timeout = 1000
 add_newline = false
 
 format = """
-$sudo\
+${env_var.ADMIN}\
 $username\
+$hostname\
 $directory\
 $git_branch\
 $git_status\
 $python\
+$status\
 $character\
 """
 
 [character]
-format = "[](fg:prev_bg) "
-success_symbol = ""
-error_symbol = ""
+format = "$symbol"
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
 
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "fg:#100e23 bg:#ffe9aa"
-format = "[  ]($style)[](fg:#ffe9aa bg:#ffffff)"
-disabled = false
+format = "[ ⚡ ]($style)"
 
 [username]
-format = "[ $user ](fg:#100e23 bg:#ffffff)"
+format = "[](fg:prev_bg bg:#ffffff)[ $user](fg:#100e23 bg:#ffffff)"
 show_always = true
+
+[hostname]
+format = "[@$hostname ](fg:#100e23 bg:#ffffff)"
+ssh_only = false
 
 [directory]
 format = "[](fg:prev_bg bg:#91ddff)[ $path ](fg:#100e23 bg:#91ddff)"
@@ -49,4 +55,10 @@ behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
 [python]
-format = "[](fg:prev_bg bg:#906cff)[ 󰌠 $version ](fg:#100e23 bg:#906cff)"
+format = "[](fg:prev_bg bg:#906cff)[ 󰌠 ${virtualenv} $version ](fg:#100e23 bg:#906cff)"
+version_format = "${raw}"
+
+[status]
+format = "[](fg:prev_bg bg:#ff8080)[ $symbol ](fg:#ffffff bg:#ff8080)[](fg:#ff8080) "
+disabled = false
+symbol = "❌"

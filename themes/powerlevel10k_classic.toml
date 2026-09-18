@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: powerlevel10k_classic
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,11 +8,14 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$os\
+${env_var.ADMIN}\
 $directory\
 $git_branch\
 $git_status\
 $fill\
 $username\
+$hostname\
 $time\
 $line_break\
 $character\
@@ -21,31 +24,54 @@ $character\
 [fill]
 symbol = " "
 
-[directory]
-format = "[  $path ](fg:#26C6DA bg:#546E7A)"
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind ](fg:#D4E157 bg:#546E7A))[](fg:#546E7A) "
-modified = " ✎"
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[git_branch]
-format = "[  $branch](fg:#D4E157 bg:#546E7A)"
-
-[username]
-format = "[](fg:#546E7A)[ $user ](fg:#D4E157 bg:#546E7A)"
-
-[time]
-format = "[  $time ](fg:#D4E157 bg:#546E7A)"
-disabled = false
-time_format = "%H:%M:%S"
-
 [character]
 success_symbol = "[❯ ](bold #D4E157) "
 error_symbol = "[❯ ](bold #FF5252) "
+
+[os]
+disabled = false
+style = "fg:#26C6DA bg:#546E7A"
+format = "[ $symbol ]($style)[ ](fg:#26C6DA bg:#546E7A)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#26C6DA bg:#546E7A"
+format = "[ ](fg:#26C6DA bg:#546E7A)[ ⚡ ]($style)"
+
+[directory]
+format = "[ ](fg:#26C6DA bg:#546E7A)[ $path ](fg:#26C6DA bg:#546E7A)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[  $branch ](fg:#D4E157 bg:#546E7A)"
+
+[git_status]
+format = "([$all_status$ahead_behind ](fg:#D4E157 bg:#546E7A))[](fg:#546E7A) "
+modified = " ~${count}"
+staged = " +${count}"
+stashed = " *${count}"
+ahead = " ↑${count}"
+behind = " ↓${count}"
+diverged = " ↕↑${ahead_count}↓${behind_count}"
+deleted = " -${count}"
+
+[username]
+format = "[](fg:#546E7A bg:prev_bg)[ $user ](fg:#D4E157 bg:#546E7A)"
+show_always = true
+
+[hostname]
+style = "fg:#D4E157 bg:#546E7A"
+format = "[/ $hostname ]($style) "
+ssh_only = false
+
+[time]
+format = "[](fg:#546E7A bg:prev_bg)[  $time ](fg:#D4E157 bg:#546E7A)"
+disabled = false
+time_format = "%H:%M:%S"

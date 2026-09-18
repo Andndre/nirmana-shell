@@ -1,12 +1,12 @@
 
-  [1;35mCategory:[0m   [1;37m[Oh-My-Posh][0m
+  [1;36m Category:[0m   [1;37m[Custom][0m
   [1;36mTheme:[0m      [1;37mspaceship[0m
-  [1;36mDetails:[0m    [0;37mCommunity theme ported from Oh My Posh[0m
+  [1;36mDetails:[0m    [0;37mCosmic developer prompt with rocket execution symbol[0m
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [1;33mRendered Prompt:[0m
 
-  [1;38;2;255;245;157mAndndre [0m[38;2;24;255;255m…\nirmana-shell [0m [38;2;255;255;255mon [1;38;2;255;148;223m main ✎[0m 
-  [1;38;2;165;214;167m❯ [0m  [1;32mgit status[0m
+  [1;36m…\nirmana-shell[0m on [1;35m main[0m [1;31m[!][0m [1;30m [0mvia [1;32m󰎙 v24.20.0[0m via [1;33m󰌠 v3.13.14[0m is [1;38;2;203;166;247m󰏗 v1.0.0[0m took [1;33m2s[0m 
+  [1m🚀[0m  [1;32mgit status[0m
 
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m

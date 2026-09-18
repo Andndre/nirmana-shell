@@ -9,11 +9,10 @@ add_newline = false
 
 format = """
 $os\
-$sudo\
+${env_var.ADMIN}\
 $directory\
 $git_branch\
 $git_status\
-$time\
 $cmd_duration\
 $character\
 """
@@ -34,10 +33,10 @@ Ubuntu = ""
 Macos = ""
 Linux = ""
 
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "fg:#FFFFFF bg:#DE2121"
-format = "[](fg:#DE2121 inverted)[  ]($style)[](fg:#DE2121)"
-disabled = false
+format = "[](fg:#DE2121 inverted)[ ⚡ ]($style)[](fg:#DE2121)"
 
 [directory]
 format = "[](fg:#26BDBB inverted)[ $path ](fg:#0C212F bg:#26BDBB)[](fg:#26BDBB)"
@@ -55,11 +54,6 @@ stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[time]
-format = "[](fg:#0C212F inverted)[ $time ](fg:#FFFFFF bg:#0C212F)[](fg:#0C212F)"
-disabled = false
-time_format = "%H:%M"
 
 [cmd_duration]
 format = "[](fg:#26BDBB inverted)[ $duration ](fg:#0C212F bg:#26BDBB)[](fg:#26BDBB) "

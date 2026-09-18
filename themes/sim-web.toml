@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: sim-web
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,38 +8,40 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$cmd_duration\
+$nodejs\
+$line_break\
 $directory\
 $git_branch\
 $git_status\
-$fill\
-$cmd_duration\
-$nodejs\
 $line_break\
 $character\
 """
 
-[fill]
-symbol = " "
-
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](purple) "
-
-[cmd_duration]
-format = "[  $duration ](fg:#a9ffb4)"
-
-[nodejs]
-format = "[ 󰎙 $version ](fg:#45bf17)"
-
 [character]
 success_symbol = "[❯_: ](bold #00c7fc) "
 error_symbol = "[❯_: ](bold #ef5350) "
+
+[cmd_duration]
+format = "[ $duration  ](bold #a9ffb4) "
+min_time = 2000
+
+[nodejs]
+format = "[ $version ](bold #45bf17) "
+
+[directory]
+format = "[ $path ](fg:#ffafd2) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[ $branch](bold #f14e32)"
+
+[git_status]
+format = "([$all_status$ahead_behind](bold #f14e32)) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"

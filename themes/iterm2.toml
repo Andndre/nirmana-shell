@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: iterm2
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,33 +8,53 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$os\
 $username\
 $directory\
 $git_branch\
 $git_status\
+$status\
 $fill\
 $battery\
 $python\
 $time\
 $line_break\
-$sudo\
+${env_var.ADMIN}\
 $character\
 """
 
 [fill]
 symbol = " "
 
+[character]
+success_symbol = "[🚀 ](bold #f1184c) "
+error_symbol = "[🚀 ](bold #ef5350) "
+
+[os]
+disabled = false
+style = "fg:#ffffff bg:#003543"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [username]
-format = "[$user ](fg:#d2ff5e bg:#003543)"
+format = "[ ](fg:#d2ff5e bg:#003543)[ $user ](fg:#d2ff5e bg:#003543)"
 show_always = true
 
 [directory]
-format = "[](fg:#003543 bg:#0087D8)[  $path ](fg:#003544 bg:#0087D8)"
+format = "[](fg:prev_bg bg:#0087D8)[  $path ](fg:#003544 bg:#0087D8)"
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[](fg:prev_bg bg:#d2ff5e)[  $branch ](fg:#193549 bg:#d2ff5e)"
+
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#193549 bg:#d2ff5e))[](fg:#d2ff5e) "
+format = "([$all_status$ahead_behind ](fg:#193549 bg:#d2ff5e))"
 modified = " ✎"
 staged = " "
 stashed = " "
@@ -42,26 +62,29 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#0087D8 bg:#d2ff5e)[  $branch](fg:#193549 bg:#d2ff5e)"
+[status]
+format = "[](fg:prev_bg bg:#33DD2D)[ $symbol ](fg:#242424 bg:#33DD2D)[](fg:#33DD2D) "
+disabled = false
+symbol = "❌"
+success_symbol = ""
 
 [battery]
-format = "[](fg:#f36943)[ 󰁹 $percentage ](fg:#242424 bg:#f36943)"
+format = "[](fg:#f36943 bg:prev_bg)[ 󰁹 $percentage ](fg:#242424 bg:#f36943)"
 disabled = false
 
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"
+
 [python]
-format = "[](fg:#0087D8 bg:#f36943)[ 󰌠 $version ](fg:#003544 bg:#0087D8)"
+format = "[](fg:#0087D8 bg:prev_bg)[ 󰌠 $version ](fg:#003544 bg:#0087D8)"
 
 [time]
-format = "[](fg:#003543 bg:#0087D8)[  $time ](fg:#ffffff bg:#003543)"
+format = "[](fg:#003543 bg:prev_bg)[ $time ](fg:#ffffff bg:#003543)[](fg:#003543)"
 disabled = false
 time_format = "%H:%M:%S"
 
-[sudo]
-disabled = false
-symbol = "⚡ "
-format = "[⚡ ](#FFD700) "
-
-[character]
-success_symbol = "[🚀 ](bold #f1184c) "
-error_symbol = "[🚀 ](bold #ef5350) "
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "bold #FFD700"
+format = "[  ]($style) "

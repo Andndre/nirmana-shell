@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: patriksvensson
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,30 +8,74 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+${env_var.ADMIN}\
 $directory\
 $git_branch\
 $git_status\
+$fill\
 $dotnet\
+$nodejs\
+$python\
+$golang\
+$rust\
+$php\
+$package\
 $line_break\
+$time\
 $character\
 """
 
-[directory]
-format = "[ $path](fg:#448AFF) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](#69F0AE) "
-
-[dotnet]
-format = "[󰪮 $version](fg:#FF4081) "
+[fill]
+symbol = " "
 
 [character]
 success_symbol = "[❯ ](bold #69F0AE) "
 error_symbol = "[❯ ](bold #ef5350) "
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "bold #FF5252"
+format = "[  ]($style) "
+
+[directory]
+format = "[$path ](fg:#448AFF) "
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[on ](fg:#ffffff)[ $branch](bold #69F0AE)"
+
+[git_status]
+format = "([$all_status$ahead_behind](bold #69F0AE)) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[dotnet]
+format = "[ 󰪮 $version ](bold #FF4081)"
+
+[nodejs]
+format = "[ 󰎙 $version ](bold #80D166)"
+
+[python]
+format = "[ 󰌠 $version ](bold #FFE873)"
+
+[golang]
+format = "[  $version ](bold #06AAD5)"
+
+[rust]
+format = "[  $version ](bold #F78C6C)"
+
+[php]
+format = "[  $version ](bold #787CB5)"
+
+[package]
+format = "[ 󰏗 $version ](bold #AEA4BF)"
+
+[time]
+format = "[$time |](fg:#FFD740) "
+disabled = false
+time_format = "%H:%M:%S"

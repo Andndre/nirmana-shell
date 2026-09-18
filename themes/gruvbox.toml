@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: gruvbox
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,6 +8,7 @@ command_timeout = 1000
 add_newline = false
 
 format = """
+$os\
 $directory\
 $git_branch\
 $git_status\
@@ -15,16 +16,37 @@ $golang\
 $julia\
 $python\
 $ruby\
+$aws\
+${env_var.ADMIN}\
 $character\
 """
 
+[character]
+format = "$symbol"
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
+
+[os]
+disabled = false
+style = "fg:#ffffff bg:#3A3A3A"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [directory]
-format = "[  $path ](fg:#282828 bg:#458588)"
+format = "[](fg:prev_bg bg:#458588)[ $path ](fg:#282828 bg:#458588)[](fg:#458588) "
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[](fg:#98971A)[  $branch ](fg:#282828 bg:#98971A)"
+
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#282828 bg:#98971A))"
+format = "([$all_status$ahead_behind ](fg:#282828 bg:#98971A))[](fg:#98971A) "
 modified = " ✎"
 staged = " "
 stashed = " "
@@ -32,21 +54,23 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#458588 bg:#98971A)[  $branch](fg:#282828 bg:#98971A)"
-
 [golang]
-format = "[](fg:#98971A bg:#8ED1F7)[  $version ](fg:#111111 bg:#8ED1F7)"
+format = "[](fg:prev_bg bg:#8ED1F7)[  $version ](fg:#111111 bg:#8ED1F7)"
 
 [julia]
-format = "[](fg:#8ED1F7 bg:#4063D8)[  $version ](fg:#111111 bg:#4063D8)"
+format = "[](fg:prev_bg bg:#4063D8)[  $version ](fg:#111111 bg:#4063D8)"
 
 [python]
-format = "[](fg:#4063D8 bg:#FFDE57)[ 󰌠 $version ](fg:#111111 bg:#FFDE57)"
+format = "[](fg:prev_bg bg:#FFDE57)[ 󰌠 $version ](fg:#111111 bg:#FFDE57)"
+version_format = "${raw}"
 
 [ruby]
-format = "[](fg:#FFDE57 bg:#AE1401)[  $version ](fg:#ffffff bg:#AE1401)[](fg:#AE1401) "
+format = "[](fg:prev_bg bg:#AE1401)[  $version ](fg:#ffffff bg:#AE1401)"
 
-[character]
-success_symbol = ""
-error_symbol = ""
+[aws]
+format = "[](fg:prev_bg bg:#FFA400)[  $version ](fg:#ffffff bg:#FFA400)"
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#111111 bg:#ffff66"
+format = "[](fg:prev_bg bg:#ffff66)[ ⚡ ]($style)[](fg:#ffff66) "

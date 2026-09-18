@@ -12,13 +12,13 @@ $username\
 $directory\
 $git_branch\
 $git_status\
-$fill\
-$python\
 $golang\
 $nodejs\
+$julia\
+$fill\
+$python\
 $ruby\
 $java\
-$julia\
 $battery\
 $line_break\
 $cmd_duration\
@@ -54,14 +54,17 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[python]
-format = "[](fg:#29315A)[ 󰌠 $version ](fg:#E4F34A bg:#29315A)[](fg:#29315A) "
-
 [golang]
 format = "[](fg:#29315A)[  $version ](fg:#7FD5EA bg:#29315A)[](fg:#29315A) "
 
 [nodejs]
-format = "[](fg:#29315A)[ 󰎙 $version ](fg:#42E66C bg:#29315A)[](fg:#29315A) "
+format = "[](fg:#29315A)[  $version ](fg:#42E66C bg:#29315A)[](fg:#29315A) "
+
+[julia]
+format = "[](fg:#29315A)[  $version ](fg:#9B6BDF bg:#29315A)[](fg:#29315A) "
+
+[python]
+format = "[](fg:#29315A)[ 󰌠 $version ](fg:#E4F34A bg:#29315A)[](fg:#29315A) "
 
 [ruby]
 format = "[](fg:#29315A)[  $version ](fg:#E64747 bg:#29315A)[](fg:#29315A) "
@@ -69,11 +72,13 @@ format = "[](fg:#29315A)[  $version ](fg:#E64747 bg:#29315A)[](fg:#2931
 [java]
 format = "[](fg:#29315A)[  $version ](fg:#E64747 bg:#29315A)[](fg:#29315A) "
 
-[julia]
-format = "[](fg:#29315A)[  $version ](fg:#9B6BDF bg:#29315A)[](fg:#29315A) "
-
 [battery]
 format = "[](fg:#29315A)[ 󰁹 $percentage ](fg:#9B6BDF bg:#29315A)[](fg:#29315A) "
+disabled = false
+
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"
 
 [cmd_duration]
 format = "[](fg:#29315A)[ $duration ](fg:#AEA4BF bg:#29315A)[](fg:#29315A) "

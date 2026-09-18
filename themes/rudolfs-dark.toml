@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: rudolfs-dark
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,6 +8,8 @@ command_timeout = 1000
 add_newline = false
 
 format = """
+${env_var.ADMIN}\
+$os\
 $username\
 $directory\
 $git_branch\
@@ -16,30 +18,49 @@ $python\
 $character\
 """
 
+[character]
+format = "$symbol"
+success_symbol = ""
+error_symbol = ""
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#ffffff bg:#BF231D"
+format = "[ ⚡ ]($style)"
+
+[os]
+disabled = false
+style = "fg:#ffffff bg:#0A703E"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [username]
-format = "[$user ](fg:#ffffff bg:#0A703E)"
+format = "[ ](fg:#ffffff bg:#0A703E)[ $user ](fg:#ffffff bg:#0A703E)"
 show_always = true
 
 [directory]
-format = "[](fg:#0A703E bg:#256C9D)[  $path ](fg:#ffffff bg:#256C9D)"
+format = "[](fg:prev_bg bg:#256C9D)[ $path ](fg:#ffffff bg:#256C9D)"
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[  $branch ](fg:#ffffff bg:#256C9D)"
+
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#ffffff bg:#256C9D))"
-modified = " ✎"
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[git_branch]
-format = "[  $branch](fg:#ffffff bg:#256C9D)"
+modified = " ~${count}"
+staged = " +${count}"
+stashed = " *${count}"
+ahead = " ↑${count}"
+behind = " ↓${count}"
+diverged = " ↕↑${ahead_count}↓${behind_count}"
+deleted = " -${count}"
 
 [python]
-format = "[ 󰌠 $version ](fg:#ffffff bg:#256C9D)[](fg:#256C9D) "
-
-[character]
-success_symbol = ""
-error_symbol = ""
+format = "[ ](fg:#ffffff bg:#256C9D)[ 󰌠 ${virtualenv} $version ](fg:#ffffff bg:#256C9D)[](fg:#256C9D) "
+version_format = "${raw}"

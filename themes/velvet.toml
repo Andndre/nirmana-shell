@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: velvet
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,10 +8,12 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$os\
 $directory\
 $git_branch\
 $git_status\
 $cmd_duration\
+$status\
 $fill\
 $python\
 $golang\
@@ -19,16 +21,36 @@ $nodejs\
 $ruby\
 $java\
 $line_break\
+$time\
 $character\
 """
 
 [fill]
 symbol = " "
 
+[character]
+success_symbol = "[❯ ](bold #22da6e) "
+error_symbol = "[❯ ](bold #ef5350) "
+format = "[](fg:prev_bg) $symbol"
+
+[os]
+disabled = false
+style = "fg:#EFDCF9 bg:#0E050F"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
 [directory]
-format = "[  $path ](fg:#EFDCF9 bg:#170B3B)"
+format = "[](fg:prev_bg bg:#170B3B)[ $path ](fg:#EFDCF9 bg:#170B3B)"
 truncation_length = 3
 truncation_symbol = "…/"
+
+[git_branch]
+format = "[](fg:prev_bg bg:#341948)[  $branch ](fg:#EFDCF9 bg:#341948)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#EFDCF9 bg:#341948))"
@@ -39,28 +61,33 @@ ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[](fg:#170B3B bg:#341948)[  $branch](fg:#EFDCF9 bg:#341948)"
-
 [cmd_duration]
-format = "[](fg:#341948 bg:#4c1f5e)[  $duration ](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "
-min_time = 1
+format = "[](fg:prev_bg bg:#4c1f5e)[ $duration ](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "
+min_time = 0
+show_milliseconds = true
+
+[status]
+format = "[](fg:prev_bg bg:#69307A)[ $symbol ](fg:#EFDCF9 bg:#69307A)[](fg:#69307A) "
+disabled = false
+symbol = "❌"
+success_symbol = ""
 
 [python]
-format = "[](fg:#4c1f5e)[ 󰌠 $version ](fg:#E4F34A bg:#4c1f5e)"
+format = "[](fg:#4c1f5e)[ 󰌠 $version ](fg:#E4F34A bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [golang]
-format = "[  $version ](fg:#7FD5EA bg:#4c1f5e)"
+format = "[](fg:#4c1f5e)[  $version ](fg:#7FD5EA bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [nodejs]
-format = "[ 󰎙 $version ](fg:#42E66C bg:#4c1f5e)"
+format = "[](fg:#4c1f5e)[  $version ](fg:#42E66C bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [ruby]
-format = "[  $version ](fg:#E64747 bg:#4c1f5e)"
+format = "[](fg:#4c1f5e)[  $version ](fg:#E64747 bg:#4c1f5e)[](fg:#4c1f5e) "
 
 [java]
-format = "[  $version ](fg:#E64747 bg:#4c1f5e)"
+format = "[](fg:#4c1f5e)[  $version ](fg:#E64747 bg:#4c1f5e)[](fg:#4c1f5e) "
 
-[character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+[time]
+format = "[ $time ](fg:#EFDCF9 bg:#4c1f5e)[](fg:#4c1f5e) "
+disabled = false
+time_format = "%H:%M:%S"

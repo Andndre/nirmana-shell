@@ -9,7 +9,7 @@ add_newline = false
 
 format = """
 $status\
-$sudo\
+${env_var.ADMIN}\
 $username\
 $hostname\
 $directory\
@@ -28,11 +28,10 @@ format = "[$symbol ](fg:#ffffff)"
 symbol = "❌"
 disabled = false
 
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "bold #ff0000"
 format = "[# ](fg:#ff0000) "
-allow_windows = true
-disabled = false
 
 [username]
 format = "[$user ](bold #ffffff)"
@@ -51,7 +50,7 @@ truncation_symbol = "…/"
 format = "[  $branch ](fg:#ffffff bg:#007ACC)"
 
 [git_status]
-format = "([$all_status$ahead_behind ](fg:#ffffff bg:#007ACC))[](fg:#007ACC) "
+format = "([$all_status$ahead_behind ](fg:#ffffff bg:#007ACC))"
 modified = " ~${count}"
 staged = " +${count}"
 stashed = " *${count}"

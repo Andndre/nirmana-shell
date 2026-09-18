@@ -17,8 +17,7 @@ $git_status\
 $line_break\
 [╭─](fg:#91f2ff) \
 $shell\
-$time\
-$sudo\
+${env_var.ADMIN}\
 $directory\
 $line_break\
 $character\
@@ -78,16 +77,10 @@ zsh_indicator = "zsh"
 style = "fg:#000000 bg:#91f2ff"
 format = "[](fg:#91f2ff)[  $indicator ]($style)[](fg:#91f2ff inverted) "
 
-[time]
-format = "[](fg:#ff8c94)[  $time ](fg:#000000 bg:#ff8c94)[](fg:#ff8c94) "
-disabled = false
-time_format = "%I:%M:%S %p | %A"
-
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "bold #ffeb95"
 format = "[  ]($style) "
-allow_windows = true
-disabled = false
 
 [directory]
 format = "[](fg:#f8677b inverted)[  $path ](fg:#000000 bg:#f8677b)[](fg:#f8677b) "

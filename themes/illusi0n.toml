@@ -32,7 +32,7 @@ Macos = ""
 Linux = ""
 
 [username]
-format = "[$user: ](bold #ff8800)"
+format = "[$user ](bold #ff8800)"
 show_always = true
 
 [directory]

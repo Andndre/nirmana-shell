@@ -17,9 +17,9 @@ $character\
 """
 
 [character]
-format = "[](fg:prev_bg) "
-success_symbol = ""
-error_symbol = ""
+format = "$symbol"
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
 
 [username]
 format = "[](fg:#c386f1)[ $user ](fg:#ffffff bg:#c386f1)[](fg:#c386f1)"

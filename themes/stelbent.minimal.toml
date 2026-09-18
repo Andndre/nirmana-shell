@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: stelbent.minimal
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,40 +8,48 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+[┏](fg:#CB4B16)\
+$shell\
+${env_var.ADMIN}\
+$time\
+$line_break\
+$username\
+$hostname\
 $directory\
 $git_branch\
 $git_status\
-$fill\
-$shell\
-$time\
+$terraform\
+$status\
 $line_break\
 $character\
 """
 
-[fill]
-symbol = " "
-
-[directory]
-format = "[ $path](fg:cyan) "
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
-
-[git_branch]
-format = "[ $branch](purple) "
-
-[shell]
-format = "[  $version ](fg:#007acc)"
-
-[time]
-format = "[  $time ](fg:#689f38)"
-disabled = false
-time_format = "%H:%M:%S"
-
 [character]
 success_symbol = "[\\$ ](bold #ffffff) "
 error_symbol = "[\\$ ](bold #ef5350) "
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+format = "[\\[](fg:#CB4B16)[⚡](fg:#ffffff)[\\]](fg:#CB4B16)"
+
+[username]
+show_always = true
+format = "[\\[](fg:#CB4B16)[$user](fg:#757575)[\\]](fg:#CB4B16)"
+
+[directory]
+format = "[┗\\[](fg:#CB4B16)[$path](fg:#100e23)[\\]](fg:#CB4B16)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+symbol = ""
+format = "[\\[](fg:#CB4B16)[$symbol$branch](fg:#100e23)[\\]](fg:#CB4B16)"
+
+[git_status]
+disabled = true
+
+[status]
+disabled = false
+format = "[\\[x](fg:#CB4B16)[$symbol](fg:#ffffff)[\\]](fg:#CB4B16)"
+success_symbol = "0"
+symbol = "$status"

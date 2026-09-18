@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: emodipt
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,31 +8,47 @@ command_timeout = 1000
 add_newline = false
 
 format = """
-$time\
+${env_var.ADMIN}\
 $directory\
 $git_branch\
 $git_status\
+$status\
+$time\
 $character\
 """
 
-[time]
-format = "[ $time](fg:#E5C07B) "
-disabled = false
-time_format = "%H:%M:%S"
+[character]
+success_symbol = "[❯ ](bold #E06C75) "
+error_symbol = "[❯ ](bold #ef5350) "
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "bold #B5B50D"
+format = "[  ]($style) "
 
 [directory]
-format = "[ $path](fg:#61AFEF) "
+format = "[$path ](fg:#61AFEF) "
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[ $branch](bold #F3C267)"
+
 [git_status]
-format = "([$all_status$ahead_behind](red) )"
+format = "([$all_status$ahead_behind](bold #F3C267)) "
 modified = " ✎"
 staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
 
-[git_branch]
-format = "[ $branch](#F3C267) "
+[status]
+format = "[$symbol ](fg:#C94A16)"
+symbol = "❌"
+disabled = false
 
-[character]
-success_symbol = ""
-error_symbol = ""
+[time]
+format = "[ $time ](bold #E5C07B)"
+disabled = false
+time_format = "%H:%M:%S"

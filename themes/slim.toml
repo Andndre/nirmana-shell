@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: slim
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,7 +8,10 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$os\
 $username\
+$hostname\
+${env_var.ADMIN}\
 $directory\
 $git_branch\
 $git_status\
@@ -17,7 +20,6 @@ $nodejs\
 $python\
 $dotnet\
 $time\
-$cmd_duration\
 $line_break\
 $character\
 """
@@ -25,44 +27,62 @@ $character\
 [fill]
 symbol = " "
 
-[username]
-format = "[▓](fg:#2f2f2f)[$user ](fg:#fafafa bg:#2f2f2f)"
-show_always = true
-
-[directory]
-format = "[  $path ](fg:#fafafa bg:#2f2f2f)"
-truncation_length = 3
-truncation_symbol = "…/"
-
-[git_status]
-format = "([$all_status$ahead_behind ](fg:#ffeb3b bg:#2f2f2f))[](fg:#2f2f2f) "
-modified = " ✎"
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[git_branch]
-format = "[  $branch](fg:#ffeb3b bg:#2f2f2f)"
-
-[nodejs]
-format = "[](fg:#2f2f2f)[ 󰎙 $version ](fg:#6CA35E bg:#2f2f2f)"
-
-[python]
-format = "[ 󰌠 $version ](fg:#96E072 bg:#2f2f2f)"
-
-[dotnet]
-format = "[ 󰪮 $version ](fg:#3891A6 bg:#2f2f2f)"
-
-[time]
-format = "[  $time ](fg:#fafafa bg:#2f2f2f)"
-disabled = false
-time_format = "%H:%M:%S"
-
-[cmd_duration]
-format = "[  $duration ](fg:#FFCE5C)"
-
 [character]
 success_symbol = "[~#@❯ ](bold #7a7a7a) "
 error_symbol = "[~#@❯ ](bold #ef5350) "
+
+[os]
+disabled = false
+style = "fg:#26C6DA bg:#2f2f2f"
+format = "[▓](fg:#2f2f2f)[ $symbol ]($style)[ ](fg:#26C6DA bg:#2f2f2f)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
+[username]
+format = "[ ](fg:#fafafa bg:#2f2f2f)[ $user](fg:#fafafa bg:#2f2f2f)"
+show_always = true
+
+[hostname]
+format = "[</><#7a7a7a></>{{ end }}<#2EEFBF>$hostname ](fg:#fafafa bg:#2f2f2f)"
+ssh_only = false
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#ffff66 bg:#2f2f2f"
+format = "[ ](fg:#ffff66 bg:#2f2f2f)[ ⚡ ]($style)"
+
+[directory]
+format = "[ ](fg:#fafafa bg:#2f2f2f)[  $path ](fg:#fafafa bg:#2f2f2f)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = "[  $branch ](fg:#ffeb3b bg:#2f2f2f)"
+
+[git_status]
+format = "([$all_status$ahead_behind ](fg:#ffeb3b bg:#2f2f2f))[](fg:#2f2f2f) "
+modified = " ~${count}"
+staged = " +${count}"
+stashed = " *${count}"
+ahead = " ↑${count}"
+behind = " ↓${count}"
+diverged = " ↕↑${ahead_count}↓${behind_count}"
+deleted = " -${count}"
+
+[nodejs]
+format = "[](fg:#2f2f2f bg:prev_bg)[  $version ](fg:#6CA35E bg:#2f2f2f)"
+
+[python]
+format = "[](fg:#2f2f2f bg:prev_bg)[ 󰌠 $version ](fg:#96E072 bg:#2f2f2f)"
+
+[dotnet]
+format = "[](fg:#2f2f2f bg:prev_bg)[ 󰪮 $version ](fg:#3891A6 bg:#2f2f2f)"
+
+[time]
+format = "[](fg:#2f2f2f bg:prev_bg)[ $time ](fg:#fafafa bg:#2f2f2f)[▓](fg:#2f2f2f)"
+disabled = false
+time_format = "%H:%M:%S"

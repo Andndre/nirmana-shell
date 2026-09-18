@@ -9,6 +9,7 @@ add_newline = false
 
 format = """
 $username\
+$hostname\
 $directory\
 $git_branch\
 $git_status\
@@ -16,13 +17,17 @@ $character\
 """
 
 [character]
-format = "[](fg:prev_bg) "
-success_symbol = ""
-error_symbol = ""
+format = "$symbol"
+success_symbol = "[](fg:prev_bg) "
+error_symbol = "[](fg:prev_bg) "
 
 [username]
-format = "[ $user ](fg:#100e23 bg:#ffffff)"
+format = "[ $user](fg:#100e23 bg:#ffffff)"
 show_always = true
+
+[hostname]
+format = "[@$hostname ](fg:#100e23 bg:#ffffff)"
+ssh_only = false
 
 [directory]
 format = "[](fg:prev_bg bg:#91ddff)[ $path ](fg:#100e23 bg:#91ddff)"

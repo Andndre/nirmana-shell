@@ -36,7 +36,7 @@ format = "[](fg:#424242)[ 󰌠 $version ](fg:#E4F34A bg:#424242)[](fg:#424
 format = "[](fg:#424242)[  $version ](fg:#7FD5EA bg:#424242)[](fg:#424242) "
 
 [nodejs]
-format = "[](fg:#424242)[ 󰎙 $version ](fg:#42E66C bg:#424242)[](fg:#424242) "
+format = "[](fg:#424242)[  $version ](fg:#42E66C bg:#424242)[](fg:#424242) "
 
 [ruby]
 format = "[](fg:#424242)[  $version ](fg:#E64747 bg:#424242)[](fg:#424242) "
@@ -49,3 +49,8 @@ format = "[](fg:#424242)[  $version ](fg:#9B6BDF bg:#424242)[](fg:#4242
 
 [battery]
 format = "[](fg:#424242)[ 󰁹 $percentage ](fg:#9B6BDF bg:#424242)[](fg:#424242) "
+disabled = false
+
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"

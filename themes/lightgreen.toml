@@ -8,7 +8,7 @@ command_timeout = 1000
 add_newline = false
 
 format = """
-$sudo\
+${env_var.ADMIN}\
 $os\
 $directory\
 $git_branch\
@@ -24,15 +24,15 @@ $character\
 success_symbol = "[❯ ](bold #22da6e) "
 error_symbol = "[❯ ](bold #ef5350) "
 
-[sudo]
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
 style = "fg:#dd1e1e bg:#000000"
 format = "[](fg:#000000)[  ]($style)[](fg:#000000) "
-disabled = false
 
 [os]
 disabled = false
-style = "fg:#ffffff bg:#21c7a8"
-format = "[](fg:#21c7a8)[ $symbol ]($style)[](fg:#21c7a8) "
+style = "bold #ffffff"
+format = "[ $symbol ]($style) "
 
 [os.symbols]
 Windows = ""

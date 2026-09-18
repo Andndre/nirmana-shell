@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: lambdageneration
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -8,53 +8,93 @@ command_timeout = 1000
 add_newline = true
 
 format = """
+$os\
 $cmd_duration\
-$directory\
+${env_var.ADMIN}\
 $git_branch\
 $git_status\
 $battery\
+$status\
 $fill\
 $username\
+$hostname\
 $time\
 $line_break\
+$directory\
 $character\
 """
 
 [fill]
 symbol = " "
 
-[cmd_duration]
-format = "[╭─](fg:#292929)[  $duration ](fg:#fb7e14 bg:#292929)"
-min_time = 1
+[character]
+success_symbol = "[❯ ](bold #22da6e) "
+error_symbol = "[❯ ](bold #ef5350) "
+format = "[](fg:prev_bg) $symbol"
 
-[directory]
-format = "[  $path ](fg:#fb7e14 bg:#292929)"
-truncation_length = 3
-truncation_symbol = "…/"
+[os]
+disabled = false
+style = "fg:#fb7e14 bg:#292929"
+format = "[╭─](fg:#292929)[ $symbol ]($style)[ ](fg:#fb7e14 bg:#292929)"
+
+[os.symbols]
+Windows = "󰕮"
+Ubuntu = ""
+Macos = ""
+Linux = ""
+
+[cmd_duration]
+format = "[ ](fg:#fb7e14 bg:#292929)[ $duration ](fg:#fb7e14 bg:#292929)"
+min_time = 500
+show_milliseconds = true
+
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#26C6DA bg:#292929"
+format = "[ ](fg:#26C6DA bg:#292929)[ ⚡ ]($style)"
+
+[git_branch]
+format = "[  $branch ](fg:#D4E157 bg:#292929)"
 
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#D4E157 bg:#292929))"
-modified = " ✎"
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[git_branch]
-format = "[  $branch](fg:#D4E157 bg:#292929)"
+modified = " ~${count}"
+staged = " +${count}"
+stashed = " *${count}"
+ahead = " ↑${count}"
+behind = " ↓${count}"
+diverged = " ↕↑${ahead_count}↓${behind_count}"
+deleted = " -${count}"
 
 [battery]
-format = "[ 󰁹 $percentage ](fg:#26C6DA bg:#292929)[](fg:#292929) "
+disabled = false
+format = "[ ](fg:#26C6DA bg:#292929)[ 󰁹 $percentage ](fg:#26C6DA bg:#292929)"
+
+[[battery.display]]
+threshold = 100
+style = "bold #A6E3A1"
+
+[status]
+format = "[ ](fg:#fb7e14 bg:#292929)[ $symbol ](fg:#fb7e14 bg:#292929)[](fg:#292929) "
+disabled = false
+symbol = "❌"
+success_symbol = ""
 
 [username]
-format = "[](fg:#292929)[ $user ](fg:#fb7e14 bg:#292929)"
+format = "[](fg:#292929 bg:prev_bg)[ $user ](fg:#fb7e14 bg:#292929)"
+show_always = true
+
+[hostname]
+style = "fg:#fb7e14 bg:#292929"
+format = "[/ $hostname ]($style) "
+ssh_only = false
 
 [time]
-format = "[  $time ](fg:#fb7e14 bg:#292929)"
+format = "[](fg:#292929 bg:prev_bg)[  $time ](fg:#fb7e14 bg:#292929)[](fg:#292929)"
 disabled = false
 time_format = "%H:%M:%S, _2"
 
-[character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+[directory]
+format = "[╰─](fg:#fb7e14)[ $path ](fg:#292929 bg:#fb7e14)[](fg:#fb7e14) "
+truncation_length = 3
+truncation_symbol = "…/"

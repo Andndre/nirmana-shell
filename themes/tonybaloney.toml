@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: tonybaloney
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -12,29 +12,38 @@ $directory\
 $git_branch\
 $git_status\
 $python\
+${env_var.ADMIN}\
 $character\
 """
 
+[character]
+format = "$symbol"
+success_symbol = ""
+error_symbol = ""
+
 [directory]
-format = "[](fg:#18354c)[  $path ](fg:#ffc107 bg:#18354c)"
+format = "[](fg:#18354c)[  $path ](fg:#ffc107 bg:#18354c)[](fg:#18354c)"
 truncation_length = 3
 truncation_symbol = "…/"
 
+[git_branch]
+format = "[  $branch ](fg:#ffc107 bg:#18354c)"
+
 [git_status]
 format = "([$all_status$ahead_behind ](fg:#ffc107 bg:#18354c))"
-modified = " ✎"
-staged = " "
-stashed = " "
-ahead = " ⇡${count}"
-behind = " ⇣${count}"
-diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[git_branch]
-format = "[  $branch](fg:#ffc107 bg:#18354c)"
+modified = " ~${count}"
+staged = " +${count}"
+stashed = " *${count}"
+ahead = " ↑${count}"
+behind = " ↓${count}"
+diverged = " ↕↑${ahead_count}↓${behind_count}"
+deleted = " -${count}"
 
 [python]
-format = "[](fg:#18354c bg:#ffc107)[ 󰌠 $version ](fg:#18354c bg:#ffc107)[](fg:#ffc107) "
+format = "[](fg:prev_bg bg:#ffc107)[ 󰌠 ${virtualenv} $version ](fg:#18354c bg:#ffc107)"
+version_format = "${raw}"
 
-[character]
-success_symbol = ""
-error_symbol = ""
+[env_var.ADMIN]
+variable = "STARSHIP_IS_ADMIN"
+style = "fg:#18354c bg:#ffc107"
+format = "[ ](fg:#18354c bg:#ffc107)[ ⚡ ]($style)[](fg:#ffc107) "

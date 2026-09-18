@@ -7,6 +7,13 @@ $OutputEncoding = [System.Text.Encoding]::UTF8
 
 # 1. Starship Prompt Engine
 if (Get-Command starship -ErrorAction SilentlyContinue) {
+    # Detect elevated administrator privilege for Starship prompt
+    if (([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        $env:STARSHIP_IS_ADMIN = "1"
+    } else {
+        Remove-Item Env:\STARSHIP_IS_ADMIN -ErrorAction SilentlyContinue
+    }
+
     $starshipConfigPath = Join-Path $HOME ".config\starship.toml"
     if ($env:STARSHIP_CONFIG -and -not (Test-Path $env:STARSHIP_CONFIG)) {
         Remove-Item Env:\STARSHIP_CONFIG -ErrorAction SilentlyContinue

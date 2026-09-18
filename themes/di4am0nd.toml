@@ -28,7 +28,7 @@ success_symbol = "[⮞ ](bold #FFBD00) "
 error_symbol = "[⮞ ](bold #ef5350) "
 
 [username]
-format = "[$user's ](bold #FFBD00)"
+format = "[$user ](bold #FFBD00)"
 show_always = true
 
 [directory]

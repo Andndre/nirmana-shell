@@ -1,6 +1,6 @@
 # =====================================================================
 # Nirmana-Shell - Transpiled Theme: huvix
-# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler
+# Ported from Oh My Posh JSON schema via Nirmana OMP Transpiler v3.1
 # =====================================================================
 
 scan_timeout = 30
@@ -11,41 +11,58 @@ format = """
 $username\
 $directory\
 $golang\
-$python\
 $git_branch\
 $git_status\
+$fill\
+$python\
 $cmd_duration\
 $line_break\
+$battery\
 $character\
 """
 
+[fill]
+symbol = " "
+
+[character]
+success_symbol = "[❯ ](bold #22da6e) "
+error_symbol = "[❯ ](bold #ef5350) "
+
 [username]
-format = "[$user](fg:#FFE082) "
+format = "[$user ](bold #FFE082)"
 show_always = true
 
 [directory]
-format = "[ $path](fg:#56B6C2) "
+format = "[$path ](fg:#56B6C2) "
 truncation_length = 3
 truncation_symbol = "…/"
 
 [golang]
-format = "[ $version](fg:#7FD5EA) "
-
-[python]
-format = "[󰌠 $version](fg:#9e7eff) "
-
-[git_status]
-format = "([$all_status$ahead_behind](red) )"
-modified = " ✎"
-staged = " "
+format = "[ $version ](bold #7FD5EA) "
 
 [git_branch]
-format = "[ $branch](#56B6C2) "
+format = "[ $branch](bold #56B6C2)"
+
+[git_status]
+format = "([$all_status$ahead_behind](bold #56B6C2)) "
+modified = " ✎"
+staged = " "
+stashed = " "
+ahead = " ⇡${count}"
+behind = " ⇣${count}"
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
+
+[python]
+format = "[ 󰌠 $version ](bold #9e7eff)"
 
 [cmd_duration]
-format = "[ $duration](fg:#FFAB91) "
-min_time = 1
+format = "[ $duration ](bold #FFAB91)"
+min_time = 2000
 
-[character]
-success_symbol = "[❯](bold green) "
-error_symbol = "[❯](bold red) "
+[battery]
+format = "[\\[](bold #193549)[󰁹 $percentage](bold #193549)[\\]](bold #193549)"
+disabled = false
+
+[[battery.display]]
+threshold = 100
+style = "bold #193549"
