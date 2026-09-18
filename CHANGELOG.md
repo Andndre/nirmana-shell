@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.1] - 2026-09-18
+
+### Fixed
+
+- **OMP Template Markup Normalization**: `convert-omp.py` now resolves static Go template control flow and removes OMP color tags before emitting Starship TOML. This prevents preview text such as `</>`, `<#7a7a7a>`, and `{{ end }}` from leaking into converted prompts.
+- **Connector Prompt Symbol Escaping**: Split connector frames from conditional prompt symbols so themes such as `quick-term` emit TOML-valid literal dollar prompt characters.
+
+### Updated
+
+- Regenerated affected Oh My Posh theme configurations and their ANSI and PNG preview cards from the upstream manifest.
+
 ## [1.2.0] - 2026-09-16
 
 ### Changed
