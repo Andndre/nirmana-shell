@@ -6,7 +6,7 @@
   [1;33mRendered Prompt:[0m
 
   [1;38;2;229;192;123mAndndre [0m[38;2;97;175;239m…\nirmana-shell [0m [1;38;2;173;219;103m main ✎[0m 
-  [1;38;2;34;218;110m❯ [0m  [1;32mgit status[0m
+  [1;38;2;220;223;228m() > [0m  [1;32mgit status[0m
 
   [0;90m──────────────────────────────────────────────────────────────────────────────[0m
   [0;90mControls: [Enter] Apply theme  |  [Esc] Cancel  |  [Arrows] Navigate[0m

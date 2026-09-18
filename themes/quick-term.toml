@@ -24,8 +24,8 @@ $character\
 symbol = " "
 
 [character]
-format = "[╰─ {{ if .Root }}#{{else}}${{end}}](fg:#d75f00) $symbol"
-success_symbol = ""
+format = "[╰─](fg:#d75f00)$symbol"
+success_symbol = "\\$ "
 error_symbol = "[x ](bold #ef5350)"
 
 [os]

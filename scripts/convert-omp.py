@@ -132,11 +132,33 @@ def convert_go_date_format(go_fmt: str) -> str:
     return res
 
 
+def normalize_omp_template(text: Optional[str]) -> str:
+    """Resolve static Go template control flow and remove unsupported actions."""
+    if not text:
+        return ""
+
+    normalized = text
+    conditional = re.compile(
+        r"\{\{\s*if\b[^}]*\}\}(.*?)\{\{\s*else\s*\}\}(.*?)\{\{\s*end\s*\}\}",
+        re.DOTALL,
+    )
+    while conditional.search(normalized):
+        normalized = conditional.sub(lambda match: match.group(2), normalized)
+
+    normalized = re.sub(
+        r"\{\{\s*(?:if|with|range)\b[^}]*\}\}.*?\{\{\s*end\s*\}\}",
+        "",
+        normalized,
+        flags=re.DOTALL,
+    )
+    return re.sub(r"\{\{.*?\}\}", "", normalized)
+
+
 def parse_omp_markup(text: Optional[str], default_fg: Optional[str] = None) -> str:
     """Convert Oh My Posh diamond/template markup (<#hex>text</>) to Starship styled spans."""
     if not text:
         return ""
-    cleaned = re.sub(r"\{\{.*?\}\}", "", text)
+    cleaned = normalize_omp_template(text)
     if not cleaned.strip():
         return ""
 
@@ -145,7 +167,7 @@ def parse_omp_markup(text: Optional[str], default_fg: Optional[str] = None) -> s
     pattern = re.compile(r"<([#a-zA-Z0-9_\-]+)>(.*?)</>")
     for m in pattern.finditer(cleaned):
         if m.start() > pos:
-            plain = cleaned[pos:m.start()]
+            plain = re.sub(r"<[^>]+>", "", cleaned[pos:m.start()])
             if plain:
                 fg_spec = f"bold {default_fg}" if default_fg else "bold"
                 spans.append(f"[{plain}]({fg_spec})")
@@ -155,7 +177,7 @@ def parse_omp_markup(text: Optional[str], default_fg: Optional[str] = None) -> s
             spans.append(f"[{content}](bold {col})")
         pos = m.end()
     if pos < len(cleaned):
-        plain = cleaned[pos:]
+        plain = re.sub(r"<[^>]+>", "", cleaned[pos:])
         if plain:
             fg_spec = f"bold {default_fg}" if default_fg else "bold"
             spans.append(f"[{plain}]({fg_spec})")
@@ -500,7 +522,17 @@ class OmpTranspiler:
                 break
             elif stype in ("text", "status") and any(c in tmpl for c in ("\u2570", "╰")):
                 col = fg or bg or "#FEF5ED"
-                connector_span = f"[{tmpl.strip()}](fg:{col})"
+                clean_tmpl = re.sub(r"<[^>]+>", "", normalize_omp_template(tmpl)).strip()
+                symbol_match = re.search(r"([#$❯❮>➜➔➜λ▶»⮞])\s*$", clean_tmpl)
+                connector_text = clean_tmpl[:symbol_match.start()].strip() if symbol_match else clean_tmpl
+                connector_span = f"[{connector_text}](fg:{col})" if connector_text else ""
+                if symbol_match:
+                    prompt_symbol = symbol_match.group(1).replace("$", "\\$")
+                    line_character = {
+                        "format": f"{connector_span}$symbol",
+                        "success_symbol": f"{prompt_symbol} ",
+                        "error_symbol": "[x ](bold #ef5350)",
+                    }
                 last_left.remove(s)
                 break
 
@@ -539,13 +571,13 @@ class OmpTranspiler:
             has_prompt_char = any(c in tmpl for c in ("\u276f", "\u276e", "❯", "❮", ">", "$", "#", "➜", "➔", "\u279c", "λ", "", "", "▶", "»", "\u2b9e", "⮞"))
             is_ribbon_status = (stype == "status" and (bg or s.get("trailing_diamond") or s.get("powerline_symbol")) and not has_prompt_char)
             if (stype == "text" or (stype == "status" and not is_ribbon_status)) or (stype == "session" and has_prompt_char):
-                clean_sym = re.sub(r"\{\{.*?\}\}", "", tmpl)
+                clean_sym = normalize_omp_template(tmpl)
                 clean_sym = re.sub(r"<[^>]+>", "", clean_sym).strip()
                 if clean_sym == "\u279c":
                     clean_sym = "➔ " 
                 if len(clean_sym) > 4 and not any(k in tmpl for k in ("{{ .UserName }}", ".UserName")):
                     continue
-                clean_sym = clean_sym.replace("\\", "").replace("$", "\\$")
+                clean_sym = clean_sym.replace("\\", "").replace("$", "\\\\$")
                 clean_sym = clean_sym.replace("[", "\\[").replace("]", "\\]")
                 clean_sym = clean_sym.replace("(", "\\(").replace(")", "\\)")
                 sym = f"{clean_sym} " if clean_sym else "❯ "
@@ -949,7 +981,7 @@ class OmpTranspiler:
         if stype == "session":
             m = re.search(r"\{\{\s*\.UserName\s*\}\}(.*?)\{\{\s*\.HostName\s*\}\}", tmpl)
             if m:
-                extra_text = m.group(1)
+                extra_text = normalize_omp_template(m.group(1))
             elif ".HostName" in tmpl:
                 extra_text = "@"
         elif stype == "executiontime":
@@ -1670,7 +1702,7 @@ class OmpTranspiler:
                     host_trail = "" if (pwr_sym in ("\ue0b4", "") and next_mod and next_mod.get("bg")) else trail_str
                     user_trail = "" if (pwr_sym in ("\ue0b4", "") and next_mod and next_mod.get("bg")) else trail_str
                     if curr.get("has_host"):
-                        sep = curr.get("extra_text") or "@"
+                        sep = parse_omp_markup(curr.get("extra_text"), fg) or "@"
                         self.modules["username"] = {
                             "format": f"{lead_str}[ {icon}$user](fg:{fg} bg:{bg})",
                             "show_always": True,
@@ -2164,7 +2196,9 @@ class OmpTranspiler:
                 lines.append(f'style = "{bat_style}"')
                 lines.append("")
 
-        return "\n".join(lines)
+        rendered = normalize_omp_template("\n".join(lines))
+        rendered = re.sub(r"</>|<#[0-9A-Fa-f]{3,8}>", "", rendered)
+        return rendered.replace("$]", r"\$]")
 
 
 def get_preview_generator():

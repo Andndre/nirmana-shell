@@ -22,8 +22,8 @@ $character\
 """
 
 [character]
-success_symbol = "[\\$ ](bold #ffffff) "
-error_symbol = "[\\$ ](bold #ef5350) "
+success_symbol = "[\\\\$ ](bold #ffffff) "
+error_symbol = "[\\\\$ ](bold #ef5350) "
 
 [username]
 show_always = true

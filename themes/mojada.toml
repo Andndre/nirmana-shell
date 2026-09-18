@@ -39,7 +39,7 @@ format = "[ ](fg:#0077c2 bg:#fbfbfb)[ $user](fg:#0077c2 bg:#fbfbfb)"
 show_always = true
 
 [hostname]
-format = "[<#000000>@</><#e06c75>$hostname ](fg:#0077c2 bg:#fbfbfb)"
+format = "[[@](bold #000000)$hostname ](fg:#0077c2 bg:#fbfbfb)"
 ssh_only = false
 
 [env_var.ADMIN]

@@ -25,8 +25,8 @@ $character\
 """
 
 [character]
-success_symbol = "[\\$ ](bold #ffffff) "
-error_symbol = "[\\$ ](bold #ef5350) "
+success_symbol = "[\\\\$ ](bold #ffffff) "
+error_symbol = "[\\\\$ ](bold #ef5350) "
 
 [env_var.ADMIN]
 variable = "STARSHIP_IS_ADMIN"

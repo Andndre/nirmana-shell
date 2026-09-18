@@ -14,13 +14,12 @@ $directory\
 $git_branch\
 $git_status\
 $line_break\
-$status\
 $character\
 """
 
 [character]
-success_symbol = "[❯ ](bold #22da6e) "
-error_symbol = "[❯ ](bold #ef5350) "
+success_symbol = "[\\(\\) > ](bold #dcdfe4) "
+error_symbol = "[\\(\\) > ](bold #ef5350) "
 
 [username]
 format = "[$user ](bold #e5c07b)"
@@ -46,8 +45,3 @@ stashed = " "
 ahead = " ⇡${count}"
 behind = " ⇣${count}"
 diverged = " ⇕⇡${ahead_count}⇣${behind_count}"
-
-[status]
-format = "[$symbol ](fg:#dcdfe4)"
-symbol = "❌"
-disabled = false

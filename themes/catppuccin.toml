@@ -38,7 +38,7 @@ format = "[ ](fg:#494D64 bg:#8AADF4)[ $user](fg:#494D64 bg:#8AADF4)"
 show_always = true
 
 [hostname]
-format = "[@$hostname ](fg:#494D64 bg:#8AADF4)"
+format = "[[@](bold #494D64)$hostname ](fg:#494D64 bg:#8AADF4)"
 ssh_only = false
 
 [directory]

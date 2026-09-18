@@ -42,7 +42,7 @@ format = "[](fg:#546E7A inverted)[ $user](fg:#26C6DA bg:#546E7A)"
 show_always = true
 
 [hostname]
-format = "[@$hostname ](fg:#26C6DA bg:#546E7A)"
+format = "[[@](bold #26C6DA)$hostname ](fg:#26C6DA bg:#546E7A)"
 ssh_only = false
 
 [battery]

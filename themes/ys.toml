@@ -22,8 +22,8 @@ $character\
 """
 
 [character]
-success_symbol = "[\\$ ](bold #FF8A80) "
-error_symbol = "[\\$ ](bold #ef5350) "
+success_symbol = "[\\\\$ ](bold #FF8A80) "
+error_symbol = "[\\\\$ ](bold #ef5350) "
 
 [python]
 format = "[󰌠 $version ](bold #FFFFFF) "

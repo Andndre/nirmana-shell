@@ -31,7 +31,7 @@ format = "[](fg:#4707a8)[ $user](fg:#ffffff bg:#4707a8)"
 show_always = true
 
 [hostname]
-format = "[@$hostname ](fg:#ffffff bg:#4707a8)[](fg:#4707a8)"
+format = "[[@](bold #ffffff)$hostname ](fg:#ffffff bg:#4707a8)[](fg:#4707a8)"
 ssh_only = false
 
 [azure]

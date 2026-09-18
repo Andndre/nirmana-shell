@@ -89,7 +89,7 @@ format = "[  $version ](bold #9c1006)"
 format = "[  $version ](bold #faa029)"
 
 [os]
-format = "[ <#ffffff></> $symbol ](bold #ffffff)"
+format = "[  $symbol ](bold #ffffff)"
 
 [battery]
 format = "[󰁹 $percentage ](bold #ffffff)"
